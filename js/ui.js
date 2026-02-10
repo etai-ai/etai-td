@@ -95,8 +95,8 @@ export class UI {
         const cellH = h / ROWS;
 
         // Background
-        const isDesert = def.environment === 'desert';
-        ctx.fillStyle = isDesert ? '#c8a878' : '#2a3a2a';
+        const env = def.environment || 'forest';
+        ctx.fillStyle = env === 'desert' ? '#c8a878' : env === 'lava' ? '#c05020' : '#2a3a2a';
         ctx.fillRect(0, 0, w, h);
 
         // Build a temp grid to know which cells are path
@@ -139,7 +139,7 @@ export class UI {
         }
 
         // Draw path cells
-        ctx.fillStyle = isDesert ? '#b8943c' : '#c8a96e';
+        ctx.fillStyle = env === 'desert' ? '#b8943c' : env === 'lava' ? '#2a2a2a' : '#c8a96e';
         for (let y = 0; y < ROWS; y++) {
             for (let x = 0; x < COLS; x++) {
                 if (grid[y][x] === CELL_TYPE.PATH) {
@@ -149,7 +149,7 @@ export class UI {
         }
 
         // Draw blocked cells
-        ctx.fillStyle = isDesert ? '#a08060' : '#4a5a4a';
+        ctx.fillStyle = env === 'desert' ? '#a08060' : env === 'lava' ? '#1a1a2a' : '#4a5a4a';
         for (const c of def.blocked) {
             if (c.x >= 0 && c.x < COLS && c.y >= 0 && c.y < ROWS && grid[c.y][c.x] !== CELL_TYPE.PATH) {
                 ctx.fillRect(c.x * cellW, c.y * cellH, cellW + 0.5, cellH + 0.5);
@@ -242,6 +242,13 @@ export class UI {
             this.game.restart();
         });
 
+        // Exit button
+        document.getElementById('exit-btn')?.addEventListener('click', () => {
+            if (this.game.state !== STATE.MENU) {
+                this.game.restart();
+            }
+        });
+
         // Manual buttons
         document.getElementById('manual-btn')?.addEventListener('click', () => {
             this.showScreen('manual');
@@ -257,11 +264,11 @@ export class UI {
         const waves = game.waves;
 
         // Top bar info
-        this.elWave.textContent = `Wave: ${waves.currentWave}/20`;
+        this.elWave.textContent = `Wave ${waves.currentWave}/20`;
         this.elLives.innerHTML = `&#9829; ${eco.lives}`;
         this.elGold.textContent = `\u{1FA99} ${eco.gold}`;
-        this.elScore.textContent = `Score: ${eco.score}`;
-        this.elRecord.textContent = `Record: ${eco.record}`;
+        this.elScore.textContent = `Score ${eco.score}`;
+        this.elRecord.textContent = `Record ${eco.record}`;
 
         // Speed buttons
         this.elSpeedBtns.forEach(btn => {

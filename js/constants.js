@@ -75,6 +75,7 @@ export const MAP_DEFS = {
         difficulty: 'Hard',
         color: '#e74c3c',
         hpMultiplier: 0.65,
+        environment: 'lava',
         description: 'A short direct path — enemies arrive fast, every tower counts.',
         waypoints: [
             { x: 0, y: 10 }, { x: 5, y: 10 }, { x: 5, y: 5 }, { x: 12, y: 5 },
@@ -111,18 +112,6 @@ export const TOWER_TYPES = {
             { damage: 28, range: 4.5, fireRate: 0.25, projSpeed: 380, upgradeCost: 70 },
         ],
     },
-    cannon: {
-        name: 'Cannon',
-        cost: 100,
-        color: '#8b5e3c',
-        splash: true,
-        unlockWave: 2,
-        levels: [
-            { damage: 30, range: 3.0, fireRate: 1.2, projSpeed: 200, splashRadius: 1.2 },
-            { damage: 50, range: 3.5, fireRate: 1.0, projSpeed: 220, splashRadius: 1.5, upgradeCost: 65 },
-            { damage: 80, range: 4.0, fireRate: 0.85, projSpeed: 240, splashRadius: 1.8, upgradeCost: 125 },
-        ],
-    },
     frost: {
         name: 'Frost',
         cost: 75,
@@ -143,6 +132,18 @@ export const TOWER_TYPES = {
             { damage: 15, range: 3.5, fireRate: 1.0, projSpeed: 500, chainCount: 3, chainRange: 2.0, chainDecay: 0.7 },
             { damage: 22, range: 4.0, fireRate: 0.85, projSpeed: 550, chainCount: 4, chainRange: 2.5, chainDecay: 0.7, upgradeCost: 80 },
             { damage: 32, range: 4.5, fireRate: 0.7, projSpeed: 600, chainCount: 5, chainRange: 3.0, chainDecay: 0.75, upgradeCost: 145 },
+        ],
+    },
+    cannon: {
+        name: 'Cannon',
+        cost: 100,
+        color: '#8b5e3c',
+        splash: true,
+        unlockWave: 2,
+        levels: [
+            { damage: 30, range: 3.0, fireRate: 1.2, projSpeed: 200, splashRadius: 1.2 },
+            { damage: 50, range: 3.5, fireRate: 1.0, projSpeed: 220, splashRadius: 1.5, upgradeCost: 65 },
+            { damage: 80, range: 4.0, fireRate: 0.85, projSpeed: 240, splashRadius: 1.8, upgradeCost: 125 },
         ],
     },
     sniper: {

@@ -136,7 +136,7 @@ export class GameMap {
 
     drawTerrain(ctx) {
         ctx.clearRect(0, 0, COLS * CELL, ROWS * CELL);
-        const isDesert = this.def.environment === 'desert';
+        const env = this.def.environment || 'forest';
 
         for (let y = 0; y < ROWS; y++) {
             for (let x = 0; x < COLS; x++) {
@@ -145,16 +145,12 @@ export class GameMap {
                 const type = this.grid[y][x];
 
                 if (type === CELL_TYPE.PATH) {
-                    isDesert ? this.drawDesertPathCell(ctx, px, py, x, y)
-                             : this.drawPathCell(ctx, px, py, x, y);
-                } else if (type === CELL_TYPE.BLOCKED) {
-                    isDesert ? this.drawDesertCell(ctx, px, py, x, y)
-                             : this.drawGrassCell(ctx, px, py, x, y);
-                    isDesert ? this.drawDesertObstacle(ctx, px, py, x, y)
-                             : this.drawObstacle(ctx, px, py, x, y);
+                    this[`draw${env === 'desert' ? 'Desert' : env === 'lava' ? 'Lava' : ''}PathCell`](ctx, px, py, x, y);
                 } else {
-                    isDesert ? this.drawDesertCell(ctx, px, py, x, y)
-                             : this.drawGrassCell(ctx, px, py, x, y);
+                    this[`draw${env === 'desert' ? 'Desert' : env === 'lava' ? 'Lava' : 'Grass'}Cell`](ctx, px, py, x, y);
+                    if (type === CELL_TYPE.BLOCKED) {
+                        this[`draw${env === 'desert' ? 'Desert' : env === 'lava' ? 'Lava' : ''}Obstacle`](ctx, px, py, x, y);
+                    }
                 }
             }
         }
@@ -373,6 +369,154 @@ export class GameMap {
             // Cactus top highlight
             ctx.fillStyle = '#3aa862';
             ctx.fillRect(cx - 2, cy - 8, 4, 3);
+        }
+    }
+
+    // ── Lava environment cells ──────────────────────────────
+
+    drawLavaCell(ctx, px, py, gx, gy) {
+        // Molten lava ground — bright orange/red
+        const shade = seedRand(gx, gy, 0);
+        const r = Math.floor(200 + shade * 40);
+        const g = Math.floor(70 + shade * 40);
+        const b = Math.floor(10 + shade * 15);
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(px, py, CELL, CELL);
+
+        // Bright hot streaks
+        const streakCount = 2 + Math.floor(seedRand(gx, gy, 1) * 2);
+        for (let i = 0; i < streakCount; i++) {
+            const sx = px + seedRand(gx, gy, 80 + i) * CELL;
+            const sy = py + seedRand(gx, gy, 90 + i) * CELL;
+            const sw = 2 + seedRand(gx, gy, 100 + i) * 5;
+            const sh = 1 + seedRand(gx, gy, 110 + i) * 2;
+            ctx.fillStyle = `rgba(255,220,60,${0.15 + seedRand(gx, gy, 120 + i) * 0.2})`;
+            ctx.fillRect(sx, sy, sw, sh);
+        }
+
+        // Dark cooled crust patches
+        if (seedRand(gx, gy, 2) > 0.5) {
+            const cx2 = px + seedRand(gx, gy, 130) * (CELL - 8) + 4;
+            const cy2 = py + seedRand(gx, gy, 140) * (CELL - 8) + 4;
+            ctx.fillStyle = 'rgba(40,15,5,0.35)';
+            ctx.beginPath();
+            ctx.ellipse(cx2, cy2, 4 + seedRand(gx, gy, 150) * 4, 3, seedRand(gx, gy, 160) * Math.PI, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    drawLavaPathCell(ctx, px, py, gx, gy) {
+        // Cooled dark basalt rock — enemies walk here
+        const shade = seedRand(gx, gy, 0);
+        const v = Math.floor(38 + shade * 14);
+        ctx.fillStyle = `rgb(${v},${v - 5},${v - 8})`;
+        ctx.fillRect(px, py, CELL, CELL);
+
+        // Subtle lava cracks glowing through the rock
+        const crackCount = 1 + Math.floor(seedRand(gx, gy, 1) * 2);
+        ctx.lineWidth = 0.6;
+        for (let i = 0; i < crackCount; i++) {
+            const sx = px + seedRand(gx, gy, 10 + i) * CELL;
+            const sy = py + seedRand(gx, gy, 20 + i) * CELL;
+            const ex = sx + (seedRand(gx, gy, 30 + i) - 0.5) * 16;
+            const ey = sy + (seedRand(gx, gy, 40 + i) - 0.5) * 16;
+            ctx.strokeStyle = `rgba(255,80,20,${0.1 + seedRand(gx, gy, 50 + i) * 0.1})`;
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(ex, ey);
+            ctx.stroke();
+        }
+
+        // Rock texture speckles
+        const speckleCount = 3 + Math.floor(seedRand(gx, gy, 3) * 3);
+        for (let i = 0; i < speckleCount; i++) {
+            const sx = px + seedRand(gx, gy, 60 + i) * (CELL - 4) + 2;
+            const sy = py + seedRand(gx, gy, 70 + i) * (CELL - 4) + 2;
+            ctx.fillStyle = seedRand(gx, gy, 80 + i) > 0.5 ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.06)';
+            ctx.fillRect(sx, sy, 1.5, 1.5);
+        }
+
+        // Glowing edge where path meets lava
+        const edgeW = 3;
+        ctx.fillStyle = 'rgba(255,100,20,0.2)';
+        if (!this.isPath(gx, gy - 1)) ctx.fillRect(px, py, CELL, edgeW);
+        if (!this.isPath(gx, gy + 1)) ctx.fillRect(px, py + CELL - edgeW, CELL, edgeW);
+        if (!this.isPath(gx - 1, gy)) ctx.fillRect(px, py, edgeW, CELL);
+        if (!this.isPath(gx + 1, gy)) ctx.fillRect(px + CELL - edgeW, py, edgeW, CELL);
+    }
+
+    drawLavaObstacle(ctx, px, py, gx, gy) {
+        const cx = px + CELL / 2;
+        const cy = py + CELL / 2;
+        const seed = gx + gy;
+
+        if (seed % 2 === 0) {
+            // Obsidian rock — dark glossy
+            const baseRadius = 10;
+            ctx.fillStyle = '#1a1a2a';
+            ctx.beginPath();
+            for (let i = 0; i < 6; i++) {
+                const a = (Math.PI * 2 * i) / 6;
+                const r = baseRadius * (0.7 + seedRand(gx, gy, i) * 0.5);
+                const rx = cx + Math.cos(a) * r;
+                const ry = cy + 2 + Math.sin(a) * r * 0.75;
+                if (i === 0) ctx.moveTo(rx, ry);
+                else ctx.lineTo(rx, ry);
+            }
+            ctx.closePath();
+            ctx.fill();
+
+            // Glassy highlight
+            ctx.fillStyle = 'rgba(100,80,160,0.25)';
+            ctx.beginPath();
+            const ha = 0;
+            const ha2 = (Math.PI * 2) / 6;
+            const r0 = baseRadius * (0.7 + seedRand(gx, gy, 0) * 0.5);
+            const r1 = baseRadius * (0.7 + seedRand(gx, gy, 1) * 0.5);
+            ctx.moveTo(cx, cy + 2);
+            ctx.lineTo(cx + Math.cos(ha) * r0, cy + 2 + Math.sin(ha) * r0 * 0.75);
+            ctx.lineTo(cx + Math.cos(ha2) * r1, cy + 2 + Math.sin(ha2) * r1 * 0.75);
+            ctx.closePath();
+            ctx.fill();
+
+            // Lava glow at base
+            ctx.fillStyle = 'rgba(255,80,20,0.15)';
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + 8, baseRadius * 0.8, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+        } else {
+            // Lava geyser / vent
+            // Base crater
+            ctx.fillStyle = 'rgba(255,60,10,0.2)';
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + 6, 10, 5, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Rock chimney
+            ctx.fillStyle = '#2a1a1a';
+            ctx.fillRect(cx - 4, cy - 6, 8, 14);
+            ctx.fillStyle = '#3a2520';
+            ctx.fillRect(cx - 3, cy - 5, 6, 12);
+
+            // Glowing top opening
+            ctx.fillStyle = '#ff6020';
+            ctx.beginPath();
+            ctx.ellipse(cx, cy - 6, 4, 2.5, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ffaa40';
+            ctx.beginPath();
+            ctx.ellipse(cx, cy - 6, 2, 1.2, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Smoke wisps
+            ctx.fillStyle = 'rgba(80,60,60,0.15)';
+            for (let i = 0; i < 3; i++) {
+                const sx = cx + (seedRand(gx, gy, 10 + i) - 0.5) * 8;
+                const sy = cy - 10 - seedRand(gx, gy, 20 + i) * 8;
+                ctx.beginPath();
+                ctx.arc(sx, sy, 2 + seedRand(gx, gy, 30 + i) * 2, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
     }
 
