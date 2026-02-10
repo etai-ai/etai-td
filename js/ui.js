@@ -1,4 +1,4 @@
-import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL_TYPE } from './constants.js';
+import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL_TYPE, WAVES_PER_LEVEL } from './constants.js';
 import { Economy } from './economy.js';
 
 export class UI {
@@ -11,6 +11,8 @@ export class UI {
         this.elGold = document.getElementById('gold-info');
         this.elScore = document.getElementById('score-info');
         this.elRecord = document.getElementById('record-info');
+        this.elLevelInfo = document.getElementById('level-info');
+        this.elAvatarCanvas = document.getElementById('avatar-canvas');
         this.elTowerPanel = document.getElementById('tower-panel');
         this.elTowerInfo = document.getElementById('tower-info');
         this.elSpeedBtns = document.querySelectorAll('.speed-btn');
@@ -52,13 +54,15 @@ export class UI {
             name.className = 'map-card-name';
             name.textContent = def.name;
 
-            const badge = document.createElement('span');
-            badge.className = 'map-card-difficulty';
-            badge.style.background = def.color;
-            badge.textContent = def.difficulty;
+            const levelBadge = document.createElement('span');
+            levelBadge.className = 'map-card-level';
+            levelBadge.dataset.mapId = id;
+            levelBadge.style.background = def.themeColor;
+            const wl = Economy.getWorldLevel(id);
+            levelBadge.textContent = wl > 0 ? `Level ${wl}` : 'New!';
 
             header.appendChild(name);
-            header.appendChild(badge);
+            header.appendChild(levelBadge);
 
             const desc = document.createElement('div');
             desc.className = 'map-card-desc';
@@ -139,7 +143,7 @@ export class UI {
         }
 
         // Draw path cells
-        ctx.fillStyle = env === 'desert' ? '#b8943c' : env === 'lava' ? '#2a2a2a' : '#c8a96e';
+        ctx.fillStyle = env === 'desert' ? '#e0b050' : env === 'lava' ? '#ff6a30' : '#d4a840';
         for (let y = 0; y < ROWS; y++) {
             for (let x = 0; x < COLS; x++) {
                 if (grid[y][x] === CELL_TYPE.PATH) {
@@ -171,6 +175,12 @@ export class UI {
             const mapId = el.dataset.mapId;
             const rec = Economy.getMapRecord(mapId);
             el.textContent = rec > 0 ? `Record: ${rec}` : 'No record yet';
+        }
+        const levelEls = document.querySelectorAll('.map-card-level');
+        for (const el of levelEls) {
+            const mapId = el.dataset.mapId;
+            const wl = Economy.getWorldLevel(mapId);
+            el.textContent = wl > 0 ? `Level ${wl}` : 'New!';
         }
     }
 
@@ -242,6 +252,11 @@ export class UI {
             this.game.restart();
         });
 
+        // Level up continue button
+        document.getElementById('level-up-btn')?.addEventListener('click', () => {
+            this.game.continueNextLevel();
+        });
+
         // Exit button
         document.getElementById('exit-btn')?.addEventListener('click', () => {
             if (this.game.state !== STATE.MENU) {
@@ -264,11 +279,18 @@ export class UI {
         const waves = game.waves;
 
         // Top bar info
-        this.elWave.textContent = `Wave ${waves.currentWave}/20`;
+        this.elWave.textContent = `Wave ${waves.currentWave}/${WAVES_PER_LEVEL}`;
         this.elLives.innerHTML = `&#9829; ${eco.lives}`;
         this.elGold.textContent = `\u{1FA99} ${eco.gold}`;
         this.elScore.textContent = `Score ${eco.score}`;
         this.elRecord.textContent = `Record ${eco.record}`;
+        this.elLevelInfo.textContent = `Level ${game.worldLevel}`;
+
+        // Avatar
+        if (this.elAvatarCanvas && game.worldLevel > 0) {
+            const themeColor = game.map.def.themeColor || '#888';
+            game.renderer.drawAvatar(this.elAvatarCanvas.getContext('2d'), game.worldLevel, themeColor);
+        }
 
         // Speed buttons
         this.elSpeedBtns.forEach(btn => {
@@ -388,6 +410,13 @@ export class UI {
         const screen = document.getElementById(`${name}-screen`);
         if (screen) screen.classList.add('visible');
 
+        // Hide/show gameplay bars
+        const onMenu = name === 'menu';
+        const topBar = document.getElementById('top-bar');
+        const bottomBar = document.getElementById('bottom-bar');
+        if (topBar) topBar.style.display = onMenu ? 'none' : 'flex';
+        if (bottomBar) bottomBar.style.display = onMenu ? 'none' : 'flex';
+
         // Refresh map records when returning to menu
         if (name === 'menu') {
             this.refreshMapRecords();
@@ -401,9 +430,29 @@ export class UI {
         if (goEl) goEl.textContent = scoreText;
         const vicEl = document.getElementById('victory-score');
         if (vicEl) vicEl.textContent = scoreText;
+
+        // Populate level-up screen
+        if (name === 'level-up') {
+            const game = this.game;
+            const nextLevel = game.worldLevel + 1;
+            const bonus = 25 + nextLevel * 15;
+            const subEl = document.getElementById('level-up-subtitle');
+            if (subEl) subEl.textContent = `World Level ${game.worldLevel} complete!`;
+            const bonusEl = document.getElementById('level-up-bonus');
+            if (bonusEl) bonusEl.textContent = `Gold bonus: +${bonus} | Lives reset to 20`;
+            const avatarCanvas = document.getElementById('level-up-avatar');
+            if (avatarCanvas) {
+                const themeColor = game.map.def.themeColor || '#888';
+                game.renderer.drawAvatar(avatarCanvas.getContext('2d'), nextLevel, themeColor);
+            }
+        }
     }
 
     hideAllScreens() {
         document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('visible'));
+        const topBar = document.getElementById('top-bar');
+        const bottomBar = document.getElementById('bottom-bar');
+        if (topBar) topBar.style.display = 'flex';
+        if (bottomBar) bottomBar.style.display = 'flex';
     }
 }

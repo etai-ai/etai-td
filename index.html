@@ -10,7 +10,9 @@
     <div id="game-container">
         <!-- Top Info Bar -->
         <div id="top-bar">
-            <div class="info-items" style="display:flex;gap:8px;">
+            <div class="info-items" style="display:flex;gap:8px;align-items:center;">
+                <canvas id="avatar-canvas" width="40" height="40"></canvas>
+                <span id="level-info" class="level-badge">Level 1</span>
                 <span id="wave-info" class="wave-badge">Wave 0/20</span>
                 <span id="score-info" class="score-badge">Score 0</span>
                 <span id="record-info" class="record-badge">Record 0</span>
@@ -40,7 +42,7 @@
             <!-- Game Screens -->
             <div id="menu-screen" class="game-screen visible">
                 <div class="screen-title">Etai's Tower Defence</div>
-                <div class="screen-subtitle">Choose a map to begin. Defend against 20 waves of enemies!</div>
+                <div class="screen-subtitle">Choose a world and climb the levels!</div>
                 <div id="map-select"></div>
                 <div class="key-hints">
                     <kbd>1</kbd>-<kbd>5</kbd> Select tower &nbsp;
@@ -66,25 +68,26 @@
 
                         <div class="manual-section">
                             <h2>Goal</h2>
-                            <p>Build and upgrade towers to stop 20 waves of enemies from reaching the exit. You start with 20 lives and 200 gold. If an enemy reaches the end, you lose lives. Lose them all and it's game over.</p>
+                            <p>Build and upgrade towers to stop waves of enemies from reaching the exit. Each level has 20 waves — beat them all to level up your world! You start with 20 lives and 200 gold. If an enemy reaches the end, you lose lives. Lose them all and it's game over.</p>
                         </div>
 
                         <div class="manual-section">
-                            <h2>Maps</h2>
+                            <h2>Worlds</h2>
                             <div class="manual-cards">
                                 <div class="manual-card">
-                                    <div class="manual-card-title" style="color:#27ae60">Serpentine Valley <span class="manual-badge" style="background:#27ae60">Easy</span></div>
+                                    <div class="manual-card-title" style="color:#27ae60">Serpentine Valley</div>
                                     <p>Long winding path with 10+ turns. Plenty of time to damage enemies. Best for learning.</p>
                                 </div>
                                 <div class="manual-card">
-                                    <div class="manual-card-title" style="color:#f39c12">Split Creek <span class="manual-badge" style="background:#f39c12">Medium</span></div>
+                                    <div class="manual-card-title" style="color:#d4a026">Split Creek</div>
                                     <p>Path forks into two branches. Enemies randomly pick a route, forcing you to defend both sides.</p>
                                 </div>
                                 <div class="manual-card">
-                                    <div class="manual-card-title" style="color:#e74c3c">The Gauntlet <span class="manual-badge" style="background:#e74c3c">Hard</span></div>
-                                    <p>Short direct path with 3 turns. Enemies arrive fast — every tower counts. HP scaled to 65%.</p>
+                                    <div class="manual-card-title" style="color:#c0392b">The Gauntlet</div>
+                                    <p>Short direct path with 3 turns. Enemies arrive fast — every tower counts.</p>
                                 </div>
                             </div>
+                            <p class="manual-tip">Each world has infinite levels. Beat 20 waves to level up. Enemies get 1.4x HP per level.</p>
                         </div>
 
                         <div class="manual-section">
@@ -139,7 +142,19 @@
                                     <tr><td style="color:#e67e22">Swarm</td><td>8</td><td>Fast</td><td>0%</td><td>Comes in huge numbers</td></tr>
                                 </tbody>
                             </table>
-                            <p class="manual-tip">HP scales exponentially each wave. By wave 20, enemies have ~30x more HP than wave 1. Armor reduces ALL incoming damage by its percentage.</p>
+                            <p class="manual-tip">HP scales exponentially each wave and each level. By wave 20, enemies have ~30x more HP than wave 1. Each new level multiplies all HP by 1.4x on top. Armor reduces ALL incoming damage by its percentage.</p>
+                        </div>
+
+                        <div class="manual-section">
+                            <h2>Leveling Up</h2>
+                            <p>Each world has infinite levels. Beat all 20 waves to complete a level and advance to the next.</p>
+                            <div class="manual-cards">
+                                <div class="manual-card"><strong>On level up:</strong> Lives reset to 20, towers cleared, gold carries over + bonus</div>
+                                <div class="manual-card"><strong>Gold bonus:</strong> 25 + (level x 15) gold on each level up</div>
+                                <div class="manual-card"><strong>HP scaling:</strong> Enemies get 1.4x HP per level (Level 5 = 3.8x, Level 10 = 20.7x)</div>
+                                <div class="manual-card"><strong>Score:</strong> Carries over between levels. Your record is tracked per world</div>
+                            </div>
+                            <p class="manual-tip">Your world level is saved automatically. Next time you play the same world, you'll continue from where you left off. Your avatar evolves as you level up!</p>
                         </div>
 
                         <div class="manual-section">
@@ -208,6 +223,14 @@
                 <div class="screen-subtitle">You survived all 20 waves! Excellent strategy!</div>
                 <div id="victory-score" class="screen-score"></div>
                 <button id="restart-btn-victory" class="screen-btn">Play Again</button>
+            </div>
+
+            <div id="level-up-screen" class="game-screen">
+                <div class="screen-title">Level Complete!</div>
+                <div class="screen-subtitle" id="level-up-subtitle"></div>
+                <div id="level-up-bonus" class="screen-score"></div>
+                <canvas id="level-up-avatar" width="80" height="80"></canvas>
+                <button id="level-up-btn" class="screen-btn">Continue</button>
             </div>
         </div>
 

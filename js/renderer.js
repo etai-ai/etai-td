@@ -1214,6 +1214,143 @@ export class Renderer {
         ctx.restore();
     }
 
+    drawAvatar(ctx, level, themeColor) {
+        const w = ctx.canvas.width;
+        const h = ctx.canvas.height;
+        ctx.clearRect(0, 0, w, h);
+
+        const cx = w / 2;
+        const cy = h / 2;
+        const scale = w / 40; // normalize to 40px base
+
+        // Background circle
+        ctx.fillStyle = '#1a1a2e';
+        ctx.beginPath();
+        ctx.arc(cx, cy, w / 2 - 1, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Glowing outline for level 8+
+        if (level >= 8) {
+            ctx.strokeStyle = 'rgba(255,215,0,0.6)';
+            ctx.lineWidth = 2 * scale;
+            ctx.beginPath();
+            ctx.arc(cx, cy, w / 2 - 1, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+
+        // Cape (level 6+)
+        if (level >= 6) {
+            ctx.fillStyle = themeColor;
+            ctx.globalAlpha = 0.7;
+            ctx.beginPath();
+            ctx.moveTo(cx - 3 * scale, cy - 2 * scale);
+            ctx.lineTo(cx - 7 * scale, cy + 10 * scale);
+            ctx.lineTo(cx - 1 * scale, cy + 8 * scale);
+            ctx.closePath();
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+
+        // Body (torso)
+        ctx.fillStyle = '#555';
+        ctx.fillRect(cx - 3 * scale, cy - 1 * scale, 6 * scale, 8 * scale);
+
+        // Shoulders
+        ctx.fillStyle = '#666';
+        ctx.fillRect(cx - 5 * scale, cy - 1 * scale, 10 * scale, 3 * scale);
+
+        // Legs
+        ctx.fillStyle = '#444';
+        ctx.fillRect(cx - 2.5 * scale, cy + 7 * scale, 2 * scale, 5 * scale);
+        ctx.fillRect(cx + 0.5 * scale, cy + 7 * scale, 2 * scale, 5 * scale);
+
+        // Arms
+        ctx.fillStyle = '#555';
+        ctx.fillRect(cx - 6 * scale, cy, 2 * scale, 6 * scale);
+        ctx.fillRect(cx + 4 * scale, cy, 2 * scale, 6 * scale);
+
+        // Shield (level 2+)
+        if (level >= 2) {
+            ctx.fillStyle = themeColor;
+            ctx.beginPath();
+            ctx.moveTo(cx - 7 * scale, cy + 1 * scale);
+            ctx.lineTo(cx - 10 * scale, cy + 1 * scale);
+            ctx.lineTo(cx - 10 * scale, cy + 6 * scale);
+            ctx.lineTo(cx - 8.5 * scale, cy + 8 * scale);
+            ctx.lineTo(cx - 7 * scale, cy + 6 * scale);
+            ctx.closePath();
+            ctx.fill();
+            // Shield edge highlight
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 0.5 * scale;
+            ctx.stroke();
+        }
+
+        // Head
+        ctx.fillStyle = '#daa877';
+        ctx.beginPath();
+        ctx.arc(cx, cy - 5 * scale, 4 * scale, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Helmet base
+        ctx.fillStyle = '#888';
+        ctx.beginPath();
+        ctx.arc(cx, cy - 5 * scale, 4.2 * scale, Math.PI, Math.PI * 2);
+        ctx.fill();
+
+        // Crown (level 8+) replaces helmet top
+        if (level >= 8) {
+            ctx.fillStyle = '#ffd700';
+            // Crown base
+            ctx.fillRect(cx - 4 * scale, cy - 9.5 * scale, 8 * scale, 2 * scale);
+            // Crown points
+            for (let i = -1; i <= 1; i++) {
+                ctx.beginPath();
+                ctx.moveTo(cx + i * 2.5 * scale - 1.2 * scale, cy - 9.5 * scale);
+                ctx.lineTo(cx + i * 2.5 * scale, cy - 12.5 * scale);
+                ctx.lineTo(cx + i * 2.5 * scale + 1.2 * scale, cy - 9.5 * scale);
+                ctx.closePath();
+                ctx.fill();
+            }
+            // Gem on crown
+            ctx.fillStyle = themeColor;
+            ctx.beginPath();
+            ctx.arc(cx, cy - 10.5 * scale, 1 * scale, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Helmet plume (level 4-7)
+        if (level >= 4 && level < 8) {
+            ctx.fillStyle = themeColor;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy - 9 * scale);
+            ctx.quadraticCurveTo(cx + 5 * scale, cy - 14 * scale, cx + 8 * scale, cy - 9 * scale);
+            ctx.quadraticCurveTo(cx + 4 * scale, cy - 10 * scale, cx, cy - 9 * scale);
+            ctx.closePath();
+            ctx.fill();
+        }
+
+        // Eyes
+        ctx.fillStyle = '#333';
+        ctx.fillRect(cx - 2 * scale, cy - 5.5 * scale, 1.2 * scale, 1 * scale);
+        ctx.fillRect(cx + 0.8 * scale, cy - 5.5 * scale, 1.2 * scale, 1 * scale);
+
+        // Sword (right hand)
+        ctx.fillStyle = '#ccc';
+        ctx.fillRect(cx + 5.5 * scale, cy - 4 * scale, 1 * scale, 8 * scale);
+        // Sword handle
+        ctx.fillStyle = '#8b5e3c';
+        ctx.fillRect(cx + 4.5 * scale, cy + 3.5 * scale, 3 * scale, 1.2 * scale);
+        // Sword tip
+        ctx.fillStyle = '#ddd';
+        ctx.beginPath();
+        ctx.moveTo(cx + 5.5 * scale, cy - 4 * scale);
+        ctx.lineTo(cx + 6 * scale, cy - 6 * scale);
+        ctx.lineTo(cx + 6.5 * scale, cy - 4 * scale);
+        ctx.closePath();
+        ctx.fill();
+    }
+
     drawUIOverlay() {
         const ctx = this.uiCtx;
         ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);

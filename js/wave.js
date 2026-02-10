@@ -1,4 +1,4 @@
-import { WAVES, TOTAL_WAVES, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getHPScale } from './constants.js';
+import { WAVES, TOTAL_WAVES, WAVES_PER_LEVEL, LEVEL_HP_MULTIPLIER, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getHPScale } from './constants.js';
 
 export class WaveManager {
     constructor(game) {
@@ -67,7 +67,8 @@ export class WaveManager {
         if (!this.spawning) return;
 
         const mapMul = this.game.map.def.hpMultiplier || 1;
-        const hpScale = getHPScale(this.currentWave) * mapMul;
+        const levelMultiplier = Math.pow(LEVEL_HP_MULTIPLIER, this.game.worldLevel - 1);
+        const hpScale = getHPScale(this.currentWave) * mapMul * levelMultiplier;
         let allDone = true;
 
         for (let g = 0; g < this.spawnGroups.length; g++) {
@@ -108,9 +109,9 @@ export class WaveManager {
 
         this.game.particles.spawnFloatingText(CANVAS_W / 2, CANVAS_H / 3, `Wave ${this.currentWave} Complete! +${bonus + interest}g`, '#ffd700');
 
-        // Check victory
-        if (this.currentWave >= TOTAL_WAVES) {
-            this.game.victory();
+        // Level up after completing all waves
+        if (this.currentWave >= WAVES_PER_LEVEL) {
+            this.game.levelUp();
             return;
         }
 

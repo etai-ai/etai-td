@@ -1,4 +1,4 @@
-import { STATE, CANVAS_W, CANVAS_H } from './constants.js';
+import { STATE, CANVAS_W, CANVAS_H, STARTING_LIVES } from './constants.js';
 import { GameMap } from './map.js';
 import { TowerManager } from './tower.js';
 import { EnemyManager } from './enemy.js';
@@ -20,6 +20,7 @@ export class Game {
         this.lastTime = 0;
         this.accumulator = 0;
         this.selectedMapId = null;
+        this.worldLevel = 0;
 
         // Screen shake
         this.shakeTimer = 0;
@@ -54,6 +55,7 @@ export class Game {
     start() {
         if (!this.selectedMapId) return;
         this.audio.ensureContext();
+        this.worldLevel = Economy.getWorldLevel(this.selectedMapId) + 1;
         this.state = STATE.PLAYING;
         this.ui.hideAllScreens();
         this.waves.startNextWave();
@@ -86,9 +88,34 @@ export class Game {
         this.ui.showScreen('victory');
     }
 
+    levelUp() {
+        this.state = STATE.LEVEL_UP;
+        Economy.setWorldLevel(this.selectedMapId, this.worldLevel);
+        this.audio.playVictory();
+        this.ui.showScreen('level-up');
+    }
+
+    continueNextLevel() {
+        this.worldLevel++;
+        const bonus = 25 + this.worldLevel * 15;
+        this.economy.levelUpReset(bonus);
+        this.enemies.reset();
+        this.towers.reset();
+        this.projectiles.reset();
+        this.particles.reset();
+        this.waves.reset();
+        this.input.reset();
+        this.renderer.drawTerrain();
+        this.state = STATE.PLAYING;
+        this.ui.hideAllScreens();
+        this.waves.startNextWave();
+        this.ui.update();
+    }
+
     restart() {
         this.state = STATE.MENU;
         this.selectedMapId = null;
+        this.worldLevel = 0;
         this.shakeTimer = 0;
         this.shakeIntensity = 0;
         this.shakeOffsetX = 0;

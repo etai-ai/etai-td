@@ -12,6 +12,7 @@ export const STATE = {
     PAUSED: 'PAUSED',
     GAME_OVER: 'GAME_OVER',
     VICTORY: 'VICTORY',
+    LEVEL_UP: 'LEVEL_UP',
 };
 
 // ── Cell Types ─────────────────────────────────────────────
@@ -25,8 +26,7 @@ export const CELL_TYPE = {
 export const MAP_DEFS = {
     serpentine: {
         name: 'Serpentine Valley',
-        difficulty: 'Easy',
-        color: '#27ae60',
+        themeColor: '#27ae60',
         hpMultiplier: 1.0,
         description: 'A long winding path gives you plenty of time to build defenses.',
         waypoints: [
@@ -47,8 +47,7 @@ export const MAP_DEFS = {
     },
     splitcreek: {
         name: 'Split Creek',
-        difficulty: 'Medium',
-        color: '#f39c12',
+        themeColor: '#d4a026',
         hpMultiplier: 0.85,
         environment: 'desert',
         description: 'The path forks midway — enemies randomly pick a branch.',
@@ -72,8 +71,7 @@ export const MAP_DEFS = {
     },
     gauntlet: {
         name: 'The Gauntlet',
-        difficulty: 'Hard',
-        color: '#e74c3c',
+        themeColor: '#c0392b',
         hpMultiplier: 0.65,
         environment: 'lava',
         description: 'A short direct path — enemies arrive fast, every tower counts.',
@@ -256,6 +254,8 @@ export const WAVES = [
 ];
 
 export const TOTAL_WAVES = 20;
+export const WAVES_PER_LEVEL = 20;
+export const LEVEL_HP_MULTIPLIER = 1.4;
 
 // ── Targeting Modes ────────────────────────────────────────
 export const TARGET_MODES = ['First', 'Closest', 'Strongest', 'Weakest'];

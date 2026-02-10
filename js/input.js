@@ -146,9 +146,9 @@ export class InputHandler {
                     this.game.ui.showTowerInfo(this.selectedTower);
                 }
                 break;
-            case 'b':
-            case 'B':
-                // Cheat: blow them all
+            case 'e':
+            case 'E':
+                // Hidden cheat
                 if (this.game.state === STATE.PLAYING) {
                     this.game.blowThemAll();
                 }

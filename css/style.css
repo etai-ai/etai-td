@@ -116,6 +116,48 @@ body {
     text-align: center;
     box-shadow: 0 0 10px rgba(231, 76, 60, 0.3);
 }
+#avatar-canvas {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 2px solid #555;
+}
+
+.level-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #2a1a4a;
+    color: #bb86fc;
+    border: 2px solid #9b59b6;
+    border-radius: 8px;
+    padding: 8px 18px;
+    font-size: 20px;
+    font-weight: 700;
+    min-width: 50px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(155, 89, 182, 0.3);
+}
+
+#level-up-avatar {
+    margin: 16px auto;
+    display: block;
+    border-radius: 50%;
+    border: 3px solid gold;
+}
+
+#level-up-screen .screen-title { color: #bb86fc; }
+
+.map-card-level {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 10px;
+    border-radius: 10px;
+    color: #fff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
 #score-info { color: #2ecc71; }
 #record-info { color: #e67e22; }
 
