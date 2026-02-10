@@ -57,12 +57,10 @@ export class InputHandler {
             // Place tower
             const tower = this.game.towers.place(this.selectedTowerType, gx, gy);
             if (tower) {
-                // Keep the tower type selected for quick placement
-                // unless they can't afford another
-                const def = TOWER_TYPES[this.selectedTowerType];
-                if (!this.game.economy.canAfford(def.cost)) {
-                    this.selectedTowerType = null;
-                }
+                // Select the placed tower and show its info card
+                this.selectedTower = tower;
+                this.selectedTowerType = null;
+                this.game.ui.showTowerInfo(tower);
                 this.game.ui.update();
             } else {
                 // Placement failed — if there's a tower here, select it
