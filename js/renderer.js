@@ -1,5 +1,4 @@
 import { CANVAS_W, CANVAS_H, CELL, COLS, ROWS, TOWER_TYPES, TARGET_MODES } from './constants.js';
-import { angle } from './utils.js';
 
 export class Renderer {
     constructor(canvases, game) {

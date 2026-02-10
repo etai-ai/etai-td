@@ -119,6 +119,7 @@ export class Game {
         }
 
         this.renderer.drawFrame(this.accumulator / FIXED_DT);
+        if (this.state === STATE.PLAYING) this.ui.update();
         requestAnimationFrame(t => this.tick(t));
     }
 
@@ -162,8 +163,6 @@ export class Game {
         if (this.waves.isWaveComplete() && this.enemies.isEmpty()) {
             this.waves.onWaveComplete();
         }
-
-        this.ui.update();
     }
 
     run() {

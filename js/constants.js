@@ -21,41 +21,6 @@ export const CELL_TYPE = {
     BLOCKED: 2,
 };
 
-// ── Map Waypoints (grid coords) — kept for back-compat ─────
-export const WAYPOINTS = [
-    { x: 0, y: 2 },
-    { x: 7, y: 2 },
-    { x: 7, y: 6 },
-    { x: 2, y: 6 },
-    { x: 2, y: 10 },
-    { x: 10, y: 10 },
-    { x: 10, y: 4 },
-    { x: 15, y: 4 },
-    { x: 15, y: 14 },
-    { x: 6, y: 14 },
-    { x: 6, y: 18 },
-    { x: 20, y: 18 },
-    { x: 20, y: 12 },
-    { x: 25, y: 12 },
-    { x: 25, y: 6 },
-    { x: 29, y: 6 },
-];
-
-// ── Decorative obstacles (grid coords) ─────────────────────
-export const BLOCKED_CELLS = [
-    { x: 4, y: 0 }, { x: 5, y: 0 },
-    { x: 12, y: 1 }, { x: 13, y: 1 },
-    { x: 22, y: 3 }, { x: 23, y: 3 },
-    { x: 0, y: 8 }, { x: 1, y: 8 },
-    { x: 18, y: 8 }, { x: 19, y: 8 },
-    { x: 27, y: 10 }, { x: 28, y: 10 },
-    { x: 12, y: 16 }, { x: 13, y: 16 },
-    { x: 24, y: 16 }, { x: 25, y: 16 },
-    { x: 3, y: 19 }, { x: 4, y: 19 },
-    { x: 16, y: 0 }, { x: 27, y: 2 },
-    { x: 0, y: 15 }, { x: 14, y: 12 },
-];
-
 // ── Map Definitions ─────────────────────────────────────────
 export const MAP_DEFS = {
     serpentine: {

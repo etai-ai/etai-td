@@ -1,5 +1,5 @@
 import { ENEMY_TYPES, CELL } from './constants.js';
-import { distance, lerp, gridToWorld } from './utils.js';
+import { distance } from './utils.js';
 
 let nextEnemyId = 0;
 
@@ -159,7 +159,7 @@ export class EnemyManager {
             if (!e.alive && e.deathTimer < 0) {
                 // Just died — start death animation
                 e.deathTimer = 0;
-                this.game.economy.addGold(e.reward);
+                this.game.economy.addGold(Math.round(e.reward * 1.10));
                 this.game.economy.addScore(e.reward);
                 this.game.particles.spawnFloatingText(e.x, e.y - 10, `+${e.reward}`, '#ffd700');
 

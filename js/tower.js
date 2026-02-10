@@ -1,4 +1,4 @@
-import { TOWER_TYPES, CELL, TARGET_MODES } from './constants.js';
+import { TOWER_TYPES, CELL, TARGET_MODES, SELL_REFUND } from './constants.js';
 import { distance, angle, gridToWorld } from './utils.js';
 
 let nextTowerId = 0;
@@ -68,7 +68,7 @@ export class Tower {
     }
 
     getSellValue() {
-        return Math.floor(this.totalInvested * 0.6);
+        return Math.floor(this.totalInvested * SELL_REFUND);
     }
 
     cycleTargetMode() {
@@ -86,8 +86,15 @@ export class Tower {
         switch (TARGET_MODES[this.targetMode]) {
             case 'First':
                 return inRange.reduce((best, e) => e.progress > best.progress ? e : best);
-            case 'Closest':
-                return inRange.reduce((best, e) => distance(this, e) < distance(this, best) ? e : best);
+            case 'Closest': {
+                let best = inRange[0];
+                let bestDist = distance(this, best);
+                for (let i = 1; i < inRange.length; i++) {
+                    const d = distance(this, inRange[i]);
+                    if (d < bestDist) { best = inRange[i]; bestDist = d; }
+                }
+                return best;
+            }
             case 'Strongest':
                 return inRange.reduce((best, e) => e.hp > best.hp ? e : best);
             case 'Weakest':

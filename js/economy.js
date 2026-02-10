@@ -39,7 +39,7 @@ export class Economy {
     }
 
     addGold(amount) {
-        this.gold += Math.round(amount * 1.10);
+        this.gold += amount;
     }
 
     addScore(points) {

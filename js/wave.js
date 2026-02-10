@@ -1,4 +1,4 @@
-import { WAVES, TOTAL_WAVES, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, getHPScale } from './constants.js';
+import { WAVES, TOTAL_WAVES, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getHPScale } from './constants.js';
 
 export class WaveManager {
     constructor(game) {
@@ -105,7 +105,7 @@ export class WaveManager {
         const interest = Math.floor(this.game.economy.gold * INTEREST_RATE);
         this.game.economy.addGold(interest);
 
-        this.game.particles.spawnFloatingText(480, 300, `Wave ${this.currentWave} Complete! +${bonus + interest}g`, '#ffd700');
+        this.game.particles.spawnFloatingText(CANVAS_W / 2, CANVAS_H / 3, `Wave ${this.currentWave} Complete! +${bonus + interest}g`, '#ffd700');
 
         // Check victory
         if (this.currentWave >= TOTAL_WAVES) {
