@@ -240,6 +240,14 @@ export class UI {
         document.getElementById('restart-btn-victory')?.addEventListener('click', () => {
             this.game.restart();
         });
+
+        // Manual buttons
+        document.getElementById('manual-btn')?.addEventListener('click', () => {
+            this.showScreen('manual');
+        });
+        document.getElementById('manual-close-btn')?.addEventListener('click', () => {
+            this.showScreen('menu');
+        });
     }
 
     update() {
