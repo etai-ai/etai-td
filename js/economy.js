@@ -42,9 +42,9 @@ export class Economy {
         this.lives = Math.max(0, this.lives - count);
     }
 
-    levelUpReset(bonus) {
+    levelUpReset(level) {
+        this.gold = 100 + level * 200;
         this.lives = STARTING_LIVES;
-        this.addGold(bonus);
     }
 
     reset() {

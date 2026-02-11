@@ -593,11 +593,11 @@ export class UI {
         if (name === 'level-up') {
             const game = this.game;
             const nextLevel = game.worldLevel + 1;
-            const bonus = 25 + nextLevel * 15;
+            const nextGold = 100 + nextLevel * 200;
             const subEl = document.getElementById('level-up-subtitle');
-            if (subEl) subEl.textContent = `World Level ${game.worldLevel} complete!`;
+            if (subEl) subEl.textContent = `Level ${game.worldLevel} complete!`;
             const bonusEl = document.getElementById('level-up-bonus');
-            if (bonusEl) bonusEl.textContent = `Gold bonus: +${bonus} | Lives reset to 20`;
+            if (bonusEl) bonusEl.textContent = `Starting gold: ${nextGold} | Lives reset to 20`;
             const avatarCanvas = document.getElementById('level-up-avatar');
             if (avatarCanvas) {
                 const themeColor = game.map.def.themeColor || '#888';

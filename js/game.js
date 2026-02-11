@@ -103,9 +103,8 @@ export class Game {
 
     continueNextLevel() {
         this.worldLevel++;
-        const bonus = 25 + this.worldLevel * 15;
         this.debug.reset();
-        this.economy.levelUpReset(bonus);
+        this.economy.levelUpReset(this.worldLevel);
         this.enemies.reset();
         this.towers.reset();
         this.projectiles.reset();
