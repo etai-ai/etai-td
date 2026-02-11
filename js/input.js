@@ -198,7 +198,7 @@ export class InputHandler {
             case 'R':
                 if (this.game.adminMode && this.game.selectedMapId) {
                     if (confirm(`Clear record & reset player level?`)) {
-                        Economy.clearMapRecord(this.game.selectedMapId);
+                        Economy.clearRecord();
                         Economy.clearPlayerLevel();
                         this.game.economy.record = 0;
                         this.game.economy.score = 0;

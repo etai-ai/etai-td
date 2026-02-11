@@ -54,7 +54,6 @@ export class Game {
     selectMap(mapId) {
         this.selectedMapId = mapId;
         this.map = new GameMap(mapId);
-        this.economy.setMap(mapId);
         this.renderer.drawTerrain();
     }
 

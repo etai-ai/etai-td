@@ -231,14 +231,14 @@ export const TOWER_TYPES = {
     },
     firearrow: {
         name: 'Fire Arrow',
-        cost: 300,
+        cost: 200,
         color: '#c0392b',
         burn: true,
         unlockLevel: 2,
         levels: [
-            { damage: 22, range: 3.5, fireRate: 0.30, projSpeed: 320, burnDamage: 3, burnDuration: 3.0 },
-            { damage: 34, range: 4.0, fireRate: 0.25, projSpeed: 360, burnDamage: 5, burnDuration: 3.5, upgradeCost: 120 },
-            { damage: 50, range: 4.5, fireRate: 0.20, projSpeed: 400, burnDamage: 8, burnDuration: 4.0, upgradeCost: 200 },
+            { damage: 20, range: 3.5, fireRate: 0.30, projSpeed: 320, burnDamage: 3, burnDuration: 3.0 },
+            { damage: 31, range: 4.0, fireRate: 0.25, projSpeed: 360, burnDamage: 5, burnDuration: 3.5, upgradeCost: 120 },
+            { damage: 45, range: 4.5, fireRate: 0.20, projSpeed: 400, burnDamage: 8, burnDuration: 4.0, upgradeCost: 200 },
         ],
     },
     frost: {

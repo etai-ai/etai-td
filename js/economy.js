@@ -1,14 +1,13 @@
 import { STARTING_GOLD, STARTING_LIVES } from './constants.js';
 
-const RECORD_PREFIX = 'td_high_score';
+const RECORD_KEY = 'td_high_score';
 
 export class Economy {
     constructor() {
         this.gold = STARTING_GOLD;
         this.lives = STARTING_LIVES;
         this.score = 0;
-        this.mapId = 'serpentine';
-        this.record = 0;
+        this.record = Economy.getRecord();
 
         // One-time fresh start for balance retuning (v4)
         if (!localStorage.getItem('td_v4_clean')) {
@@ -17,15 +16,6 @@ export class Economy {
             }
             localStorage.setItem('td_v4_clean', '1');
         }
-    }
-
-    setMap(mapId) {
-        this.mapId = mapId;
-        this.record = Economy.getMapRecord(mapId);
-    }
-
-    static getMapRecord(mapId) {
-        return parseInt(localStorage.getItem(`${RECORD_PREFIX}_${mapId}`)) || 0;
     }
 
     canAfford(cost) {
@@ -44,7 +34,7 @@ export class Economy {
         this.score += points;
         if (this.score > this.record) {
             this.record = this.score;
-            localStorage.setItem(`${RECORD_PREFIX}_${this.mapId}`, this.record);
+            localStorage.setItem(RECORD_KEY, this.record);
         }
     }
 
@@ -61,10 +51,15 @@ export class Economy {
         this.gold = STARTING_GOLD;
         this.lives = STARTING_LIVES;
         this.score = 0;
+        this.record = Economy.getRecord();
     }
 
-    static clearMapRecord(mapId) {
-        localStorage.removeItem(`${RECORD_PREFIX}_${mapId}`);
+    static getRecord() {
+        return parseInt(localStorage.getItem(RECORD_KEY)) || 0;
+    }
+
+    static clearRecord() {
+        localStorage.removeItem(RECORD_KEY);
     }
 
     static clearPlayerLevel() {

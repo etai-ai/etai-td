@@ -9,8 +9,6 @@ export class UI {
         this.elWave = document.getElementById('wave-info');
         this.elLives = document.getElementById('lives-info');
         this.elGold = document.getElementById('gold-info');
-        this.elScore = document.getElementById('score-info');
-        this.elRecord = document.getElementById('record-info');
         this.elLevelInfo = document.getElementById('level-info');
         this.elAvatarCanvas = document.getElementById('avatar-canvas');
         this.elTowerPanel = document.getElementById('tower-panel');
@@ -35,7 +33,8 @@ export class UI {
         const playerLevel = Economy.getPlayerLevel();
         const levelEl = document.getElementById('menu-player-level');
         if (levelEl) {
-            levelEl.textContent = `Level ${playerLevel + 1}`;
+            const rec = Economy.getRecord();
+            levelEl.textContent = `Level ${playerLevel + 1}` + (rec > 0 ? `  |  Record: ${rec}` : '');
         }
 
         for (const [id, def] of Object.entries(MAP_DEFS)) {
@@ -52,6 +51,7 @@ export class UI {
             preview.width = 240;
             preview.height = 160;
             this.drawMapPreview(preview, def);
+            if (mapLocked) this.drawLockOverlay(preview, reqLevel);
 
             // Info section
             const info = document.createElement('div');
@@ -81,17 +81,8 @@ export class UI {
             desc.className = 'map-card-desc';
             desc.textContent = mapLocked ? `Reach Level ${reqLevel} to unlock` : def.description;
 
-            const record = document.createElement('div');
-            record.className = 'map-card-record';
-            record.dataset.mapId = id;
-            if (!mapLocked) {
-                const rec = Economy.getMapRecord(id);
-                record.textContent = rec > 0 ? `Record: ${rec}` : 'No record yet';
-            }
-
             info.appendChild(header);
             info.appendChild(desc);
-            info.appendChild(record);
 
             card.appendChild(preview);
             card.appendChild(info);
@@ -185,6 +176,46 @@ export class UI {
         ctx.fillRect(entry.x * cellW, entry.y * cellH, cellW + 0.5, cellH + 0.5);
         ctx.fillStyle = '#e74c3c';
         ctx.fillRect(exitPt.x * cellW, exitPt.y * cellH, cellW + 0.5, cellH + 0.5);
+    }
+
+    drawLockOverlay(canvas, reqLevel) {
+        const ctx = canvas.getContext('2d');
+        const w = canvas.width;
+        const h = canvas.height;
+
+        // Darken
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+        ctx.fillRect(0, 0, w, h);
+
+        const cx = w / 2;
+        const cy = h / 2 - 10;
+
+        // Padlock body
+        ctx.fillStyle = '#888';
+        ctx.beginPath();
+        ctx.roundRect(cx - 18, cy, 36, 28, 4);
+        ctx.fill();
+
+        // Keyhole
+        ctx.fillStyle = '#333';
+        ctx.beginPath();
+        ctx.arc(cx, cy + 11, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillRect(cx - 2, cy + 14, 4, 8);
+
+        // Shackle
+        ctx.strokeStyle = '#aaa';
+        ctx.lineWidth = 5;
+        ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 14, Math.PI, 0);
+        ctx.stroke();
+
+        // Level text
+        ctx.fillStyle = '#ffd700';
+        ctx.font = 'bold 16px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText(`Level ${reqLevel}`, cx, cy + 48);
     }
 
     refreshMapRecords() {
@@ -390,8 +421,6 @@ export class UI {
         }
         this.elLives.innerHTML = `&#9829; ${eco.lives}`;
         this.elGold.textContent = `\u{1FA99} ${eco.gold}`;
-        this.elScore.textContent = `Score ${eco.score}`;
-        this.elRecord.textContent = `Record ${eco.record}`;
         this.elLevelInfo.textContent = `Level ${game.worldLevel}`;
 
         // Avatar

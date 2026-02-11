@@ -54,37 +54,6 @@ body {
     box-shadow: 0 0 10px rgba(52, 152, 219, 0.3);
 }
 
-.score-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #0a3a1a;
-    color: #2ecc71;
-    border: 2px solid #27ae60;
-    border-radius: 8px;
-    padding: 8px 18px;
-    font-size: 20px;
-    font-weight: 700;
-    min-width: 50px;
-    text-align: center;
-    box-shadow: 0 0 10px rgba(46, 204, 113, 0.3);
-}
-
-.record-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: #3a2000;
-    color: #e67e22;
-    border: 2px solid #d35400;
-    border-radius: 8px;
-    padding: 8px 18px;
-    font-size: 20px;
-    font-weight: 700;
-    min-width: 50px;
-    text-align: center;
-    box-shadow: 0 0 10px rgba(230, 126, 34, 0.3);
-}
 
 .gold-badge {
     display: inline-flex;
@@ -173,8 +142,6 @@ body {
     letter-spacing: 0.5px;
 }
 
-#score-info { color: #2ecc71; }
-#record-info { color: #e67e22; }
 
 .controls {
     display: flex;
@@ -188,9 +155,10 @@ body {
     justify-content: center;
     border: 2px solid;
     border-radius: 8px;
-    padding: 6px 12px;
-    font-size: 15px;
+    padding: 8px 18px;
+    font-size: 20px;
     font-weight: 700;
+    min-width: 50px;
     text-align: center;
     cursor: pointer;
     transition: all 0.15s;
