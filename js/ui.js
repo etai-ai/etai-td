@@ -225,6 +225,8 @@ export class UI {
         for (const [key, def] of Object.entries(TOWER_TYPES)) {
             // Hide towers that are outclassed at this level
             if (def.maxLevel && worldLevel > def.maxLevel) continue;
+            // Hide towers not yet unlocked at this level
+            if (def.unlockLevel && worldLevel < def.unlockLevel) continue;
 
             if (!this.towerPreviews[key]) {
                 this.towerPreviews[key] = this.renderTowerPreview(key);
