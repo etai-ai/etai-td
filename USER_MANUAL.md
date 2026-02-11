@@ -4,15 +4,19 @@ Defend your base against 20 waves of enemies by building and upgrading towers al
 
 ## Maps
 
-| Map | Difficulty | Description |
-|-----|-----------|-------------|
-| **Serpentine Valley** | Easy | Long winding path with 10+ turns. Plenty of time to damage enemies. Best for learning. |
-| **Split Creek** | Medium | Path forks into two branches midway. Enemies randomly take upper or lower route, forcing you to defend both. |
-| **The Gauntlet** | Hard | Short direct path with only 3 turns. Enemies arrive fast — every tower counts. |
+Each world offers a different strategic challenge. Enemy HP is adjusted per world to keep difficulty balanced — shorter paths have lower HP multipliers so no world is inherently harder than another.
 
-Enemy HP scales to each map: Serpentine (100%), Split Creek (85%), Gauntlet (65%).
+| Map | Style | Description |
+|-----|-------|-------------|
+| **Serpentine Valley** | Long path | Winding path with 10+ turns. Lots of build space. Lightning towers shine at corners where the path doubles back. |
+| **Split Creek** | Split path | Path forks into two branches midway. Enemies randomly take upper or lower route, forcing you to defend both sides. |
+| **The Gauntlet** | Short path | Direct path with only 3 turns. Fewer tower slots — every placement counts. Concentrated killzones are essential. |
+
+Each world has its own infinite level progression. Beat 20 waves to level up. Enemies get 1.4x HP per level.
 
 ## Towers
+
+Hover over any tower button in the bottom bar to see a preview card with the tower image, stats, and special ability.
 
 ### Arrow ($50) — Available from wave 1
 
@@ -25,18 +29,6 @@ Your bread-and-butter tower. Fast fire rate, decent range, cheap to build and up
 | 3 | 28 | 4.5 | 4.0/s | $70 |
 
 **Total investment:** $155 fully upgraded. Best DPS per gold in the game.
-
-### Cannon ($100) — Unlocks after wave 2
-
-Slow-firing but deals splash damage in an area. Essential against grouped enemies. Causes screen shake on impact.
-
-| Level | Damage | Range | Fire Rate | Splash Radius | Upgrade Cost |
-|-------|--------|-------|-----------|---------------|-------------|
-| 1 | 30 | 3.0 | 0.8/s | 1.2 | — |
-| 2 | 50 | 3.5 | 1.0/s | 1.5 | $65 |
-| 3 | 80 | 4.0 | 1.2/s | 1.8 | $125 |
-
-**Total investment:** $290 fully upgraded. Splash damage falls off — 100% at center, 50% at edge.
 
 ### Frost ($75) — Available from wave 1
 
@@ -62,7 +54,19 @@ Hits one target then chains to nearby enemies. Great against groups that are spr
 
 **Total investment:** $350 fully upgraded. Each chain hit deals 70% of the previous (e.g., 15 > 10.5 > 7.4). Best placed where the path doubles back so chains can reach enemies on parallel segments.
 
-### Sniper ($150) — Available from wave 1
+### Cannon ($100) — Unlocks at wave 2
+
+Slow-firing but deals splash damage in an area. Essential against grouped enemies. Causes screen shake on impact.
+
+| Level | Damage | Range | Fire Rate | Splash Radius | Upgrade Cost |
+|-------|--------|-------|-----------|---------------|-------------|
+| 1 | 30 | 3.0 | 0.8/s | 1.2 | — |
+| 2 | 50 | 3.5 | 1.0/s | 1.5 | $65 |
+| 3 | 80 | 4.0 | 1.2/s | 1.8 | $125 |
+
+**Total investment:** $290 fully upgraded. Splash damage falls off — 100% at center, 50% at edge.
+
+### Sniper ($150) — Unlocks at wave 5
 
 Extreme range, high single-target damage, slow fire rate. Has a chance to deal critical hits for massive damage. Shows a laser sight when targeting.
 
@@ -114,7 +118,7 @@ Set frost towers to **First** so they slow the leading enemy. Set snipers to **S
 
 | Key | Action |
 |-----|--------|
-| 1-5 | Select tower (Arrow, Cannon, Frost, Lightning, Sniper) |
+| 1-5 | Select tower (Arrow, Frost, Lightning, Cannon, Sniper) |
 | Click | Place tower / Select placed tower |
 | Right-click / Esc | Cancel selection |
 | U | Upgrade selected tower |
@@ -122,21 +126,22 @@ Set frost towers to **First** so they slow the leading enemy. Set snipers to **S
 | T | Cycle targeting mode |
 | Space | Pause / Resume |
 | N | Send next wave early |
-| +/- | Change game speed (1x, 2x, 3x) |
+| Speed button | Click to cycle speed (1x / 2x / 3x) |
+| +/- | Change game speed via keyboard |
 
 ## Strategy Guide
 
 ### Early Game (Waves 1-5)
 
-Start with 2-3 Arrow towers at the first major corner. Arrows are the most gold-efficient tower and handle grunts and runners easily. Add a Frost tower before wave 3 when runners appear — their speed makes them dangerous without slowing. Save up so you can buy a Cannon as soon as it unlocks after wave 2.
+Start with 2-3 Arrow towers at the first major corner. Arrows are the most gold-efficient tower and handle grunts and runners easily. Add a Frost tower before wave 3 when runners appear — their speed makes them dangerous without slowing. Save up so you can buy a Cannon as soon as it unlocks after wave 2. The Sniper unlocks at wave 5 — plan your gold to afford one when it becomes available.
 
 ### Mid Game (Waves 6-10)
 
-Wave 6 is a swarm wave (20 fast enemies). Have at least one Cannon ready for splash damage, or a Lightning tower to chain through them. Wave 10 is your first boss — a Sniper set to Strongest targeting makes a big difference here. Start upgrading your key towers to level 2.
+Wave 6 is a swarm wave (22 fast enemies). Have at least one Cannon ready for splash damage, or a Lightning tower to chain through them. Wave 10 is your first boss — a Sniper set to Strongest targeting makes a big difference here. Start upgrading your key towers to level 2.
 
 ### Late Game (Waves 11-20)
 
-Healers become a serious threat. Prioritize killing healers before they can sustain tanks and bosses. Set one tower to Weakest targeting to pick off healers (they have moderate HP). Wave 15 has 2 bosses — you need upgraded snipers and cannons by then. Wave 20 throws everything at you: 3 bosses, 5 tanks, 3 healers, and 25 swarm. Fully upgrade your core towers and make sure every path segment is covered.
+Healers become a serious threat. Prioritize killing healers before they can sustain tanks and bosses. Set one tower to Weakest targeting to pick off healers (they have moderate HP). Wave 15 has 2 bosses — you need upgraded snipers and cannons by then. Wave 20 throws everything at you: 2 bosses, 4 tanks, 3 healers, and 25 swarm. Fully upgrade your core towers and make sure every path segment is covered.
 
 ### Tower Placement Tips
 
@@ -148,8 +153,8 @@ Healers become a serious threat. Prioritize killing healers before they can sust
 
 ### Map-Specific Tips
 
-**Serpentine Valley:** The long winding path gives you time to build a deep defense. Focus on 2-3 killzones at the tightest corners where the path doubles back. Lightning towers shine here because chains can jump between parallel path segments.
+**Serpentine Valley:** The long winding path lets you build deep, layered defenses. Focus on 2-3 killzones at the tightest corners where the path doubles back. Lightning towers shine here because chains can jump between parallel path segments.
 
-**Split Creek:** You must cover both branches. Place frost towers at the fork to slow enemies regardless of which path they take. Build symmetric defenses, or use long-range snipers placed centrally to cover both routes.
+**Split Creek:** You must cover both branches. Place frost towers at the fork to slow enemies regardless of which path they take. Build symmetric defenses, or use long-range snipers placed centrally to cover both routes. The lower HP multiplier compensates for the split coverage requirement.
 
-**The Gauntlet:** The long vertical segment in the middle (9 cells) is your best killzone. Stack frost + cannon + arrows there. Every tower must count — you can't afford wasted placements. Upgrade aggressively rather than building wide.
+**The Gauntlet:** Fewer build spots means every tower placement matters. Find the longest straight segment and stack frost + cannon + arrows there. Upgrade aggressively rather than building wide. The reduced HP multiplier balances the shorter path length.
