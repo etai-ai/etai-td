@@ -94,7 +94,7 @@ export const MAP_DEFS = {
             // Layout 0: Original horizontal fork
             {
                 waypoints: [
-                    { x: 0, y: 9 }, { x: 6, y: 9 }, { x: 6, y: 10 },
+                    { x: 0, y: 10 }, { x: 6, y: 10 },
                 ],
                 paths: {
                     upper: [{ x: 6, y: 5 }, { x: 14, y: 5 }, { x: 14, y: 3 }, { x: 22, y: 3 }, { x: 22, y: 8 }],
@@ -133,7 +133,7 @@ export const MAP_DEFS = {
             // Layout 2: Wide fork with different angles and merge point
             {
                 waypoints: [
-                    { x: 0, y: 10 }, { x: 5, y: 10 }, { x: 5, y: 9 },
+                    { x: 0, y: 10 }, { x: 5, y: 10 },
                 ],
                 paths: {
                     upper: [{ x: 5, y: 3 }, { x: 10, y: 3 }, { x: 10, y: 6 }, { x: 18, y: 6 }, { x: 18, y: 9 }],
@@ -346,16 +346,16 @@ export const ENEMY_TYPES = {
 export const WAVES = [
     // Wave 1-5: Introduction
     [{ type: 'grunt', count: 8, interval: 1.0, delay: 0 }],
-    [{ type: 'grunt', count: 10, interval: 0.9, delay: 0 }],
+    [{ type: 'grunt', count: 11, interval: 0.85, delay: 0 }],
     [{ type: 'grunt', count: 8, interval: 0.8, delay: 0 }, { type: 'runner', count: 4, interval: 0.5, delay: 2 }],
-    [{ type: 'runner', count: 12, interval: 0.4, delay: 0 }],
+    [{ type: 'runner', count: 16, interval: 0.3, delay: 0 }],
     [{ type: 'grunt', count: 10, interval: 0.7, delay: 0 }, { type: 'tank', count: 2, interval: 2.0, delay: 3 }],
     // Wave 6-10: Variety
-    [{ type: 'swarm', count: 20, interval: 0.25, delay: 0 }],
-    [{ type: 'tank', count: 5, interval: 1.5, delay: 0 }, { type: 'grunt', count: 8, interval: 0.6, delay: 2 }],
-    [{ type: 'runner', count: 10, interval: 0.4, delay: 0 }, { type: 'healer', count: 2, interval: 3.0, delay: 3 }],
-    [{ type: 'grunt', count: 12, interval: 0.6, delay: 0 }, { type: 'healer', count: 3, interval: 2.0, delay: 2 }],
-    [{ type: 'boss', count: 1, interval: 0, delay: 0 }, { type: 'grunt', count: 6, interval: 0.8, delay: 5 }],
+    [{ type: 'swarm', count: 22, interval: 0.22, delay: 0 }, { type: 'tank', count: 1, interval: 0, delay: 3 }],
+    [{ type: 'tank', count: 6, interval: 1.4, delay: 0 }, { type: 'grunt', count: 9, interval: 0.55, delay: 2 }],
+    [{ type: 'runner', count: 12, interval: 0.35, delay: 0 }, { type: 'healer', count: 2, interval: 2.5, delay: 3 }],
+    [{ type: 'grunt', count: 14, interval: 0.55, delay: 0 }, { type: 'healer', count: 3, interval: 1.8, delay: 2 }],
+    [{ type: 'boss', count: 1, interval: 0, delay: 0 }, { type: 'grunt', count: 8, interval: 0.7, delay: 4 }],
     // Wave 11-15: Escalation
     [{ type: 'swarm', count: 30, interval: 0.2, delay: 0 }],
     [{ type: 'tank', count: 6, interval: 1.2, delay: 0 }, { type: 'healer', count: 3, interval: 2.0, delay: 2 }],
@@ -366,8 +366,8 @@ export const WAVES = [
     [{ type: 'swarm', count: 40, interval: 0.15, delay: 0 }, { type: 'tank', count: 4, interval: 1.0, delay: 2 }],
     [{ type: 'tank', count: 8, interval: 1.0, delay: 0 }, { type: 'healer', count: 4, interval: 1.5, delay: 2 }],
     [{ type: 'runner', count: 20, interval: 0.25, delay: 0 }, { type: 'boss', count: 1, interval: 0, delay: 5 }],
-    [{ type: 'grunt', count: 15, interval: 0.4, delay: 0 }, { type: 'tank', count: 6, interval: 1.0, delay: 2 }, { type: 'healer', count: 4, interval: 1.5, delay: 4 }, { type: 'runner', count: 10, interval: 0.3, delay: 6 }],
-    [{ type: 'boss', count: 2, interval: 6.0, delay: 0 }, { type: 'tank', count: 5, interval: 1.2, delay: 3 }, { type: 'healer', count: 3, interval: 2.0, delay: 5 }, { type: 'swarm', count: 25, interval: 0.2, delay: 7 }],
+    [{ type: 'grunt', count: 14, interval: 0.4, delay: 0 }, { type: 'tank', count: 6, interval: 1.0, delay: 2 }, { type: 'healer', count: 3, interval: 1.5, delay: 4 }, { type: 'runner', count: 9, interval: 0.3, delay: 6 }],
+    [{ type: 'boss', count: 2, interval: 6.0, delay: 0 }, { type: 'tank', count: 4, interval: 1.2, delay: 3 }, { type: 'healer', count: 3, interval: 2.0, delay: 5 }, { type: 'swarm', count: 25, interval: 0.2, delay: 7 }],
 ];
 
 export const TOTAL_WAVES = 20;
