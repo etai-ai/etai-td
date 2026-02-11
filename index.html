@@ -56,7 +56,10 @@
                     <kbd>T</kbd> Target mode &nbsp;
                     <kbd>Esc</kbd> Deselect
                 </div>
-                <button id="manual-btn" class="screen-btn manual-btn">How to Play</button>
+                <div class="menu-buttons">
+                    <button id="manual-btn" class="screen-btn manual-btn">How to Play</button>
+                    <button id="about-btn" class="screen-btn manual-btn">About</button>
+                </div>
             </div>
 
             <div id="manual-screen" class="game-screen">
@@ -88,7 +91,7 @@
                                     <p>Short direct path with 3 turns. Enemies arrive fast — every tower counts.</p>
                                 </div>
                             </div>
-                            <p class="manual-tip">Each world has infinite levels. Beat 20 waves to level up. Enemies get 1.4x HP per level.</p>
+                            <p class="manual-tip">Each world has infinite levels. Beat 20 waves to level up. Enemies get 1.1x HP per level.</p>
                         </div>
 
                         <div class="manual-section">
@@ -102,6 +105,11 @@
                                         <td><span class="manual-dot" style="background:#4a7c3f"></span> Arrow</td>
                                         <td>$50</td><td>12/18/28</td><td>3.5/4/4.5</td><td>2.5/3/4/s</td>
                                         <td>Cheap, fast, reliable DPS. Best gold efficiency.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><span class="manual-dot" style="background:#c0392b"></span> Fire Arrow</td>
+                                        <td>$200</td><td>20/31/45</td><td>3.5/4/4.5</td><td>3.3/4/5/s</td>
+                                        <td>Burn DoT bypasses armor. Unlocks at Level 2.</td>
                                     </tr>
                                     <tr>
                                         <td><span class="manual-dot" style="background:#8b5e3c"></span> Cannon</td>
@@ -125,7 +133,7 @@
                                     </tr>
                                 </tbody>
                             </table>
-                            <p class="manual-tip">Upgrade costs: Arrow $35/$70 | Cannon $65/$125 | Frost $55/$100 | Lightning $80/$145 | Sniper $110/$180</p>
+                            <p class="manual-tip">Upgrade costs: Arrow $35/$70 | Fire Arrow $120/$200 | Cannon $65/$125 | Frost $55/$100 | Lightning $80/$145 | Sniper $110/$180</p>
                         </div>
 
                         <div class="manual-section">
@@ -143,19 +151,19 @@
                                     <tr><td style="color:#e67e22">Swarm</td><td>8</td><td>Fast</td><td>0%</td><td>Comes in huge numbers</td></tr>
                                 </tbody>
                             </table>
-                            <p class="manual-tip">HP scales exponentially each wave and each level. By wave 20, enemies have ~30x more HP than wave 1. Each new level multiplies all HP by 1.4x on top. Armor reduces ALL incoming damage by its percentage.</p>
+                            <p class="manual-tip">HP scales exponentially each wave and each level. By wave 20, enemies have ~134x more HP than wave 1. Each new level multiplies all HP by 1.1x on top. Armor reduces ALL incoming damage by its percentage.</p>
                         </div>
 
                         <div class="manual-section">
                             <h2>Leveling Up</h2>
                             <p>Each world has infinite levels. Beat all 20 waves to complete a level and advance to the next.</p>
                             <div class="manual-cards">
-                                <div class="manual-card"><strong>On level up:</strong> Lives reset to 20, towers cleared, gold carries over + bonus</div>
-                                <div class="manual-card"><strong>Gold bonus:</strong> 25 + (level x 15) gold on each level up</div>
-                                <div class="manual-card"><strong>HP scaling:</strong> Enemies get 1.4x HP per level (Level 5 = 3.8x, Level 10 = 20.7x)</div>
-                                <div class="manual-card"><strong>Score:</strong> Carries over between levels. Your record is tracked per world</div>
+                                <div class="manual-card"><strong>On level up:</strong> Lives reset to 20, towers cleared, gold set to starting amount for that level</div>
+                                <div class="manual-card"><strong>Starting gold:</strong> 100 + (level x 200) gold (L1=300, L2=500, L3=700...)</div>
+                                <div class="manual-card"><strong>HP scaling:</strong> Enemies get 1.1x HP per level (Level 5 = 1.46x, Level 10 = 2.36x)</div>
+                                <div class="manual-card"><strong>Score:</strong> Carries over between levels. Your global record is tracked</div>
                             </div>
-                            <p class="manual-tip">Your world level is saved automatically. Next time you play the same world, you'll continue from where you left off. Your avatar evolves as you level up!</p>
+                            <p class="manual-tip">Your player level is global and saved automatically. It persists across all maps. Your avatar evolves as you level up!</p>
                         </div>
 
                         <div class="manual-section">
@@ -195,7 +203,7 @@
                             <h2>Controls</h2>
                             <table class="manual-table">
                                 <tbody>
-                                    <tr><td><kbd>1</kbd>-<kbd>5</kbd></td><td>Select tower type</td></tr>
+                                    <tr><td><kbd>1</kbd>-<kbd>6</kbd></td><td>Select tower type</td></tr>
                                     <tr><td>Click</td><td>Place tower / Select placed tower</td></tr>
                                     <tr><td>Right-click / <kbd>Esc</kbd></td><td>Cancel selection</td></tr>
                                     <tr><td><kbd>U</kbd></td><td>Upgrade selected tower</td></tr>
@@ -210,6 +218,16 @@
 
                     </div>
                 </div>
+            </div>
+
+            <div id="about-screen" class="game-screen">
+                <div class="screen-title">About</div>
+                <div class="screen-subtitle">Etai's Tower Defence</div>
+                <div class="about-content">
+                    <p>A tower defense game built from scratch with vanilla JavaScript, HTML5 Canvas, and Web Audio API. No frameworks, no dependencies.</p>
+                    <p>Created by Etai</p>
+                </div>
+                <button id="about-close-btn" class="screen-btn">Back</button>
             </div>
 
             <div id="game-over-screen" class="game-screen">

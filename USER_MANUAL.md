@@ -43,17 +43,17 @@ Your bread-and-butter tower. Fast fire rate, decent range, cheap to build and up
 
 **Total investment:** $155 fully upgraded. Best DPS per gold in the game.
 
-### Fire Arrow ($300) — Key 2 — Unlocks at Level 2
+### Fire Arrow ($200) — Key 2 — Unlocks at Level 2
 
-Premium arrow tower that sets enemies on fire. High damage with a burn damage-over-time effect that bypasses armor entirely. Expensive but devastating against armored targets.
+Premium arrow tower that sets enemies on fire. High damage with a burn damage-over-time effect that bypasses armor entirely. Devastating against armored targets.
 
 | Level | Damage | Range | Fire Rate | Burn DPS | Burn Duration | Upgrade Cost |
 |-------|--------|-------|-----------|----------|---------------|-------------|
-| 1 | 22 | 3.5 | 3.3/s | 3/s | 3.0s | — |
-| 2 | 34 | 4.0 | 4.0/s | 5/s | 3.5s | $120 |
-| 3 | 50 | 4.5 | 5.0/s | 8/s | 4.0s | $200 |
+| 1 | 20 | 3.5 | 3.3/s | 3/s | 3.0s | — |
+| 2 | 31 | 4.0 | 4.0/s | 5/s | 3.5s | $120 |
+| 3 | 45 | 4.5 | 5.0/s | 8/s | 4.0s | $200 |
 
-**Total investment:** $620 fully upgraded. Burn damage ignores armor — strong against tanks and bosses. If a stronger burn is applied while burning, the enemy takes the stronger one.
+**Total investment:** $520 fully upgraded. Burn damage ignores armor — strong against tanks and bosses. If a stronger burn is applied while burning, the enemy takes the stronger one.
 
 ### Frost ($75) — Key 3 — Available from wave 1
 
@@ -109,7 +109,7 @@ Extreme range, high single-target damage, slow fire rate. Has a chance to deal c
 |------|-------|----|-------|-------|---------|-----------|
 | **Grunt** | Pentagon | 30 | Medium (70) | 0% | — | 1 |
 | **Runner** | Diamond | 15 | Fast (125) | 0% | — | 1 |
-| **Tank** | Square | 108 | Slow (40) | 27% | — | 2 |
+| **Tank** | Square | 100 | Slow (40) | 27% | — | 2 |
 | **Healer** | Cross | 50 | Medium (65) | 0% | Heals nearby allies (3 HP/s) | 1 |
 | **Boss** | Hexagon | 400 | Very slow (26) | 20% | Screen shake on death | 5 |
 | **Swarm** | Triangle | 8 | Fast (105) | 0% | Comes in large numbers | 1 |
@@ -137,13 +137,12 @@ When a wave ends, pressing N to send the next wave early earns bonus gold. The b
 
 ## Economy
 
-- **Starting gold:** 300
+- **Starting gold:** 100 + (level x 200) per level (L1=300, L2=500, L3=700...)
 - **Kill rewards:** Base reward + 10% bonus
 - **Wave completion bonus:** 25 + (wave number x 8) gold
 - **Interest:** 2% of your gold at end of each wave
 - **Sell refund:** 60% of total invested gold (base cost + all upgrades)
 - **Early-send bonus:** Up to 50g for sending the next wave immediately (decays 5g/s)
-- **Level-up bonus:** 25 + (level x 15) gold
 
 **Tip:** Banking gold between waves earns interest, but sending the next wave early gives up to 50g bonus. Balance these two strategies based on whether you need time to build or can handle the pressure.
 
@@ -189,7 +188,7 @@ Bosses appear more frequently from wave 15 onward, including waves 17, 18, and 1
 
 ### Fire Arrow Strategy
 
-The Fire Arrow (unlocked at Level 2) costs 300g — a major investment. Its burn DoT bypasses armor, making it the best counter against tanks (27% armor) and bosses (20% armor). At Level 3, the 8 DPS burn for 4 seconds adds 32 free damage per hit on top of the 50 direct damage. Prioritize it against armored waves. Pair with Frost to maximize burn uptime while enemies are slowed.
+The Fire Arrow (unlocked at Level 2) costs 200g — a significant investment. Its burn DoT bypasses armor, making it the best counter against tanks (27% armor) and bosses (20% armor). At Level 3, the 8 DPS burn for 4 seconds adds 32 free damage per hit on top of the 45 direct damage. Prioritize it against armored waves. Pair with Frost to maximize burn uptime while enemies are slowed.
 
 ### Tower Placement Tips
 

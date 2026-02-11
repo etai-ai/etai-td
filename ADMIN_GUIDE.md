@@ -236,7 +236,7 @@ Each level multiplies enemy HP by this factor:
 
 On level-up, the player gets:
 - Lives reset to `STARTING_LIVES`
-- Gold bonus: `25 + level x 15`
+- Gold set to `100 + level × 200` (L1=300, L2=500, L3=700...) — gold does NOT carry over
 - A new map layout (cycles through 3 variants)
 
 To make level progression steeper, increase `LEVEL_HP_MULTIPLIER` (e.g. 1.2). To make it gentler, reduce it (e.g. 1.05).
@@ -263,7 +263,7 @@ Defined in `ENEMY_TYPES`. Each enemy has:
 |------|--------|-------|-------|------|
 | Grunt | 30 | 70 | 0 | Baseline |
 | Runner | 15 | 125 | 0 | Fast, fragile |
-| Tank | 108 | 40 | 0.27 | Slow, tanky |
+| Tank | 100 | 40 | 0.27 | Slow, tanky |
 | Healer | 50 | 65 | 0 | Heals nearby allies |
 | Boss | 400 | 26 | 0.20 | High HP, slow |
 | Swarm | 8 | 105 | 0 | Cheap, fast, overwhelming in numbers |
@@ -309,7 +309,7 @@ arrow: {
 | Tower | Key | Unlock | Cost |
 |-------|-----|--------|------|
 | Arrow | 1 | Wave 1 | $50 |
-| Fire Arrow | 2 | Level 2 | $300 |
+| Fire Arrow | 2 | Level 2 | $200 |
 | Frost | 3 | Wave 1 | $75 |
 | Lightning | 4 | Wave 1 | $125 |
 | Cannon | 5 | Wave 2 | $100 |
@@ -366,10 +366,10 @@ export const WAVE_BONUS_PER = 8;      // additional per wave number
 
 **Kill income:** `enemy.reward x 1.10` (hardcoded 10% bonus in `enemy.js`)
 
-**Level-up bonus:** `25 + level x 15` (gold added on level-up, lives reset to 20)
+**Level-up gold:** `100 + level × 200` (gold resets to this on level-up, lives reset to 20)
 
 **Tuning tips:**
-- `STARTING_GOLD` controls early-game tower options (300 = 1 fire arrow, or 2 arrows + 1 cannon, etc.)
+- `STARTING_GOLD` controls Level 1 starting gold (300 = 2 arrows + 1 cannon, etc.). On level-up, gold is set via `levelUpReset()` formula instead
 - `INTEREST_RATE` rewards banking gold — higher values incentivize delaying purchases
 - `SELL_REFUND` at 0.6 means repositioning costs 40% — lower values punish mistakes more
 
@@ -559,7 +559,7 @@ Uses `localStorage` with `td_` prefix:
 | Key | Purpose |
 |-----|---------|
 | `td_player_level` | Global player level (highest reached) |
-| `td_high_score_{mapId}` | Best score per world |
+| `td_high_score` | Global best score (single value, not per-map) |
 | `td_wave_debug_log_v2` | Append-only wave analysis log (JSON array) |
 | `td_v4_clean` | Version flag — set to force-clear old data on first load |
 
@@ -588,7 +588,7 @@ if (!localStorage.getItem('td_v5_clean')) {
 ### Menu Screen
 - Shows player level at the top
 - Map cards built dynamically from `MAP_DEFS`
-- Locked maps show "Locked (Lv.X)" badge and "Reach Level X to unlock" description
+- Locked maps show padlock overlay on preview and "Reach Level X to unlock" description
 - Locked maps have `cursor: not-allowed` but are not dimmed
 
 ### Admin Panel

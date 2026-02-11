@@ -132,15 +132,6 @@ body {
 
 #level-up-screen .screen-title { color: #bb86fc; }
 
-.map-card-level {
-    font-size: 11px;
-    font-weight: 700;
-    padding: 2px 10px;
-    border-radius: 10px;
-    color: #fff;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-}
 
 
 .controls {
@@ -667,16 +658,11 @@ body {
     padding: 12px;
 }
 
-.map-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-}
-
 .map-card-name {
     font-weight: 700;
-    font-size: 15px;
+    font-size: 18px;
+    text-align: center;
+    margin-bottom: 6px;
 }
 
 .map-card-desc {
@@ -692,9 +678,15 @@ body {
     font-weight: 600;
 }
 
-/* ── Manual Button ─────────────────────────────────────── */
-.manual-btn {
+/* ── Menu Buttons ──────────────────────────────────────── */
+.menu-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
     margin-top: 16px;
+}
+
+.manual-btn {
     background: #2c3e50;
     font-size: 14px;
     padding: 8px 24px;
@@ -702,6 +694,19 @@ body {
 
 .manual-btn:hover {
     background: #3d566e;
+}
+
+/* ── About Screen ─────────────────────────────────────── */
+.about-content {
+    max-width: 420px;
+    margin-bottom: 20px;
+}
+
+.about-content p {
+    font-size: 14px;
+    color: #bbb;
+    line-height: 1.6;
+    margin-bottom: 10px;
 }
 
 /* ── Manual Screen ─────────────────────────────────────── */

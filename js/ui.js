@@ -57,31 +57,16 @@ export class UI {
             const info = document.createElement('div');
             info.className = 'map-card-info';
 
-            const header = document.createElement('div');
-            header.className = 'map-card-header';
-
-            const name = document.createElement('span');
+            const name = document.createElement('div');
             name.className = 'map-card-name';
             name.textContent = def.name;
-
-            const levelBadge = document.createElement('span');
-            levelBadge.className = 'map-card-level';
-            levelBadge.dataset.mapId = id;
-            if (mapLocked) {
-                levelBadge.textContent = `Locked (Lv.${reqLevel})`;
-                levelBadge.style.background = '#555';
-            } else {
-                levelBadge.style.background = def.themeColor;
-            }
-
-            header.appendChild(name);
-            header.appendChild(levelBadge);
+            if (!mapLocked) name.style.color = def.themeColor;
 
             const desc = document.createElement('div');
             desc.className = 'map-card-desc';
             desc.textContent = mapLocked ? `Reach Level ${reqLevel} to unlock` : def.description;
 
-            info.appendChild(header);
+            info.appendChild(name);
             info.appendChild(desc);
 
             card.appendChild(preview);
@@ -403,6 +388,14 @@ export class UI {
             this.showScreen('manual');
         });
         document.getElementById('manual-close-btn')?.addEventListener('click', () => {
+            this.showScreen('menu');
+        });
+
+        // About buttons
+        document.getElementById('about-btn')?.addEventListener('click', () => {
+            this.showScreen('about');
+        });
+        document.getElementById('about-close-btn')?.addEventListener('click', () => {
             this.showScreen('menu');
         });
     }
