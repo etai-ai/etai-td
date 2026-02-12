@@ -283,16 +283,17 @@ export class EnemyManager {
                 this.game.economy.addScore(e.reward);
                 this.game.particles.spawnFloatingText(e.x, e.y - 10, `+${e.reward}`, '#ffd700');
 
-                // Spawn death particles
-                if (e.type === 'tank' || e.type === 'boss') {
-                    this.game.particles.spawnShatter(e.x, e.y, e.color, e.type === 'boss' ? 12 : 8);
-                } else {
-                    this.game.particles.spawnExplosion(e.x, e.y, e.color);
+                // Type-specific death particles
+                this.game.particles.spawnDeathBurst(e.x, e.y, e.type, e.color);
+
+                // Tank screen shake
+                if (e.type === 'tank') {
+                    this.game.triggerShake(3, 0.15);
                 }
 
                 // Boss death screen shake + PostFX
                 if (e.type === 'boss') {
-                    this.game.triggerShake(8, 0.4);
+                    this.game.triggerShake(10, 0.4);
                     this.game.postfx?.flash(0.15, 0.2);
                     this.game.postfx?.shockwave(e.x / CANVAS_W, e.y / CANVAS_H, 0.5);
                 }

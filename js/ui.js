@@ -677,6 +677,15 @@ export class UI {
                 const themeColor = game.map.def.themeColor || '#888';
                 game.renderer.drawAvatar(avatarCanvas.getContext('2d'), nextLevel, themeColor);
             }
+
+            // Confetti burst from top-center
+            const cx = COLS * CELL / 2;
+            game.particles.spawnConfetti(cx, 40, 50);
+
+            // Expanding rings from avatar center
+            const avY = ROWS * CELL / 2;
+            game.particles.spawnAuraPulse(cx, avY, 60, '#ffd700');
+            game.particles.spawnAuraPulse(cx, avY, 90, '#bb86fc');
         }
     }
 

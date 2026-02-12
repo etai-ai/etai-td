@@ -312,13 +312,14 @@ export class Renderer {
 
             const isDying = e.deathTimer >= 0;
 
-            // Death animation: scale down + fade
+            // Death animation: scale down + fade + spin + color shift
             let scale = 1;
             let alpha = 1;
+            let deathT = 0;
             if (isDying) {
-                const t = Math.min(e.deathTimer / 0.35, 1);
-                scale = 1 - t;
-                alpha = 1 - t;
+                deathT = Math.min(e.deathTimer / 0.35, 1);
+                scale = 1 - deathT;
+                alpha = 1 - deathT;
                 if (scale <= 0) continue;
             }
 
@@ -329,6 +330,14 @@ export class Renderer {
             const r = e.radius * scale;
 
             ctx.globalAlpha = alpha;
+
+            // Apply death spin
+            if (isDying) {
+                ctx.save();
+                ctx.translate(drawX, drawY);
+                ctx.rotate(deathT * Math.PI);
+                ctx.translate(-drawX, -drawY);
+            }
 
             // Shadow
             ctx.fillStyle = 'rgba(0,0,0,0.2)';
@@ -345,10 +354,25 @@ export class Renderer {
                 ctx.stroke();
             }
 
-            // Body shape
-            ctx.fillStyle = e.color;
+            // Body shape — lerp color toward white during death
+            if (isDying) {
+                const w = Math.min(deathT * 2, 1); // faster color shift
+                ctx.fillStyle = `color-mix(in srgb, ${e.color} ${Math.round((1 - w) * 100)}%, #fff)`;
+            } else {
+                ctx.fillStyle = e.color;
+            }
             this.drawEnemyShape(ctx, e, drawX, drawY, r);
             ctx.fill();
+
+            // White flash overlay at start of death
+            if (isDying && e.deathTimer < 0.05) {
+                ctx.globalAlpha = 0.5;
+                ctx.fillStyle = '#fff';
+                ctx.beginPath();
+                ctx.arc(drawX, drawY, r * 1.2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.globalAlpha = alpha;
+            }
 
             // Type-specific overlays
             if (e.type === 'tank' && !isDying) {
@@ -565,6 +589,11 @@ export class Renderer {
                 ctx.strokeStyle = 'rgba(0,0,0,0.4)';
                 ctx.lineWidth = 0.5;
                 ctx.strokeRect(barX, barY, barW, barH);
+            }
+
+            // Restore death spin transform
+            if (isDying) {
+                ctx.restore();
             }
 
             ctx.globalAlpha = 1;
