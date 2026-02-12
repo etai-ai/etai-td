@@ -3031,7 +3031,7 @@ export class Renderer {
                 // Background panel
                 ctx.fillStyle = 'rgba(0,0,0,0.6)';
                 const bgPad = 16;
-                const panelH = 70;
+                const panelH = 78;
                 const panelTop = baseY - 20;
                 ctx.beginPath();
                 const cr = 8;
@@ -3051,7 +3051,7 @@ export class Renderer {
 
                 // Label
                 ctx.save();
-                ctx.font = 'bold 14px monospace';
+                ctx.font = 'bold 16px monospace';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'bottom';
                 ctx.fillStyle = 'rgba(255,255,255,0.6)';
@@ -3079,14 +3079,14 @@ export class Renderer {
 
                     // Count (large bold)
                     ctx.save();
-                    ctx.font = 'bold 22px monospace';
+                    ctx.font = 'bold 26px monospace';
                     ctx.textAlign = 'left';
                     ctx.textBaseline = 'middle';
                     ctx.fillStyle = '#fff';
                     ctx.fillText(`x${count}`, cx - 12, cy - 2);
                     // Type name below
-                    ctx.font = 'bold 12px monospace';
-                    ctx.fillStyle = def.color;
+                    ctx.font = 'bold 14px monospace';
+                    ctx.fillStyle = 'rgba(255,255,255,0.8)';
                     ctx.fillText(def.name, cx - 12, cy + 16);
                     ctx.restore();
                 }
