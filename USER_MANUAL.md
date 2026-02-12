@@ -10,11 +10,14 @@ You have a global player level that persists across all games. Beat 20 waves on 
 |-------|---------|
 | 1 | Serpentine Valley, Arrow, Frost, Lightning, Cannon (W2), Sniper (W5) |
 | 2 | Fire Arrow + Deep Frost (replace Arrow + Frost) |
+| 3 | Hero unit (WASD-controlled), compressed 15-wave schedule |
 | 4 | Super Lightning + Bi-Cannon |
 | 5 | Missile Sniper (2x2), Split Creek map |
 | 10 | The Gauntlet map |
 
 Enemies get 1.1x HP per level, so higher levels are progressively harder. Your tower panel updates automatically as you unlock new towers — Arrow and Frost are replaced by Fire Arrow and Deep Frost at Level 2.
+
+Level 3 features a compressed 15-wave schedule (instead of 20) with two special events: a **Gold Rush** wave where all kills give double gold, and a **Bounty Boss** wave where killing the boss earns a +150g bonus.
 
 ## Maps
 
@@ -26,7 +29,28 @@ Each world offers a different strategic challenge. Enemy HP is adjusted per worl
 | **Split Creek** | Split path | 0.60x | 5 | Path forks into two branches midway. Enemies randomly take upper or lower route, forcing you to defend both sides. |
 | **The Gauntlet** | Short path | 0.65x | 10 | Direct path with only 3 turns. Fewer tower slots — every placement counts. Concentrated killzones are essential. |
 
-Each map has 3 layout variants that cycle as you level up.
+Each map has 3 layout variants that cycle as you level up. Each environment has unique ambient effects — falling leaves and fireflies in forests, sand wisps in the desert, and rising embers over lava.
+
+## Hero Unit (Level 3+)
+
+At Level 3, you unlock a hero unit that spawns at the map entrance. Control it with WASD (or arrow keys) to move around the battlefield.
+
+**Auto-Attack:** The hero automatically fires at the nearest enemy within range (15 damage, 3.5 cell range, 2 shots/sec).
+
+**Abilities:**
+
+| Key | Ability | Cooldown | Effect |
+|-----|---------|----------|--------|
+| **Q** | AoE Stun | 15s | Stuns all enemies in a 3-cell radius for 1.5 seconds |
+| **E** | Gold Magnet | 20s | Doubles gold from kills within a 4-cell radius for 8 seconds |
+
+**Contact Damage:** Enemies deal damage to the hero when they overlap. Bosses and tanks hurt more; swarms and runners hurt less. If the hero dies, it respawns at the path entrance after 5 seconds with full HP.
+
+**Tips:**
+- Position the hero at chokepoints where enemies are clustered for maximum stun value
+- Activate Gold Magnet during high-count waves (swarms, hordes) to maximize bonus gold
+- Don't let the hero sit on the path — bosses deal 3x contact damage and can kill quickly
+- The hero keeps fighting even while abilities are on cooldown — the auto-attack is free DPS
 
 ## Towers
 
@@ -228,8 +252,10 @@ Set frost/deep frost towers to **First** so they slow the leading enemy. Set sni
 | T | Cycle targeting mode |
 | Space / P | Pause / Resume |
 | N | Send next wave early |
-| Speed button | Click to cycle speed (1x / 2x / 3x) |
-| +/- | Change game speed via keyboard |
+| +/- | Change game speed (1x / 2x / 3x) |
+| WASD / Arrows | Move hero unit (Level 3+) |
+| Q | Hero AoE stun (Level 3+) |
+| E | Hero gold magnet (Level 3+) |
 
 ## Strategy Guide
 

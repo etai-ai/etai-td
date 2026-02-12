@@ -306,14 +306,18 @@ arrow: {
 
 **Current unlock schedule:**
 
-| Tower | Key | Unlock | Cost |
-|-------|-----|--------|------|
-| Arrow | 1 | Wave 1 | $50 |
-| Fire Arrow | 2 | Level 2 | $200 |
-| Frost | 3 | Wave 1 | $75 |
-| Lightning | 4 | Wave 1 | $125 |
-| Cannon | 5 | Wave 2 | $100 |
-| Sniper | 6 | Wave 5 | $150 |
+| Tower | Unlock | Cost | Hidden at |
+|-------|--------|------|-----------|
+| Arrow | Wave 1 | $50 | Level 2+ |
+| Frost | Wave 1 | $75 | Level 2+ |
+| Fire Arrow | Level 2 | $200 | — |
+| Deep Frost | Level 2 | $150 | — |
+| Lightning | Wave 1 | $125 | Level 4+ |
+| Cannon | Wave 2 | $100 | Level 4+ |
+| Sniper | Wave 5 | $150 | Level 5+ |
+| Super Lightning | Level 4 | $250 | — |
+| Bi-Cannon | Level 4 | $200 | — |
+| Missile Sniper | Level 5 | $325 (2x2) | — |
 
 **Special tower mechanics:**
 
@@ -321,9 +325,13 @@ arrow: {
 |-------|---------------|----------|
 | Fire Arrow | `burnDamage`, `burnDuration` | Burns enemies (DoT that bypasses armor) |
 | Frost | `slowFactor`, `slowDuration` | Slows enemies (factor 0.3 = 70% slow) |
+| Deep Frost | `slowFactor`, `freezeChance`, `freezeDuration` | AoE aura pulse, no projectiles, chance to freeze |
 | Lightning | `chainCount`, `chainRange`, `chainDecay` | Hits bounce to nearby enemies |
+| Super Lightning | `forkCount`, `forkDepth`, `shockChance` | BFS forking chains, overcharge, shock stun |
 | Cannon | `splashRadius` | AoE damage in grid cells |
+| Bi-Cannon | `heavyEvery`, `shredPercent`, `scorchDPS` | Dual barrel, armor shred, scorch zones |
 | Sniper | `critChance`, `critMulti` | Random crit hits for bonus damage |
+| Missile Sniper | `splashRadius`, `critChance`, `critMulti` | 2x2, homing missiles, splash + crit |
 
 ### Burn Mechanic (Fire Arrow)
 
@@ -351,7 +359,81 @@ Current burn stats:
 
 ---
 
-## 6. Economy
+## 6. Hero Unit
+
+The hero unit (`hero.js`) is a player-controlled character that spawns at Level 3+ (`HERO_STATS.unlockLevel`). Managed independently from towers.
+
+**Stats (from `HERO_STATS` in `constants.js`):**
+
+| Stat | Value |
+|------|-------|
+| HP | 200 |
+| Speed | 150 px/s |
+| Attack Damage | 15 |
+| Attack Range | 3.5 cells |
+| Attack Rate | 2/s (0.5s interval) |
+| Projectile Speed | 350 px/s |
+
+**Abilities:**
+
+| Key | Ability | Cooldown | Effect |
+|-----|---------|----------|--------|
+| Q | AoE Stun | 15s | Shocks all enemies in 3-cell radius for 1.5s |
+| E | Gold Magnet | 20s | 2x kill gold within 4-cell radius for 8s |
+
+**Contact damage:** Enemies deal 10 base damage per 0.5s tick when overlapping the hero, multiplied by type (Boss 3x, Tank 2x, Runner 0.8x, Swarm 0.5x, Healer 0.6x).
+
+**Death/Respawn:** Dies at 0 HP, respawns at path start after 5s. Full HP restored.
+
+**Controls:** WASD or arrow keys for movement. Note: WASD conflicts with admin hotkeys (W=wave, D=download) when admin mode is active.
+
+**Tuning:** All stats in `HERO_STATS` in `constants.js`. Contact damage multipliers are in `hero.js`.
+
+---
+
+## 7. Level-Specific Wave Overrides
+
+Level 3 uses a compressed 15-wave schedule instead of the default 20 waves. This is defined via `LEVEL_WAVES` in `constants.js`.
+
+```js
+export const LEVEL_WAVES = {
+    3: { waves: [ /* 15 wave definitions */ ], tags: { 7: 'goldrush', 8: 'midboss' } }
+};
+```
+
+**`getTotalWaves(worldLevel)`:** Returns `LEVEL_WAVES[level].waves.length` if an override exists, otherwise `TOTAL_WAVES` (20).
+
+**`getWaveTag(worldLevel, wave)`:** Returns the tag string for a specific wave (e.g., `'goldrush'`, `'midboss'`), or `null`.
+
+### Gold Rush (Wave Tag: `goldrush`)
+- All enemy kills during the wave give 2x gold (`GOLD_RUSH_MULTIPLIER = 2`)
+- "GOLD RUSH!" floating text displayed at wave start
+- Level 3, wave 7: 45 swarms + 10 runners (high-count wave to maximize gold)
+
+### Bounty Boss (Wave Tag: `midboss`)
+- When a boss dies on a `midboss` wave, player gets +150g flat bonus (`MIDBOSS_BOUNTY`)
+- "BOUNTY +150g" floating text on boss kill
+- Level 3, wave 8: 1 boss + 2 tanks
+
+**Adding new level overrides:** Add an entry to `LEVEL_WAVES` with a `waves` array (same format as `WAVES`) and optional `tags` object mapping wave numbers to tag strings.
+
+---
+
+## 8. Ambient Map Effects
+
+Per-environment animated particles rendered on the game canvas as a ground layer (before scorch zones, behind enemies). Purely visual, no gameplay impact.
+
+| Environment | Effect 1 (70%) | Effect 2 (30%) |
+|-------------|----------------|----------------|
+| Forest | Falling leaves (green/brown, sine wobble) | Fireflies (pulsing yellow-green glow) |
+| Desert | Sand wisps (light streaks blowing right) | Dust puffs (dark expanding circles) |
+| Lava | Rising embers (orange/red glow) | Bubbles (grow and pop) |
+
+**Implementation:** `renderer.js` methods `updateAmbients(dt)`, `spawnAmbient()`, `drawAmbients(ctx)`. Pool capped at 40 particles, ~6-7 spawns/sec. Uses fixed dt (1/60) — not speed-scaled. Pool cleared in `drawTerrain()`.
+
+---
+
+## 9. Economy
 
 ```js
 export const STARTING_GOLD = 300;
@@ -375,7 +457,7 @@ export const WAVE_BONUS_PER = 8;      // additional per wave number
 
 ---
 
-## 7. Wave Modifiers
+## 10. Wave Modifiers
 
 Starting from wave 3, each wave has a 35% chance of receiving a random modifier that buffs all enemies in that wave. Defined in `WAVE_MODIFIERS` in `constants.js`:
 
@@ -408,7 +490,7 @@ export const WAVE_MODIFIERS = {
 
 ---
 
-## 8. Early-Send Bonus
+## 11. Early-Send Bonus
 
 Players earn bonus gold for sending the next wave early (pressing N between waves). Defined in `constants.js`:
 
@@ -425,7 +507,7 @@ At default values: 50g for instant send, 40g after 2 seconds, 0g after 10 second
 
 ---
 
-## 9. Map Layouts
+## 12. Map Layouts
 
 
 Each world has 3 layout variants, cycled by level: `layouts[(level - 1) % 3]`.
@@ -469,7 +551,7 @@ A layout contains:
 
 ---
 
-## 10. Adding a New World
+## 13. Adding a New World
 
 1. Add entry to `MAP_DEFS` in `constants.js`:
    ```js
@@ -495,7 +577,7 @@ A layout contains:
 
 ---
 
-## 11. Procedural Waves (21+)
+## 14. Procedural Waves (21+)
 
 After wave 20, waves are generated by `WaveManager.generateWave()` in `wave.js`:
 
@@ -513,7 +595,7 @@ These waves use the same HP scaling system. To tune endless mode, adjust the for
 
 ---
 
-## 12. Keyboard Shortcuts
+## 15. Keyboard Shortcuts
 
 Defined in `input.js`:
 
@@ -521,14 +603,17 @@ Defined in `input.js`:
 
 | Key | Action |
 |-----|--------|
-| 1-6 | Select tower type (Arrow, Fire Arrow, Frost, Lightning, Cannon, Sniper) |
-| Space | Start game / toggle pause |
+| 1-5 | Select tower type (keys remap to visible towers at current level) |
+| Space / P | Start game / toggle pause |
 | Escape | Cancel selection |
 | N | Send next wave early (between waves only) |
 | U | Upgrade selected tower |
 | S | Sell selected tower |
 | T | Cycle target mode (First/Closest/Strongest/Weakest) |
 | +/- | Speed up/down (1x-3x) |
+| WASD / Arrows | Move hero unit (Level 3+) |
+| Q | Hero AoE stun (Level 3+) |
+| E | Hero gold magnet (Level 3+) |
 
 ### Admin Shortcuts (requires admin mode)
 
@@ -552,7 +637,7 @@ To add a new shortcut, add a case in `InputHandler.onKeyDown()`.
 
 ---
 
-## 13. Persistence
+## 16. Persistence
 
 Uses `localStorage` with `td_` prefix:
 
@@ -578,7 +663,7 @@ if (!localStorage.getItem('td_v5_clean')) {
 
 ---
 
-## 14. UI Architecture
+## 17. UI Architecture
 
 ### Four-Layer Canvas
 - **Terrain** (z-index 0): Static ground, path, tower bases. Redrawn only when towers are placed/sold.
@@ -617,7 +702,7 @@ if (!localStorage.getItem('td_v5_clean')) {
 
 ---
 
-## 15. Quick Reference — Common Tuning Tasks
+## 18. Quick Reference — Common Tuning Tasks
 
 | Goal | What to change |
 |------|----------------|

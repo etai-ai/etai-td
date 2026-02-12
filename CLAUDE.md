@@ -59,12 +59,25 @@ Press backtick (`` ` ``) to toggle the admin panel with real-time DPS/efficiency
 - Effect triggers: `flash(intensity, duration)`, `shockwave(nx, ny, intensity)`, `aberration(intensity, duration)`
 - Per-map tints set in `game.selectMap()`: Serpentine warm green, Split Creek cool blue, Gauntlet hot red
 
+## Hero Unit (Level 3+)
+
+WASD-controlled hero spawns at map start when `worldLevel >= 3`. Auto-attacks nearest enemy (15 dmg, 3.5 range, 2/s). Two abilities: Q = AoE stun (3-cell radius, 1.5s, 15s cooldown), E = gold magnet (2x kill gold in 4-cell radius, 8s duration, 20s cooldown). Takes contact damage from enemies (type-dependent multipliers). Dies at 0 HP, respawns after 5s at path start. Managed by `hero.js`, updated after enemies/before towers in game loop.
+
+## Level 3 Pacing Override
+
+Level 3 uses 15 waves instead of 20, defined in `LEVEL_WAVES[3]` in `constants.js`. `getTotalWaves(worldLevel)` checks for per-level overrides. Two special wave tags: wave 7 = `goldrush` (2x kill gold via `GOLD_RUSH_MULTIPLIER`), wave 8 = `midboss` (boss kill grants +150g flat bonus via `MIDBOSS_BOUNTY`). Tags retrieved via `getWaveTag(worldLevel, wave)`.
+
+## Ambient Map Effects
+
+Per-environment animated particles drawn on the game canvas (ground layer, before scorch zones). Forest: falling leaves + fireflies. Desert: sand wisps + dust puffs. Lava: rising embers + bubbles. Pool capped at 40, spawned at ~6-7/sec. Fixed dt (1/60) — not affected by game speed. Pool cleared on `drawTerrain()`. Self-contained in `renderer.js` (`updateAmbients`, `spawnAmbient`, `drawAmbients`).
+
 ## Common Pitfalls
 
 - Wave completion check needs `currentWave > 0` guard to avoid false triggers before the game starts
 - All audio `play*` methods need null-check on `this.ctx` (context may not be initialized)
 - Player level is only persisted in `levelUp()`, not in `continueNextLevel` or `adminSetLevel`
 - Map unlock check: `(playerLevel + 1) < requiredLevel` — off-by-one is easy to get wrong
-- `renderer.js` is the largest file (1,754 lines) — drawing logic for all entities lives here
+- `renderer.js` is the largest file (~2,000 lines) — drawing logic for all entities lives here
+- Hero WASD keys conflict with admin hotkeys (W=wave, D=download) when admin mode is active
 - PostFX canvas textures need `UNPACK_FLIP_Y_WEBGL = true` or the image renders upside-down
 - Screen flash in `renderer.js` is gated behind `!postfx.enabled` — the PostFX shader handles flash when active
