@@ -7,6 +7,10 @@ export class Renderer {
         this.gameCtx = canvases.game.getContext('2d');
         this.uiCtx = canvases.ui.getContext('2d');
 
+        // Ambient particle state
+        this.ambients = [];
+        this.ambientSpawnTimer = 0;
+
         // Set canvas sizes
         for (const c of [canvases.terrain, canvases.game, canvases.ui]) {
             c.width = CANVAS_W;
@@ -15,6 +19,7 @@ export class Renderer {
     }
 
     drawTerrain() {
+        this.ambients = [];
         this.game.map.drawTerrain(this.terrainCtx);
         // Draw tower bases on terrain layer
         for (const tower of this.game.towers.towers) {
@@ -166,6 +171,10 @@ export class Renderer {
             ctx.save();
             ctx.translate(shakeX, shakeY);
         }
+
+        // Ambient map effects (ground layer, behind everything)
+        this.updateAmbients(1 / 60);
+        this.drawAmbients(ctx);
 
         // Draw scorch zones (ground layer, below enemies)
         this.drawScorchZones(ctx);
@@ -2001,6 +2010,201 @@ export class Renderer {
                 ctx.fill();
             }
             ctx.globalAlpha = 1;
+        }
+    }
+
+    // ── Ambient Effects ──────────────────────────────────────────
+
+    updateAmbients(dt) {
+        this.ambientSpawnTimer -= dt;
+        if (this.ambientSpawnTimer <= 0 && this.ambients.length < 40) {
+            this.spawnAmbient();
+            const env = (this.game.map && this.game.map.def && this.game.map.def.environment) || 'forest';
+            const rate = env === 'forest' ? 0.18 : 0.15; // ~6/sec forest, ~7/sec others
+            this.ambientSpawnTimer = rate;
+        }
+        for (let i = this.ambients.length - 1; i >= 0; i--) {
+            const p = this.ambients[i];
+            p.life -= dt;
+            if (p.life <= 0) { this.ambients.splice(i, 1); continue; }
+            p.x += p.vx * dt;
+            p.y += p.vy * dt;
+            p.age += dt;
+        }
+    }
+
+    spawnAmbient() {
+        const env = (this.game.map && this.game.map.def && this.game.map.def.environment) || 'forest';
+        const r = Math.random();
+        let p;
+
+        if (env === 'desert') {
+            if (r < 0.7) {
+                // Sand wisp — light/white so it contrasts against tan background
+                const life = 5 + Math.random() * 3;
+                const colors = ['#fff8e0', '#ffe8b0', '#f5e0c0'];
+                p = {
+                    type: 'sand', x: -10, y: Math.random() * CANVAS_H,
+                    vx: 60 + Math.random() * 60, vy: 0,
+                    life, maxLife: life, size: 3 + Math.random(),
+                    color: colors[Math.random() * colors.length | 0], phase: Math.random() * Math.PI * 2, age: 0
+                };
+            } else {
+                // Dust puff — darker brown for contrast
+                const life = 2 + Math.random();
+                p = {
+                    type: 'dust', x: Math.random() * CANVAS_W, y: Math.random() * CANVAS_H,
+                    vx: 0, vy: 0,
+                    life, maxLife: life, size: 4,
+                    color: '#8a6a30', phase: 0, age: 0
+                };
+            }
+        } else if (env === 'lava') {
+            if (r < 0.7) {
+                // Ember
+                const life = 3 + Math.random() * 2;
+                const colors = ['#ff4400', '#ff6600', '#ff8800', '#ffaa00'];
+                p = {
+                    type: 'ember', x: Math.random() * CANVAS_W, y: CANVAS_H + 5,
+                    vx: (Math.random() - 0.5) * 30, vy: -(30 + Math.random() * 30),
+                    life, maxLife: life, size: 2.5 + Math.random() * 1.5,
+                    color: colors[Math.random() * colors.length | 0], phase: Math.random() * Math.PI * 2, age: 0
+                };
+            } else {
+                // Bubble
+                const life = 1.5 + Math.random();
+                p = {
+                    type: 'bubble', x: Math.random() * CANVAS_W, y: Math.random() * CANVAS_H,
+                    vx: 0, vy: 0,
+                    life, maxLife: life, size: 3,
+                    color: '#ff6030', phase: 0, age: 0
+                };
+            }
+        } else {
+            // Forest (default)
+            if (r < 0.7) {
+                // Leaf
+                const life = 8 + Math.random() * 4;
+                const colors = ['#5a8a3c', '#7a9a4c', '#8b6e3c', '#c07030'];
+                p = {
+                    type: 'leaf', x: Math.random() * CANVAS_W, y: -5,
+                    vx: 0, vy: 20 + Math.random() * 20,
+                    life, maxLife: life, size: 5 + Math.random() * 3,
+                    color: colors[Math.random() * colors.length | 0], phase: Math.random() * Math.PI * 2, age: 0
+                };
+            } else {
+                // Firefly
+                const life = 4 + Math.random() * 2;
+                p = {
+                    type: 'firefly', x: Math.random() * CANVAS_W, y: Math.random() * CANVAS_H,
+                    vx: 0, vy: 0,
+                    life, maxLife: life, size: 2.5 + Math.random() * 1.5,
+                    color: '#aaff44', phase: Math.random() * Math.PI * 2, age: 0
+                };
+            }
+        }
+        if (p) this.ambients.push(p);
+    }
+
+    drawAmbients(ctx) {
+        for (const p of this.ambients) {
+            const t = p.age / p.maxLife;
+            // Fade in first 10%, fade out last 30%
+            let alpha = 1;
+            if (t < 0.1) alpha = t / 0.1;
+            else if (t > 0.7) alpha = (1 - t) / 0.3;
+
+            switch (p.type) {
+                case 'leaf': {
+                    alpha *= 0.55;
+                    const wobbleX = Math.sin(p.age * 1.5 + p.phase) * 20;
+                    ctx.save();
+                    ctx.translate(p.x + wobbleX, p.y);
+                    ctx.rotate(p.age * 0.8 + p.phase);
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, p.size, p.size * 0.45, 0, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.restore();
+                    break;
+                }
+                case 'firefly': {
+                    const bobX = Math.sin(p.age * 2 + p.phase) * 12;
+                    const bobY = Math.cos(p.age * 1.5 + p.phase * 1.3) * 10;
+                    const pulse = 0.3 + 0.7 * (0.5 + 0.5 * Math.sin(p.age * 4 + p.phase));
+                    ctx.globalAlpha = alpha * pulse;
+                    // Outer glow
+                    ctx.fillStyle = 'rgba(170,255,68,0.35)';
+                    ctx.beginPath();
+                    ctx.arc(p.x + bobX, p.y + bobY, p.size * 4, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Inner dot
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x + bobX, p.y + bobY, p.size * 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                    break;
+                }
+                case 'sand': {
+                    alpha *= 0.45 + 0.15 * Math.sin(p.age + p.phase);
+                    const waveY = Math.sin(p.age * 2 + p.phase) * 6;
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = p.color;
+                    for (let i = 0; i < 4; i++) {
+                        ctx.fillRect(p.x + i * 6, p.y + waveY + i * 2, 3, 2);
+                    }
+                    ctx.globalAlpha = 1;
+                    break;
+                }
+                case 'dust': {
+                    const expand = 5 + (1 - p.life / p.maxLife) * 10;
+                    alpha *= 0.55 * (p.life / p.maxLife);
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, expand, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                    break;
+                }
+                case 'ember': {
+                    alpha *= 0.7;
+                    // Outer glow
+                    ctx.globalAlpha = alpha * 0.4;
+                    ctx.fillStyle = '#ff8800';
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * 3, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Inner bright core
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * 1.3, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                    break;
+                }
+                case 'bubble': {
+                    const grow = 4 + (1 - p.life / p.maxLife) * 6;
+                    const pop = p.life / p.maxLife;
+                    alpha *= pop * 0.65;
+                    ctx.globalAlpha = alpha;
+                    ctx.fillStyle = p.color;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, grow, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Highlight
+                    ctx.fillStyle = '#ffaa40';
+                    ctx.globalAlpha = alpha * 1.2;
+                    ctx.beginPath();
+                    ctx.arc(p.x - grow * 0.25, p.y - grow * 0.25, grow * 0.35, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.globalAlpha = 1;
+                    break;
+                }
+            }
         }
     }
 
