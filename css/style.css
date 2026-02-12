@@ -433,8 +433,8 @@ body {
 }
 
 .tower-icon {
-    width: 40px;
-    height: 40px;
+    width: 64px;
+    height: 64px;
     flex-shrink: 0;
     display: block;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
@@ -1065,8 +1065,8 @@ body {
         gap: 6px;
     }
     .tower-icon {
-        width: 32px;
-        height: 32px;
+        width: 48px;
+        height: 48px;
     }
     .tower-name {
         font-size: 14px;

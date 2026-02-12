@@ -235,7 +235,7 @@ export class UI {
                 this.towerPreviews[key] = this.renderTowerPreview(key);
             }
             if (!this.towerIcons[key]) {
-                this.towerIcons[key] = this.renderTowerIcon(key, 40);
+                this.towerIcons[key] = this.renderTowerIcon(key, 64);
                 this.towerIconsLg[key] = this.renderTowerIcon(key, 80);
             }
 
@@ -244,7 +244,7 @@ export class UI {
             btn.dataset.type = key;
             btn.style.setProperty('--tower-color', def.color);
             btn.innerHTML = `
-                <img class="tower-icon" src="${this.towerIcons[key]}" width="40" height="40">
+                <img class="tower-icon" src="${this.towerIcons[key]}" width="64" height="64">
                 <span class="tower-name">${def.name}</span>
                 <span class="tower-cost">$${def.cost}</span>
             `;
