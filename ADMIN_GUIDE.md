@@ -114,7 +114,7 @@ Final HP = baseHP × getWaveHPScale(wave) × worldHpMultiplier × LEVEL_HP_MULTI
 |-------|-------|------------------|
 | **Wave** | `getWaveHPScale(wave)` + `WAVES[]` | Per-wave HP curve and enemy composition (global, same for all worlds) |
 | **World** | `worldHpMultiplier` on each `MAP_DEFS` entry | Per-world HP scaling (lower = easier world) |
-| **Level** | `LEVEL_HP_MULTIPLIER` (currently 1.1) | Per-level HP scaling (exponential, same for all worlds) |
+| **Level** | `LEVEL_HP_MULTIPLIER` (currently 1.055) | Per-level HP scaling (exponential, same for all worlds) |
 
 ---
 
@@ -217,15 +217,15 @@ This exponential curve determines how much base HP is multiplied per wave number
 Player level is a single global value that persists across all maps and sessions. It's stored in `localStorage` as `td_player_level`.
 
 ```js
-export const LEVEL_HP_MULTIPLIER = 1.1;
+export const LEVEL_HP_MULTIPLIER = 1.055;
 ```
 
 Each level multiplies enemy HP by this factor:
 - Level 1: x1.0
-- Level 2: x1.1
-- Level 3: x1.21
-- Level 4: x1.33
-- Level 5: x1.46
+- Level 2: x1.055
+- Level 3: x1.113
+- Level 4: x1.174
+- Level 5: x1.239
 
 **Level progression:** Beat 20 waves on any map to level up. The player level is shared — leveling up on Serpentine counts toward unlocking Split Creek and The Gauntlet.
 
@@ -236,7 +236,7 @@ Each level multiplies enemy HP by this factor:
 
 On level-up, the player gets:
 - Lives reset to `STARTING_LIVES`
-- Gold set to `100 + level × 200` (L1=300, L2=500, L3=700...) — gold does NOT carry over
+- Gold set to `150 + level × 150` (L1=300, L2=450, L3=600...) — gold does NOT carry over
 - A new map layout (cycles through 3 variants)
 
 To make level progression steeper, increase `LEVEL_HP_MULTIPLIER` (e.g. 1.2). To make it gentler, reduce it (e.g. 1.05).
@@ -383,7 +383,7 @@ The hero unit (`hero.js`) is a player-controlled character that spawns at Level 
 
 **Contact damage:** Enemies deal 10 base damage per 0.5s tick when overlapping the hero, multiplied by type (Boss 3x, Tank 2x, Runner 0.8x, Swarm 0.5x, Healer 0.6x).
 
-**Death/Respawn:** Dies at 0 HP, respawns at path start after 5s. Full HP restored.
+**Death/Respawn:** Dies at 0 HP, respawns near the castle (second-to-last waypoint) after 5s. Full HP restored.
 
 **Controls:** WASD or arrow keys for movement. Note: WASD conflicts with admin hotkeys (W=wave, D=download) when admin mode is active.
 
@@ -448,10 +448,10 @@ export const WAVE_BONUS_PER = 8;      // additional per wave number
 
 **Kill income:** `enemy.reward x 1.10` (hardcoded 10% bonus in `enemy.js`)
 
-**Level-up gold:** `100 + level × 200` (gold resets to this on level-up, lives reset to 20)
+**Level-up gold:** `150 + level × 150` (gold resets to this on level-up, lives reset to 20)
 
 **Tuning tips:**
-- `STARTING_GOLD` controls Level 1 starting gold (300 = 2 arrows + 1 cannon, etc.). On level-up, gold is set via `levelUpReset()` formula instead
+- `STARTING_GOLD` controls Level 1 starting gold (300). On level-up, gold is set via `levelUpReset()` formula instead
 - `INTEREST_RATE` rewards banking gold — higher values incentivize delaying purchases
 - `SELL_REFUND` at 0.6 means repositioning costs 40% — lower values punish mistakes more
 
@@ -519,6 +519,7 @@ A layout contains:
     waypoints: [{ x, y }, ...],  // Grid coordinates for the path
     blocked: [{ x, y }, ...],    // Cells where towers can't be placed (obstacles)
     paths: null,                  // null for single-path maps
+    secondaryWaypoints: [{ x, y }, ...], // Dual spawn path (Level 6+), enters from right edge
 }
 ```
 
@@ -541,7 +542,8 @@ A layout contains:
 - The prefix endpoint must cleanly fork — don't add extra waypoints that cause enemies to reverse direction
 - Enemies follow waypoints in order via straight-line movement
 - Grid is 30x20 (0-29 x, 0-19 y)
-- Entry point should be at x=0 (left edge), exit at x=29 (right edge)
+- Primary entry point should be at x=0 (left edge), exit at x=29 (right edge)
+- Secondary entry (dual spawn) enters from x=29 (right edge) and converges at the same exit
 
 **Adding a new layout variant:**
 1. Add a new object to the world's `layouts` array

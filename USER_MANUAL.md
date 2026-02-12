@@ -13,9 +13,10 @@ You have a global player level that persists across all games. Beat 20 waves on 
 | 3 | Hero unit (WASD-controlled), compressed 15-wave schedule |
 | 4 | Super Lightning + Bi-Cannon |
 | 5 | Missile Sniper (2x2), Split Creek map |
+| 6 | Dual spawn points — enemies alternate from left and right entries |
 | 10 | The Gauntlet map |
 
-Enemies get 1.1x HP per level, so higher levels are progressively harder. Your tower panel updates automatically as you unlock new towers — Arrow and Frost are replaced by Fire Arrow and Deep Frost at Level 2.
+Enemies get 1.055x HP per level, so higher levels are progressively harder. Your tower panel updates automatically as you unlock new towers — Arrow and Frost are replaced by Fire Arrow and Deep Frost at Level 2.
 
 Level 3 features a compressed 15-wave schedule (instead of 20) with two special events: a **Gold Rush** wave where all kills give double gold, and a **Bounty Boss** wave where killing the boss earns a +150g bonus.
 
@@ -33,7 +34,7 @@ Each map has 3 layout variants that cycle as you level up. Each environment has 
 
 ## Hero Unit (Level 3+)
 
-At Level 3, you unlock a hero unit that spawns at the map entrance. Control it with WASD (or arrow keys) to move around the battlefield.
+At Level 3, you unlock a hero unit that spawns near the castle (exit). Control it with WASD (or arrow keys) to move around the battlefield.
 
 **Auto-Attack:** The hero automatically fires at the nearest enemy within range (15 damage, 3.5 cell range, 2 shots/sec).
 
@@ -44,7 +45,7 @@ At Level 3, you unlock a hero unit that spawns at the map entrance. Control it w
 | **Q** | AoE Stun | 15s | Stuns all enemies in a 3-cell radius for 1.5 seconds |
 | **E** | Gold Magnet | 20s | Doubles gold from kills within a 4-cell radius for 8 seconds |
 
-**Contact Damage:** Enemies deal damage to the hero when they overlap. Bosses and tanks hurt more; swarms and runners hurt less. If the hero dies, it respawns at the path entrance after 5 seconds with full HP.
+**Contact Damage:** Enemies deal damage to the hero when they overlap. Bosses and tanks hurt more; swarms and runners hurt less. If the hero dies, it respawns near the castle after 5 seconds with full HP.
 
 **Tips:**
 - Position the hero at chokepoints where enemies are clustered for maximum stun value
@@ -220,7 +221,7 @@ When a wave ends, pressing N to send the next wave early earns bonus gold. The b
 
 ## Economy
 
-- **Starting gold:** 100 + (level x 200) per level (L1=300, L2=500, L3=700...)
+- **Starting gold:** 150 + (level x 150) per level (L1=300, L2=450, L3=600...)
 - **Kill rewards:** Base reward + 10% bonus
 - **Wave completion bonus:** 25 + (wave number x 8) gold
 - **Interest:** 2% of your gold at end of each wave

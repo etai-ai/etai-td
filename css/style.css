@@ -531,14 +531,13 @@ body {
 #tower-info {
     display: none;
     position: absolute;
-    top: 50px;
-    right: 40px;
     background: rgba(13, 27, 42, 0.96);
     border: 2px solid #0f3460;
     border-radius: 10px;
-    padding: 14px;
+    padding: 12px;
     z-index: 10;
-    min-width: 240px;
+    min-width: 204px;
+    max-width: 204px;
     pointer-events: all;
     box-shadow: 0 8px 28px rgba(0,0,0,0.5);
 }
@@ -582,8 +581,8 @@ body {
 
 .tower-info-icon-wrap {
     flex-shrink: 0;
-    width: 80px;
-    height: 80px;
+    width: 64px;
+    height: 64px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -599,8 +598,8 @@ body {
 }
 
 .tower-info-icon {
-    width: 64px;
-    height: 64px;
+    width: 48px;
+    height: 48px;
     filter: drop-shadow(0 2px 8px rgba(0,0,0,0.7));
 }
 

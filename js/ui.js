@@ -659,6 +659,23 @@ export class UI {
         info.style.display = 'block';
         info.style.borderColor = def.color;
 
+        // Position card near the tower
+        const towerSize = def.size || 1;
+        const towerCx = (tower.gx + towerSize / 2) * CELL;
+        const towerCy = tower.gy * CELL;
+        const cardW = 204;
+        const cardH = info.offsetHeight || 200;
+        const gap = 10;
+        // Prefer right side, fall back to left
+        let left = towerCx + towerSize * CELL / 2 + gap;
+        if (left + cardW > COLS * CELL) left = towerCx - towerSize * CELL / 2 - cardW - gap;
+        // Vertical: align top with tower, clamp to canvas
+        let top = towerCy - 10;
+        if (top + cardH > ROWS * CELL) top = ROWS * CELL - cardH - 4;
+        if (top < 4) top = 4;
+        info.style.left = Math.round(left) + 'px';
+        info.style.top = Math.round(top) + 'px';
+
         // Rebind action buttons
         document.getElementById('target-btn')?.addEventListener('click', () => {
             tower.cycleTargetMode();

@@ -37,8 +37,8 @@ Open `http://localhost:8000` in a modern browser. There are no tests or linters 
 
 - `playerLevel` is 0-based (stored in localStorage), displayed as `playerLevel + 1`
 - `worldLevel = playerLevel + 1` set in `start()`; these must always agree with the menu display
-- Beat 20 waves on any map → level up. Gold resets to `100 + level × 200` each level
-- HP scaling: `wave * 1.10^wave` per wave, `1.1^(level-1)` per level, plus per-map `worldHpMultiplier`
+- Beat 20 waves on any map → level up. Gold resets to `150 + level × 150` each level
+- HP scaling: `wave * 1.10^wave` per wave, `1.055^(level-1)` per level, plus per-map `worldHpMultiplier`
 - Tower unlocks: some by wave number (`unlockWave`), some by player level (`unlockLevel`)
 - Map unlocks: Serpentine always, Split Creek at Lv.5, Gauntlet at Lv.10
 
@@ -61,7 +61,11 @@ Press backtick (`` ` ``) to toggle the admin panel with real-time DPS/efficiency
 
 ## Hero Unit (Level 3+)
 
-WASD-controlled hero spawns at map start when `worldLevel >= 3`. Auto-attacks nearest enemy (15 dmg, 3.5 range, 2/s). Two abilities: Q = AoE stun (3-cell radius, 1.5s, 15s cooldown), E = gold magnet (2x kill gold in 4-cell radius, 8s duration, 20s cooldown). Takes contact damage from enemies (type-dependent multipliers). Dies at 0 HP, respawns after 5s at path start. Managed by `hero.js`, updated after enemies/before towers in game loop.
+WASD-controlled hero spawns near the castle (second-to-last waypoint) when `worldLevel >= 3`, facing towards enemies. Auto-attacks nearest enemy (15 dmg, 3.5 range, 2/s). Two abilities: Q = AoE stun (3-cell radius, 1.5s, 15s cooldown), E = gold magnet (2x kill gold in 4-cell radius, 8s duration, 20s cooldown). Takes contact damage from enemies (type-dependent multipliers). Dies at 0 HP, respawns after 5s near the castle. Managed by `hero.js`, updated after enemies/before towers in game loop.
+
+## Dual Spawn Points (Level 6+)
+
+At `worldLevel >= DUAL_SPAWN_LEVEL` (6), enemies spawn from two entry points. Each layout in `MAP_DEFS` has `secondaryWaypoints` entering from x=29 (right edge), converging at the same exit. `WaveManager` alternates spawns: odd-numbered enemies use the secondary path. `GameMap` constructor takes `worldLevel` as 3rd param to conditionally carve and build `this.secondaryPath`. Split Creek primary enemies still fork upper/lower; secondary enemies use a single right-side path.
 
 ## Level 3 Pacing Override
 
