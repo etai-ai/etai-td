@@ -223,12 +223,13 @@ export class Game {
     }
 
     adminSetLevel(level) {
-        // Full restart at a specific player level (session only, not saved)
+        // Persist player level so map unlocks work
+        Economy.setPlayerLevelDirect(level - 1);
         this.worldLevel = level;
         this.elapsedTime = 0;
         this.waveElapsed = 0;
         this.debug.reset();
-        this.economy.reset();
+        this.economy.levelUpReset(this.worldLevel);
         this.enemies.reset();
         this.towers.reset();
         this.projectiles.reset();
@@ -236,12 +237,19 @@ export class Game {
         this.scorchZones = [];
         this.waves.reset();
         this.input.reset();
-        this.map = new GameMap(this.selectedMapId, (this.worldLevel - 1) % 3);
-        this.renderer.drawTerrain();
-        this.state = STATE.PLAYING;
-        this.ui.setupTowerPanel();
-        this.waves.startNextWave();
-        this.ui.update();
+        if (this.selectedMapId) {
+            this.map = new GameMap(this.selectedMapId, (this.worldLevel - 1) % 3);
+            this.renderer.drawTerrain();
+            this.state = STATE.PLAYING;
+            this.ui.setupTowerPanel();
+            this.waves.startNextWave();
+            this.ui.update();
+        } else {
+            this.state = STATE.MENU;
+            this.ui.setupTowerPanel();
+            this.ui.showScreen('menu');
+            this.ui.update();
+        }
     }
 
     update(dt) {

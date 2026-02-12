@@ -76,4 +76,8 @@ export class Economy {
             localStorage.setItem('td_player_level', level);
         }
     }
+
+    static setPlayerLevelDirect(level) {
+        localStorage.setItem('td_player_level', level);
+    }
 }

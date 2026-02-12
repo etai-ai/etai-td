@@ -170,7 +170,7 @@ A massive emplacement that takes up 4 grid cells (2x2). Fires homing missiles th
 | **Runner** | Diamond | 15 | Fast (125) | 0% | — | 1 |
 | **Tank** | Square | 100 | Slow (40) | 27% | — | 2 |
 | **Healer** | Cross | 50 | Medium (65) | 0% | Heals nearby allies (3 HP/s) | 1 |
-| **Boss** | Hexagon | 400 | Very slow (26) | 20% | Screen shake on death | 5 |
+| **Boss** | Hexagon | 400 | Very slow (26) | 20% | Screen shake + shockwave on death | 5 |
 | **Swarm** | Triangle | 8 | Fast (105) | 0% | Comes in large numbers | 1 |
 
 HP scales exponentially each wave. By wave 20, enemies have roughly 134x the HP of wave 1.

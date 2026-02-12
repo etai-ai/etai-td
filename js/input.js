@@ -199,15 +199,16 @@ export class InputHandler {
                 break;
             case 'l':
             case 'L':
-                if (this.game.adminMode && this.game.state === STATE.PLAYING) {
-                    const l = prompt(`Set level (current: ${this.game.worldLevel}):`);
+                if (this.game.adminMode) {
+                    const cur = this.game.worldLevel || (Economy.getPlayerLevel() + 1);
+                    const l = prompt(`Set level (current: ${cur}):`);
                     const ln = parseInt(l);
                     if (ln > 0) this.game.adminSetLevel(ln);
                 }
                 break;
             case 'r':
             case 'R':
-                if (this.game.adminMode && this.game.selectedMapId) {
+                if (this.game.adminMode) {
                     if (confirm(`Clear record & reset player level?`)) {
                         Economy.clearRecord();
                         Economy.clearPlayerLevel();

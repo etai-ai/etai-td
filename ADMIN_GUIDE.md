@@ -580,9 +580,10 @@ if (!localStorage.getItem('td_v5_clean')) {
 
 ## 14. UI Architecture
 
-### Three-Layer Canvas
-- **Terrain** (z-index 1): Static ground, path, tower bases. Redrawn only when towers are placed/sold.
-- **Game** (z-index 2): Enemies, turrets, projectiles, particles. Redrawn every frame at 60fps.
+### Four-Layer Canvas
+- **Terrain** (z-index 0): Static ground, path, tower bases. Redrawn only when towers are placed/sold.
+- **Game** (z-index 1): Enemies, turrets, projectiles, particles. Redrawn every frame at 60fps.
+- **FX** (z-index 2): WebGL2 post-processing. Composites terrain+game with bloom, vignette, color grading, and dynamic effects (shockwave, flash, chromatic aberration). Hidden if WebGL2 unavailable.
 - **UI** (z-index 3): Hover highlights, range circles, selection boxes, wave number overlay.
 
 ### Menu Screen
@@ -604,7 +605,12 @@ if (!localStorage.getItem('td_v5_clean')) {
 
 ### Visual Effects
 - **Screen shake:** `game.triggerShake(intensity, duration)` — random offset applied during `drawFrame`.
-- **Screen flash:** `game.screenFlash` — white overlay with alpha fade, rendered after particles.
+- **Screen flash:** `game.postfx.flash(intensity, duration)` — GPU white overlay via shader. Falls back to Canvas 2D `game.screenFlash` if WebGL2 unavailable.
+- **Bloom:** GPU bright-pass + Gaussian blur at half resolution. Bright explosions and muzzle flashes glow softly.
+- **Vignette:** Subtle edge darkening applied in the final shader pass.
+- **Color grading:** Per-map tint — Serpentine warm green `(0.95, 1.0, 0.9)`, Split Creek cool blue `(0.9, 0.95, 1.05)`, Gauntlet hot red `(1.05, 0.95, 0.9)`.
+- **Shockwave distortion:** `game.postfx.shockwave(nx, ny, intensity)` — radial ripple on splash explosions and boss deaths.
+- **Chromatic aberration:** `game.postfx.aberration(intensity, duration)` — brief RGB split on crit hits.
 - **Particle explosions:** Object-pooled system (500 max) for enemy deaths and Kill All.
 - **Burn visual:** Orange glow ring + flickering flame particles on burning enemies.
 - **Fire Arrow ambient:** Flickering ember glow + orbiting embers on placed fire arrow towers.

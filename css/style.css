@@ -323,47 +323,52 @@ body {
 #bottom-bar {
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: stretch;
     background: #16213e;
     border: 1px solid #0f3460;
     border-top: none;
-    padding: 8px 16px;
+    padding: 8px 12px;
     border-radius: 0 0 8px 8px;
     gap: 8px;
-    flex-wrap: wrap;
 }
 
 #tower-panel {
     display: flex;
-    gap: 8px;
+    gap: 6px;
+    flex: 1;
 }
 
 .tower-btn {
     display: flex;
     align-items: center;
-    gap: 8px;
-    background: #0f3460;
+    justify-content: center;
+    gap: 6px;
+    background: #0d1b2a;
     color: #eee;
-    border: 3px solid #1a4a8a;
-    padding: 10px 18px;
-    border-radius: 8px;
+    border: 2px solid var(--tower-color, #1a4a8a);
+    padding: 8px 20px;
+    border-radius: 10px;
     cursor: pointer;
-    font-size: 16px;
     font-weight: 600;
     transition: all 0.15s;
+    flex: 1;
+    min-width: 0;
+    box-shadow: 0 0 8px color-mix(in srgb, var(--tower-color, #1a4a8a) 40%, transparent);
 }
 
 .tower-btn:hover {
-    background: #1a4a8a;
-    border-color: #3498db;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
+    background: #162a4a;
+    border-color: var(--tower-color, #3498db);
+    transform: translateY(-3px);
+    box-shadow: 0 4px 16px color-mix(in srgb, var(--tower-color, #3498db) 50%, transparent),
+                0 0 12px color-mix(in srgb, var(--tower-color, #3498db) 30%, transparent);
 }
 
 .tower-btn.selected {
     border-color: #f1c40f;
-    background: #1a4a8a;
-    box-shadow: 0 0 12px rgba(241, 196, 15, 0.4);
+    background: #1a3050;
+    box-shadow: 0 0 14px rgba(241, 196, 15, 0.5), 0 0 6px rgba(241, 196, 15, 0.3);
+    transform: translateY(-2px) scale(1.04);
 }
 
 .tower-btn.disabled {
@@ -377,17 +382,25 @@ body {
 }
 
 .tower-icon {
-    width: 22px;
-    height: 22px;
-    border-radius: 4px;
-    display: inline-block;
-    border: 1px solid rgba(255,255,255,0.2);
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    display: block;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+}
+
+.tower-name {
+    font-size: 17px;
+    font-weight: 700;
+    color: #ddd;
+    white-space: nowrap;
 }
 
 .tower-cost {
+    flex-shrink: 0;
     color: #f1c40f;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 17px;
 }
 
 /* ── Tower Hover Tooltip ──────────────────────────────── */
@@ -466,39 +479,75 @@ body {
     position: absolute;
     top: 50px;
     right: 40px;
-    background: rgba(22, 33, 62, 0.95);
-    border: 1px solid #0f3460;
-    border-radius: 8px;
-    padding: 12px;
+    background: rgba(13, 27, 42, 0.96);
+    border: 2px solid #0f3460;
+    border-radius: 10px;
+    padding: 14px;
     z-index: 10;
-    min-width: 180px;
+    min-width: 240px;
     pointer-events: all;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.5);
 }
 
 .tower-info-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 6px;
     padding-bottom: 6px;
     border-bottom: 1px solid #0f3460;
 }
 
 .tower-info-name {
     font-weight: 700;
-    font-size: 14px;
+    font-size: 17px;
 }
 
 .tower-info-level {
     color: #f1c40f;
     font-weight: 700;
+    font-size: 15px;
+    background: rgba(241, 196, 15, 0.12);
+    padding: 1px 8px;
+    border-radius: 4px;
+}
+
+.tower-info-body {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
 }
 
 .tower-info-stats {
-    font-size: 12px;
-    line-height: 1.6;
-    margin-bottom: 10px;
+    font-size: 13px;
+    line-height: 1.7;
     color: #bbb;
+    flex: 1;
+}
+
+.tower-info-icon-wrap {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in srgb, var(--tc) 20%, transparent) 0%, transparent 70%);
+    box-shadow: 0 0 18px color-mix(in srgb, var(--tc) 35%, transparent);
+    animation: towerIconPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes towerIconPulse {
+    0%, 100% { box-shadow: 0 0 14px color-mix(in srgb, var(--tc) 30%, transparent); }
+    50% { box-shadow: 0 0 24px color-mix(in srgb, var(--tc) 50%, transparent); }
+}
+
+.tower-info-icon {
+    width: 64px;
+    height: 64px;
+    filter: drop-shadow(0 2px 8px rgba(0,0,0,0.7));
 }
 
 .tower-info-actions {
@@ -912,7 +961,17 @@ body {
         padding: 6px 8px;
     }
     .tower-btn {
-        padding: 8px 12px;
+        padding: 4px 8px 4px 4px;
+        gap: 6px;
+    }
+    .tower-icon {
+        width: 32px;
+        height: 32px;
+    }
+    .tower-name {
+        font-size: 14px;
+    }
+    .tower-cost {
         font-size: 14px;
     }
 }

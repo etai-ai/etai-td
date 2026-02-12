@@ -16,11 +16,11 @@ Open `http://localhost:8000` in a modern browser. There are no tests or linters 
 
 ## Architecture
 
-**Three-layer canvas system:** terrain (static, redrawn on tower place/sell), game (60fps entities), ui (hover/range overlay). All three canvases are stacked via z-index in `index.html`.
+**Four-layer canvas system:** terrain (static, z:0), game (60fps entities, z:1), fx (WebGL2 post-processing, z:2), ui (hover/range overlay, z:3). When PostFX is enabled, terrain+game are composited through WebGL shaders into fx-canvas with bloom, vignette, and dynamic effects. When WebGL2 is unavailable, fx-canvas is hidden and the game falls back to Canvas 2D only.
 
 **Fixed timestep game loop** in `game.js`: 60Hz physics decoupled from rendering. Accumulator pattern with speed multiplier (1x/2x/3x). Update order: screen effects → waves → enemies → towers → projectiles → particles → wave completion check.
 
-**Module graph:** `main.js` bootstraps `Game` (game.js), which instantiates all managers. Each manager class owns its entity array. `constants.js` is the single source of truth for all tuning data — tower stats, enemy stats, wave definitions, map layouts. `utils.js` has only pure helpers.
+**Module graph:** `main.js` bootstraps `Game` (game.js), which instantiates all managers. Each manager class owns its entity array. `constants.js` is the single source of truth for all tuning data — tower stats, enemy stats, wave definitions, map layouts. `utils.js` has only pure helpers. `postfx.js` owns the WebGL2 pipeline (shaders, FBOs, effect state).
 
 **State machine:** MENU → PLAYING → PAUSED / GAME_OVER / LEVEL_UP. Level-up transitions back to PLAYING with reset state.
 
@@ -50,6 +50,15 @@ Burn damage bypasses armor entirely — applied directly to HP, not through `tak
 
 Press backtick (`` ` ``) to toggle the admin panel with real-time DPS/efficiency stats and post-wave analysis. Hotkeys: `K` kill all, `W` set wave, `L` set level, `D` download CSV analytics. See `ADMIN_GUIDE.md` for full reference.
 
+## PostFX (WebGL2 Post-Processing)
+
+`postfx.js` adds a 5-pass GPU pipeline on a 4th canvas (`fx-canvas`). When enabled, terrain+game canvases are hidden (`visibility: hidden`) and composited through WebGL shaders. Effects: bloom (half-res blur), vignette, per-map color grading, screen flash, shockwave distortion, chromatic aberration. All effects have timers decayed in `game.update(dt)`.
+
+- `postfx.setTerrainDirty()` must be called after any terrain redraw (tower place/sell/upgrade) — this is done automatically in `renderer.drawTerrain()`
+- `UNPACK_FLIP_Y_WEBGL` is set to `true` to prevent Y-inversion when uploading canvas textures
+- Effect triggers: `flash(intensity, duration)`, `shockwave(nx, ny, intensity)`, `aberration(intensity, duration)`
+- Per-map tints set in `game.selectMap()`: Serpentine warm green, Split Creek cool blue, Gauntlet hot red
+
 ## Common Pitfalls
 
 - Wave completion check needs `currentWave > 0` guard to avoid false triggers before the game starts
@@ -57,3 +66,5 @@ Press backtick (`` ` ``) to toggle the admin panel with real-time DPS/efficiency
 - Player level is only persisted in `levelUp()`, not in `continueNextLevel` or `adminSetLevel`
 - Map unlock check: `(playerLevel + 1) < requiredLevel` — off-by-one is easy to get wrong
 - `renderer.js` is the largest file (1,754 lines) — drawing logic for all entities lives here
+- PostFX canvas textures need `UNPACK_FLIP_Y_WEBGL = true` or the image renders upside-down
+- Screen flash in `renderer.js` is gated behind `!postfx.enabled` — the PostFX shader handles flash when active

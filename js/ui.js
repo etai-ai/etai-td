@@ -215,6 +215,8 @@ export class UI {
         // Pre-render tower previews and create tooltip (only once)
         if (!this.towerPreviews) {
             this.towerPreviews = {};
+            this.towerIcons = {};
+            this.towerIconsLg = {};
             this.tooltip = document.createElement('div');
             this.tooltip.id = 'tower-tooltip';
             document.body.appendChild(this.tooltip);
@@ -231,12 +233,17 @@ export class UI {
             if (!this.towerPreviews[key]) {
                 this.towerPreviews[key] = this.renderTowerPreview(key);
             }
+            if (!this.towerIcons[key]) {
+                this.towerIcons[key] = this.renderTowerIcon(key, 40);
+                this.towerIconsLg[key] = this.renderTowerIcon(key, 80);
+            }
 
             const btn = document.createElement('button');
             btn.className = 'tower-btn';
             btn.dataset.type = key;
+            btn.style.setProperty('--tower-color', def.color);
             btn.innerHTML = `
-                <span class="tower-icon" style="background:${def.color}"></span>
+                <img class="tower-icon" src="${this.towerIcons[key]}" width="40" height="40">
                 <span class="tower-name">${def.name}</span>
                 <span class="tower-cost">$${def.cost}</span>
             `;
@@ -280,6 +287,46 @@ export class UI {
         this.game.renderer.drawTowerBase(ctx, fake);
         ctx.translate(towerSize * CELL / 2, towerSize * CELL / 2);
         ctx.rotate(Math.PI / 6);
+
+        switch (key) {
+            case 'arrow': this.game.renderer.drawArrowTurret(ctx, 0, fake); break;
+            case 'cannon': this.game.renderer.drawCannonTurret(ctx, 0, fake); break;
+            case 'frost': this.game.renderer.drawFrostTurret(ctx, 0, fake); break;
+            case 'lightning': this.game.renderer.drawLightningTurret(ctx, 0, fake); break;
+            case 'sniper': this.game.renderer.drawSniperTurret(ctx, 0, fake); break;
+            case 'firearrow': this.game.renderer.drawFireArrowTurret(ctx, 0, fake); break;
+            case 'deepfrost': this.game.renderer.drawDeepFrostTurret(ctx, 0, fake); break;
+            case 'superlightning': this.game.renderer.drawSuperLightningTurret(ctx, 0, fake); break;
+            case 'bicannon': this.game.renderer.drawBiCannonTurret(ctx, 0, fake); break;
+            case 'missilesniper': this.game.renderer.drawMissileSniperTurret(ctx, 0, fake); break;
+        }
+
+        ctx.restore();
+        return canvas.toDataURL();
+    }
+
+    renderTowerIcon(key, size = 64) {
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const ctx = canvas.getContext('2d');
+
+        const def = TOWER_TYPES[key];
+        const towerSize = def.size || 1;
+        const s = size / (towerSize * CELL);
+        ctx.save();
+        ctx.scale(s, s);
+        ctx.translate(towerSize * CELL / 2, towerSize * CELL / 2);
+        ctx.rotate(Math.PI / 6);
+
+        const fake = {
+            type: key, level: 0, gx: 0, gy: 0,
+            size: towerSize,
+            recoilTimer: 0, spinPhase: 0,
+            turretAngle: Math.PI / 6, glowPhase: 0,
+            idleTime: 0, target: null,
+            activeBarrel: 0, shotCount: 0, heavyEvery: 4,
+        };
 
         switch (key) {
             case 'arrow': this.game.renderer.drawArrowTurret(ctx, 0, fake); break;
@@ -350,7 +397,7 @@ export class UI {
         const rect = btn.getBoundingClientRect();
         const ttRect = this.tooltip.getBoundingClientRect();
         this.tooltip.style.left = (rect.left + rect.width / 2 + 40) + 'px';
-        this.tooltip.style.top = (rect.top - ttRect.height - 10) + 'px';
+        this.tooltip.style.top = (rect.top - ttRect.height - 20) + 'px';
     }
 
     hideTowerTooltip() {
@@ -528,17 +575,22 @@ export class UI {
         const targetMode = TARGET_MODES[tower.targetMode];
         const modeColors = { First: '#3498db', Closest: '#2ecc71', Strongest: '#e74c3c', Weakest: '#f39c12' };
         const modeColor = modeColors[targetMode] || '#eee';
+        const def = TOWER_TYPES[tower.type];
+        const iconSrc = this.towerIconsLg && this.towerIconsLg[tower.type] ? this.towerIconsLg[tower.type] : '';
 
         let html = `
             <div class="tower-info-header">
-                <span class="tower-info-name">${tower.name} Tower</span>
+                <span class="tower-info-name" style="color:${def.color}">${tower.name} Tower</span>
                 <span class="tower-info-level">Lv.${tower.level + 1}</span>
             </div>
-            <div class="tower-info-stats">
-                <div>Damage: ${tower.damage}</div>
-                <div>Range: ${tower.range.toFixed(1)}</div>
-                <div>Fire Rate: ${(1 / tower.fireRate).toFixed(1)}/s</div>
-                <div>Target: <span style="color:${modeColor};font-weight:700">${targetMode}</span></div>
+            <div class="tower-info-body">
+                <div class="tower-info-stats">
+                    <div>Damage: ${tower.damage}</div>
+                    <div>Range: ${tower.range.toFixed(1)}</div>
+                    <div>Rate: ${(1 / tower.fireRate).toFixed(1)}/s</div>
+                    <div>Target: <span style="color:${modeColor};font-weight:700">${targetMode}</span></div>
+                </div>
+                ${iconSrc ? `<div class="tower-info-icon-wrap" style="--tc:${def.color}"><img class="tower-info-icon" src="${iconSrc}"></div>` : ''}
             </div>
             <div class="tower-info-actions">
                 <button id="target-btn" class="action-btn target-mode-btn" style="border-color:${modeColor};color:${modeColor}" title="Cycle targeting mode (T)">Target: ${targetMode}</button>
@@ -558,6 +610,7 @@ export class UI {
 
         info.innerHTML = html;
         info.style.display = 'block';
+        info.style.borderColor = def.color;
 
         // Rebind action buttons
         document.getElementById('target-btn')?.addEventListener('click', () => {
