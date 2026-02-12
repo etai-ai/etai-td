@@ -246,5 +246,6 @@ export class InputHandler {
         this.selectedTower = null;
         this.hoverGx = -1;
         this.hoverGy = -1;
+        this.game.ui.hideTowerInfo();
     }
 }

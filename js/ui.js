@@ -1,4 +1,4 @@
-import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, TOTAL_WAVES, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY } from './constants.js';
+import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, TOTAL_WAVES, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, getTotalWaves } from './constants.js';
 import { Economy } from './economy.js';
 
 export class UI {
@@ -481,11 +481,12 @@ export class UI {
         const waves = game.waves;
 
         // Top bar info — wave + modifier badge
+        const totalWaves = getTotalWaves(game.worldLevel);
         const modDef = waves.modifierDef;
         if (modDef && !waves.betweenWaves) {
-            this.elWave.innerHTML = `Wave ${waves.currentWave}/${TOTAL_WAVES} <span style="background:${modDef.color};color:#000;padding:1px 6px;border-radius:4px;font-size:0.8em;font-weight:700;margin-left:4px">${modDef.name}</span>`;
+            this.elWave.innerHTML = `Wave ${waves.currentWave}/${totalWaves} <span style="background:${modDef.color};color:#000;padding:1px 6px;border-radius:4px;font-size:0.8em;font-weight:700;margin-left:4px">${modDef.name}</span>`;
         } else {
-            this.elWave.textContent = `Wave ${waves.currentWave}/${TOTAL_WAVES}`;
+            this.elWave.textContent = `Wave ${waves.currentWave}/${totalWaves}`;
         }
         this.elLives.innerHTML = `&#9829; ${eco.lives}`;
         this.elGold.textContent = `\u{1FA99} ${eco.gold}`;

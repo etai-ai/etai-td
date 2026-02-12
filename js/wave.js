@@ -1,4 +1,4 @@
-import { WAVES, TOTAL_WAVES, LEVEL_HP_MULTIPLIER, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getWaveHPScale, WAVE_MODIFIERS, MODIFIER_START_WAVE, MODIFIER_CHANCE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY } from './constants.js';
+import { WAVES, TOTAL_WAVES, LEVEL_HP_MULTIPLIER, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getWaveHPScale, WAVE_MODIFIERS, MODIFIER_START_WAVE, MODIFIER_CHANCE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, LEVEL_WAVES, getTotalWaves, getWaveTag } from './constants.js';
 
 export class WaveManager {
     constructor(game) {
@@ -14,6 +14,9 @@ export class WaveManager {
         this.modifier = null;     // key from WAVE_MODIFIERS
         this.modifierDef = null;  // full modifier object
         this.hpModifier = 1.0;    // horde HP multiplier
+
+        // Special wave tag (goldrush, midboss)
+        this.waveTag = null;
 
         // Spawn state
         this.spawnGroups = [];
@@ -37,6 +40,12 @@ export class WaveManager {
         this.betweenWaves = false;
         this.betweenWaveTimer = 0;
         this.game.waveElapsed = 0;
+
+        // Set special wave tag
+        this.waveTag = getWaveTag(this.game.worldLevel, this.currentWave);
+        if (this.waveTag === 'goldrush') {
+            this.game.particles.spawnBigFloatingText(CANVAS_W / 2, CANVAS_H / 3, 'GOLD RUSH!', '#ffd700');
+        }
 
         // Roll for wave modifier
         this.modifier = null;
@@ -67,10 +76,15 @@ export class WaveManager {
     }
 
     getWaveDefinition(waveNum) {
+        // Check level-specific wave overrides first
+        const override = LEVEL_WAVES[this.game.worldLevel];
+        if (override && waveNum <= override.waves.length) {
+            return override.waves[waveNum - 1].map(g => ({ ...g }));
+        }
         if (waveNum <= TOTAL_WAVES) {
             return WAVES[waveNum - 1].map(g => ({ ...g }));
         }
-        // Procedural waves after 20
+        // Procedural waves after defined waves
         return this.generateWave(waveNum);
     }
 
@@ -155,7 +169,7 @@ export class WaveManager {
         this.game.particles.spawnFloatingText(CANVAS_W / 2, CANVAS_H / 3, `Wave ${this.currentWave} Complete! +${bonus + interest}g`, '#ffd700');
 
         // Level up after completing all waves
-        if (this.currentWave >= TOTAL_WAVES) {
+        if (this.currentWave >= getTotalWaves(this.game.worldLevel)) {
             this.game.levelUp();
             return;
         }
@@ -172,6 +186,7 @@ export class WaveManager {
         this.modifier = null;
         this.modifierDef = null;
         this.hpModifier = 1.0;
+        this.waveTag = null;
         this.spawnGroups = [];
         this.groupTimers = [];
         this.groupIndices = [];

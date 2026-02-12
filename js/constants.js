@@ -444,6 +444,58 @@ export const WAVES = [
 export const TOTAL_WAVES = 20;
 export const LEVEL_HP_MULTIPLIER = 1.05;
 
+// ── Level-Specific Wave Overrides ─────────────────────────
+export const GOLD_RUSH_MULTIPLIER = 2;
+export const MIDBOSS_BOUNTY = 150;
+
+export const LEVEL_WAVES = {
+    3: {
+        waves: [
+            // Wave 1: Merged intro — dense grunt+runner mix
+            [{ type: 'grunt', count: 12, interval: 0.7, delay: 0 }, { type: 'runner', count: 5, interval: 0.35, delay: 1.0 }],
+            // Wave 2: Merged — runners + early tanks
+            [{ type: 'runner', count: 10, interval: 0.3, delay: 0 }, { type: 'tank', count: 3, interval: 1.3, delay: 1.5 }],
+            // Wave 3: Healer introduction
+            [{ type: 'grunt', count: 8, interval: 0.6, delay: 0 }, { type: 'tank', count: 3, interval: 1.3, delay: 0.5 }, { type: 'healer', count: 1, interval: 0, delay: 2.5 }],
+            // Wave 4: Swarm + tanks
+            [{ type: 'swarm', count: 20, interval: 0.17, delay: 0 }, { type: 'tank', count: 2, interval: 1.3, delay: 1.5 }],
+            // Wave 5: Tank-heavy
+            [{ type: 'tank', count: 5, interval: 1.0, delay: 0 }, { type: 'healer', count: 2, interval: 1.7, delay: 0.5 }, { type: 'grunt', count: 6, interval: 0.4, delay: 1.5 }],
+            // Wave 6: Runner flood
+            [{ type: 'runner', count: 15, interval: 0.25, delay: 0 }, { type: 'healer', count: 3, interval: 1.3, delay: 1.5 }],
+            // Wave 7: GOLD RUSH — massive swarm, 2x kill gold
+            [{ type: 'swarm', count: 45, interval: 0.13, delay: 0 }, { type: 'runner', count: 10, interval: 0.3, delay: 1.0 }],
+            // Wave 8: BOUNTY BOSS — boss + tanks, +150g on boss kill
+            [{ type: 'boss', count: 1, interval: 0, delay: 0 }, { type: 'tank', count: 2, interval: 1.3, delay: 1.5 }],
+            // Wave 9: Swarm + tanks
+            [{ type: 'swarm', count: 25, interval: 0.15, delay: 0 }, { type: 'tank', count: 3, interval: 0.85, delay: 1.5 }],
+            // Wave 10: Mixed composition
+            [{ type: 'tank', count: 6, interval: 0.85, delay: 0 }, { type: 'healer', count: 3, interval: 1.3, delay: 0.5 }, { type: 'runner', count: 8, interval: 0.3, delay: 1.5 }],
+            // Wave 11: Escalation
+            [{ type: 'runner', count: 12, interval: 0.25, delay: 0 }, { type: 'tank', count: 4, interval: 1.0, delay: 1.5 }, { type: 'healer', count: 2, interval: 1.7, delay: 2.5 }],
+            // Wave 12: Double boss
+            [{ type: 'boss', count: 2, interval: 7.0, delay: 0 }, { type: 'tank', count: 3, interval: 1.3, delay: 1.5 }, { type: 'healer', count: 2, interval: 1.7, delay: 2.5 }],
+            // Wave 13: Boss + tank heavy
+            [{ type: 'tank', count: 6, interval: 0.7, delay: 0 }, { type: 'healer', count: 4, interval: 1.0, delay: 0.5 }, { type: 'boss', count: 1, interval: 0, delay: 2.5 }],
+            // Wave 14: Everything
+            [{ type: 'grunt', count: 8, interval: 0.35, delay: 0 }, { type: 'tank', count: 4, interval: 0.7, delay: 0.5 }, { type: 'healer', count: 2, interval: 1.3, delay: 1.5 }, { type: 'boss', count: 1, interval: 0, delay: 2.5 }],
+            // Wave 15: Finale
+            [{ type: 'boss', count: 2, interval: 4.0, delay: 0 }, { type: 'tank', count: 3, interval: 0.85, delay: 1.5 }, { type: 'healer', count: 2, interval: 1.3, delay: 2.5 }, { type: 'swarm', count: 15, interval: 0.15, delay: 3 }],
+        ],
+        tags: { 7: 'goldrush', 8: 'midboss' },
+    },
+};
+
+export function getTotalWaves(worldLevel) {
+    const override = LEVEL_WAVES[worldLevel];
+    return override ? override.waves.length : TOTAL_WAVES;
+}
+
+export function getWaveTag(worldLevel, waveNum) {
+    const override = LEVEL_WAVES[worldLevel];
+    return override?.tags?.[waveNum] || null;
+}
+
 // ── Targeting Modes ────────────────────────────────────────
 export const TARGET_MODES = ['First', 'Closest', 'Strongest', 'Weakest'];
 

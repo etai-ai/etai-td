@@ -1,4 +1,4 @@
-import { ENEMY_TYPES, CELL, CANVAS_W, CANVAS_H, WAVE_MODIFIERS } from './constants.js';
+import { ENEMY_TYPES, CELL, CANVAS_W, CANVAS_H, WAVE_MODIFIERS, GOLD_RUSH_MULTIPLIER, MIDBOSS_BOUNTY } from './constants.js';
 import { distance } from './utils.js';
 
 let nextEnemyId = 0;
@@ -279,9 +279,20 @@ export class EnemyManager {
                 // Just died — start death animation
                 e.deathTimer = 0;
                 this.game.debug.onEnemyKilled(e);
-                this.game.economy.addGold(Math.round(e.reward * 1.10));
+
+                // Calculate gold reward with gold rush multiplier
+                const waveTag = this.game.waves.waveTag;
+                const goldMulti = waveTag === 'goldrush' ? GOLD_RUSH_MULTIPLIER : 1;
+                const goldReward = Math.round(e.reward * 1.10 * goldMulti);
+                this.game.economy.addGold(goldReward);
                 this.game.economy.addScore(e.reward);
-                this.game.particles.spawnFloatingText(e.x, e.y - 10, `+${e.reward}`, '#ffd700');
+                this.game.particles.spawnFloatingText(e.x, e.y - 10, `+${goldReward}`, goldMulti > 1 ? '#ffaa00' : '#ffd700');
+
+                // Bounty boss bonus
+                if (e.type === 'boss' && waveTag === 'midboss') {
+                    this.game.economy.addGold(MIDBOSS_BOUNTY);
+                    this.game.particles.spawnBigFloatingText(e.x, e.y - 30, `BOUNTY +${MIDBOSS_BOUNTY}g`, '#2ecc71');
+                }
 
                 // Type-specific death particles
                 this.game.particles.spawnDeathBurst(e.x, e.y, e.type, e.color);
