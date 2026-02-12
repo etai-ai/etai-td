@@ -43,7 +43,7 @@ export class Economy {
     }
 
     levelUpReset(level) {
-        this.gold = 200 + level * 100;
+        this.gold = 150 + level * 150;
         this.lives = STARTING_LIVES;
     }
 

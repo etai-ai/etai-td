@@ -714,7 +714,7 @@ export class UI {
         if (name === 'level-up') {
             const game = this.game;
             const nextLevel = game.worldLevel + 1;
-            const nextGold = 200 + nextLevel * 100;
+            const nextGold = 150 + nextLevel * 150;
             const subEl = document.getElementById('level-up-subtitle');
             if (subEl) subEl.textContent = `Level ${game.worldLevel} complete!`;
             const bonusEl = document.getElementById('level-up-bonus');
