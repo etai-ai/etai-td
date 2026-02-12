@@ -4,3 +4,4 @@ package-lock.json
 *.png
 *.log
 nul
+.claude/settings.local.json
