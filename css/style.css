@@ -21,6 +21,8 @@ body {
 #game-container {
     position: relative;
     max-width: max-content;
+    width: 100%;
+    max-width: min(1440px, 95vw);
 }
 
 /* ── Top Bar ───────────────────────────────────────────── */
@@ -292,9 +294,10 @@ body {
 /* ── Canvas Stack ──────────────────────────────────────── */
 #canvas-wrapper {
     position: relative;
-    width: 1440px;
-    min-width: 1440px;
-    height: 960px;
+    width: 100%;
+    max-width: 1440px;
+    height: auto;
+    aspect-ratio: 1440 / 960;
     border: 1px solid #0f3460;
     cursor: crosshair;
 }
@@ -304,7 +307,7 @@ body {
     display: none;
     width: 230px;
     min-width: 230px;
-    height: 960px;
+    height: auto;
     background: #0d1b2a;
     border: 1px solid #0f3460;
     border-left: none;
