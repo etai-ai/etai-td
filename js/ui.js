@@ -1,4 +1,4 @@
-import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, TOTAL_WAVES, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, HERO_STATS, getTotalWaves, DUAL_SPAWN_LEVEL } from './constants.js';
+import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, TOTAL_WAVES, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, HERO_STATS, getTotalWaves, DUAL_SPAWN_LEVEL, TOWER_UNLOCKS } from './constants.js';
 import { Economy } from './economy.js';
 
 export class UI {
@@ -870,6 +870,40 @@ export class UI {
                 }
             }
 
+            // Tower unlock announcement
+            const towerUnlockEl = document.getElementById('level-up-tower-unlock');
+            const towerUnlock = TOWER_UNLOCKS[nextLevel] || null;
+            if (towerUnlockEl) {
+                if (towerUnlock) {
+                    const c = towerUnlock.color;
+                    towerUnlockEl.style.display = 'block';
+                    towerUnlockEl.style.color = c;
+                    towerUnlockEl.style.background = `linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3))`;
+                    towerUnlockEl.style.border = `2px solid ${c}`;
+                    towerUnlockEl.style.boxShadow = `0 0 20px ${c}66, inset 0 0 12px ${c}22`;
+                    const title = towerUnlock.towers.length > 1 ? 'New Towers Unlocked!' : 'New Tower Unlocked!';
+                    const imgs = towerUnlock.keys.map(k => {
+                        const src = this.renderTowerPreview(k);
+                        return `<img src="${src}" width="80" height="80" style="border-radius:8px;border:2px solid ${c}44;background:#0d1b2a;">`;
+                    }).join('');
+                    const verb = towerUnlock.towers.length > 1 ? 'replace' : 'replaces';
+                    let desc;
+                    if (towerUnlock.replaces) {
+                        desc = `${verb} ${towerUnlock.replaces.join(' & ')}`;
+                    } else {
+                        desc = `new addition to your arsenal`;
+                    }
+                    towerUnlockEl.innerHTML = `
+                        <div class="unlock-title">${title}</div>
+                        <div style="display:flex;justify-content:center;gap:16px;margin:8px 0">${imgs}</div>
+                        <div class="unlock-desc" style="color:#eee">${towerUnlock.towers.join(' & ')} — ${desc}</div>
+                    `;
+                } else {
+                    towerUnlockEl.style.display = 'none';
+                    towerUnlockEl.innerHTML = '';
+                }
+            }
+
             // Confetti burst from top-center
             const cx = COLS * CELL / 2;
             game.particles.spawnConfetti(cx, 40, 50);
@@ -879,10 +913,14 @@ export class UI {
             game.particles.spawnAuraPulse(cx, avY, 60, '#ffd700');
             game.particles.spawnAuraPulse(cx, avY, 90, '#bb86fc');
 
-            // Extra confetti + bigger rings for world unlock
+            // Extra confetti + bigger rings for world/tower unlock
             if (worldUnlocked) {
                 game.particles.spawnConfetti(cx, 40, 80);
                 game.particles.spawnAuraPulse(cx, avY, 120, worldUnlocked.themeColor);
+            }
+            if (towerUnlock) {
+                game.particles.spawnConfetti(cx, 40, 60);
+                game.particles.spawnAuraPulse(cx, avY, 100, towerUnlock.color);
             }
         }
     }

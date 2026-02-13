@@ -505,6 +505,14 @@ export const TOWER_TYPES = {
     },
 };
 
+// ── Tower Unlock Announcements ────────────────────────────
+export const TOWER_UNLOCKS = {
+    2:  { towers: ['Fire Arrow', 'Deep Frost'], keys: ['firearrow', 'deepfrost'], replaces: ['Arrow', 'Frost'], color: '#c0392b' },
+    4:  { towers: ['Super Lightning', 'Bi-Cannon'], keys: ['superlightning', 'bicannon'], replaces: ['Lightning', 'Cannon'], color: '#7b3fff' },
+    5:  { towers: ['Missile Sniper'], keys: ['missilesniper'], replaces: ['Sniper'], color: '#6b8e23' },
+    8:  { towers: ['Pulse Cannon'], keys: ['pulsecannon'], replaces: null, color: '#2eaaaa' },
+};
+
 // ── Hero Definitions ──────────────────────────────────────
 export const HERO_STATS = {
     unlockLevel: 3,       // hero appears from level 3 onwards
