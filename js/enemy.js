@@ -58,6 +58,9 @@ export class Enemy {
         // Wave modifier tag (for visual indicator)
         this.waveModifier = null;
 
+        // Knockback limit
+        this.knockbackCount = 0;
+
         // Boss enrage (when last enemy alive)
         this.enraged = false;
 
@@ -115,8 +118,10 @@ export class Enemy {
     }
 
     applyKnockback(cells) {
-        // Bosses immune, tanks 50% resistance
+        // Bosses immune, tanks 50% resistance, max 2 knockbacks per enemy
         if (this.type === 'boss') return;
+        if (this.knockbackCount >= 2) return;
+        this.knockbackCount++;
         if (this.type === 'tank') cells *= 0.5;
 
         const knockPx = cells * CELL;

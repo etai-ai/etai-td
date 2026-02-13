@@ -487,8 +487,8 @@ body {
 }
 
 .tower-icon {
-    width: 52px;
-    height: 52px;
+    width: 80px;
+    height: 80px;
     flex-shrink: 0;
     display: block;
     filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
@@ -501,7 +501,7 @@ body {
 }
 
 .tower-name {
-    font-size: 15px;
+    font-size: 18px;
     font-weight: 700;
     color: #ddd;
     white-space: nowrap;
@@ -513,7 +513,7 @@ body {
 .tower-cost {
     color: #f1c40f;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 18px;
     line-height: 1.3;
 }
 

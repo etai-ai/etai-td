@@ -495,7 +495,7 @@ export const TOWER_TYPES = {
     },
     pulsecannon: {
         name: 'Pulse Cannon',
-        cost: 250,
+        cost: 300,
         color: '#2eaaaa',
         splash: true,
         knockback: true,
