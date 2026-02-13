@@ -4,13 +4,13 @@ const STORAGE_KEY = 'td_achievements';
 
 const ACHIEVEMENTS = [
     // ── Progression (7) ───────────────────────────────────
-    { id: 'first_victory', name: 'First Blood', description: 'Complete your first level', category: 'Progression', tier: 'bronze', icon: '\u2694\uFE0F', stat: 'levelsCompleted', threshold: 1 },
-    { id: 'reach_level_5', name: 'Rising Star', description: 'Reach Level 5', category: 'Progression', tier: 'silver', icon: '\u2B50', stat: 'highestLevel', threshold: 5 },
-    { id: 'reach_level_10', name: 'Veteran Commander', description: 'Reach Level 10', category: 'Progression', tier: 'gold', icon: '\uD83C\uDFC6', stat: 'highestLevel', threshold: 10 },
-    { id: 'reach_level_20', name: 'Legendary', description: 'Reach Level 20', category: 'Progression', tier: 'gold', icon: '\uD83D\uDC51', stat: 'highestLevel', threshold: 20 },
-    { id: 'play_serpentine', name: 'Forest Walker', description: 'Complete a level on Serpentine Valley', category: 'Progression', tier: 'bronze', icon: '\uD83C\uDF32', event: 'levelComplete', condition: (_s, ctx) => ctx.map === 'serpentine' },
-    { id: 'play_splitcreek', name: 'Desert Tactician', description: 'Complete a level on Split Creek', category: 'Progression', tier: 'silver', icon: '\uD83C\uDFDC\uFE0F', event: 'levelComplete', condition: (_s, ctx) => ctx.map === 'splitcreek' },
-    { id: 'play_gauntlet', name: 'Gauntlet Runner', description: 'Complete a level on The Gauntlet', category: 'Progression', tier: 'gold', icon: '\uD83C\uDF0B', event: 'levelComplete', condition: (_s, ctx) => ctx.map === 'gauntlet' },
+    { id: 'survive_20', name: 'Getting Started', description: 'Survive to wave 20', category: 'Progression', tier: 'bronze', icon: '\u2694\uFE0F', stat: 'highestWave', threshold: 20 },
+    { id: 'survive_50', name: 'Rising Star', description: 'Survive to wave 50', category: 'Progression', tier: 'silver', icon: '\u2B50', stat: 'highestWave', threshold: 50 },
+    { id: 'survive_100', name: 'Veteran Commander', description: 'Survive to wave 100', category: 'Progression', tier: 'gold', icon: '\uD83C\uDFC6', stat: 'highestWave', threshold: 100 },
+    { id: 'survive_200', name: 'Legendary', description: 'Survive to wave 200', category: 'Progression', tier: 'gold', icon: '\uD83D\uDC51', stat: 'highestWave', threshold: 200 },
+    { id: 'play_serpentine', name: 'Forest Walker', description: 'Reach wave 20 on Serpentine Valley', category: 'Progression', tier: 'bronze', icon: '\uD83C\uDF32', stat: 'serpentine_best', threshold: 20 },
+    { id: 'play_splitcreek', name: 'Desert Tactician', description: 'Reach wave 20 on Split Creek', category: 'Progression', tier: 'silver', icon: '\uD83C\uDFDC\uFE0F', stat: 'splitcreek_best', threshold: 20 },
+    { id: 'play_gauntlet', name: 'Gauntlet Runner', description: 'Reach wave 20 on The Gauntlet', category: 'Progression', tier: 'gold', icon: '\uD83C\uDF0B', stat: 'gauntlet_best', threshold: 20 },
 
     // ── Combat (7) ────────────────────────────────────────
     { id: 'kills_100', name: 'Pest Control', description: 'Kill 100 enemies', category: 'Combat', tier: 'bronze', icon: '\uD83D\uDDE1\uFE0F', stat: 'totalKills', threshold: 100 },
@@ -42,7 +42,7 @@ const ACHIEVEMENTS = [
     { id: 'hero_kills_100', name: 'Hero of the Realm', description: 'Get 100 hero kills', category: 'Hero', tier: 'bronze', icon: '\uD83E\uDDB8', stat: 'heroKills', threshold: 100 },
     { id: 'hero_stuns_50', name: 'Crowd Controller', description: 'Use hero stun 50 times', category: 'Hero', tier: 'silver', icon: '\u26A1', stat: 'heroStuns', threshold: 50 },
     { id: 'hero_magnets_25', name: 'Gold Digger', description: 'Use gold magnet 25 times', category: 'Hero', tier: 'bronze', icon: '\uD83E\uDDF2', stat: 'heroMagnets', threshold: 25 },
-    { id: 'hero_deathless', name: 'Immortal Hero', description: 'Complete a level with the hero and zero hero deaths', category: 'Hero', tier: 'gold', icon: '\uD83D\uDE07', event: 'levelComplete', condition: (_s, ctx) => ctx.heroActive && ctx.heroDeaths === 0 },
+    { id: 'hero_deathless', name: 'Immortal Hero', description: 'Survive 20+ waves with the hero and zero hero deaths', category: 'Hero', tier: 'gold', icon: '\uD83D\uDE07', event: 'waveComplete', condition: (_s, ctx) => ctx.heroActive && ctx.heroDeaths === 0 && ctx.wave >= 40 },
 
     // ── Challenge (2) + Hidden (1) ────────────────────────
     { id: 'perfect_wave', name: 'Flawless', description: 'Complete a wave with zero lives lost', category: 'Challenge', tier: 'bronze', icon: '\uD83D\uDCAF', event: 'waveComplete', condition: (_s, ctx) => ctx.livesLost === 0 },

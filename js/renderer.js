@@ -1,4 +1,4 @@
-import { CANVAS_W, CANVAS_H, CELL, COLS, ROWS, TOWER_TYPES, TARGET_MODES, LEVEL_HP_MULTIPLIER, TOTAL_WAVES, HERO_STATS, ENEMY_TYPES, getWaveHPScale, getTotalWaves } from './constants.js';
+import { CANVAS_W, CANVAS_H, CELL, COLS, ROWS, TOWER_TYPES, TARGET_MODES, HERO_STATS, ENEMY_TYPES, getWaveHPScale } from './constants.js';
 
 export class Renderer {
     constructor(canvases, game) {
@@ -3261,12 +3261,9 @@ export class Renderer {
         const mapDef = this.game.map.def;
         const worldName = mapDef ? mapDef.name : '—';
         const worldHpMul = mapDef ? mapDef.worldHpMultiplier : 1;
-        const level = this.game.worldLevel;
-        const levelHpMul = Math.pow(LEVEL_HP_MULTIPLIER, Math.max(0, level - 1));
         const wave = this.game.waves.currentWave;
-        const totalWaves = getTotalWaves(level);
         const waveHpScale = wave > 0 ? getWaveHPScale(wave) : 0;
-        const finalMul = worldHpMul * levelHpMul * waveHpScale;
+        const finalMul = worldHpMul * waveHpScale;
 
         const spawning = this.game.waves.spawning;
         const between = this.game.waves.betweenWaves;
@@ -3290,7 +3287,7 @@ export class Renderer {
     <span style="color:${dc};font-weight:700;font-size:14px">${report.difficulty}</span>
     <span style="color:#888;font-size:10px">${ts}</span>
   </div>
-  <div style="color:#fff;font-size:13px;font-weight:600;margin:4px 0">${report.world} L${report.level} W${report.wave}</div>
+  <div style="color:#fff;font-size:13px;font-weight:600;margin:4px 0">${report.world} W${report.wave}</div>
 </div>
 <div class="ap-row">Time: <span style="color:#fff">${fmtTime(report.duration)}</span> (${report.duration.toFixed(1)}s)</div>
 <div class="ap-row">Spawned: <span style="color:#fff">${report.spawned}</span> Killed: <span style="color:#2ecc71">${report.killed}</span></div>
@@ -3307,15 +3304,14 @@ export class Renderer {
   <div class="ap-header" style="color:#f1c40f">Actions</div>
   <div class="ap-row"><span class="ap-key">K</span><span style="color:#e74c3c">Kill All</span></div>
   <div class="ap-row"><span class="ap-key">W</span><span style="color:#e67e22">Set Wave</span></div>
-  <div class="ap-row"><span class="ap-key">L</span><span style="color:#e67e22">Set Level</span></div>
   <div class="ap-row"><span class="ap-key">C</span><span style="color:#888">Clear Log</span></div>
   <div class="ap-row"><span class="ap-key">R</span><span style="color:#888">Reset Progress</span></div>
   <div class="ap-row"><span class="ap-key">D</span><span style="color:#888">Download CSV</span></div>
 </div>
 <div class="ap-section">
   <div class="ap-header" style="color:#9b59b6">Difficulty</div>
-  <div class="ap-row" style="color:#fff">${worldName} L${level} W${wave}/${totalWaves}</div>
-  <div class="ap-row" style="color:#f1c40f">HP: ${worldHpMul}×${levelHpMul.toFixed(1)}×${waveHpScale.toFixed(1)} = ${finalMul.toFixed(1)}</div>
+  <div class="ap-row" style="color:#fff">${worldName} W${wave}</div>
+  <div class="ap-row" style="color:#f1c40f">HP: ${worldHpMul}×${waveHpScale.toFixed(1)} = ${finalMul.toFixed(1)}</div>
   ${this.game.waves.modifierDef ? `<div class="ap-row">Modifier: <span style="color:${this.game.waves.modifierDef.color};font-weight:700">${this.game.waves.modifierDef.name}</span> <span style="color:#888">${this.game.waves.modifierDef.desc}</span></div>` : `<div class="ap-row" style="color:#555">No modifier</div>`}
 </div>
 <div class="ap-section">

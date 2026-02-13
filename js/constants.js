@@ -1,5 +1,5 @@
 // ── Version ───────────────────────────────────────────────
-export const VERSION = '1.0.0';
+export const VERSION = '2.0.0';
 
 // ── Canvas & Grid ──────────────────────────────────────────
 export const COLS = 30;
@@ -14,8 +14,6 @@ export const STATE = {
     PLAYING: 'PLAYING',
     PAUSED: 'PAUSED',
     GAME_OVER: 'GAME_OVER',
-    VICTORY: 'VICTORY',
-    LEVEL_UP: 'LEVEL_UP',
 };
 
 // ── Cell Types ─────────────────────────────────────────────
@@ -31,6 +29,8 @@ export const MAP_DEFS = {
         name: 'Serpentine Valley',
         themeColor: '#27ae60',
         worldHpMultiplier: 1.0,
+        requiredRecord: 0,
+        startingUnlocks: 0,
         description: 'A long winding path gives you plenty of time to build defenses.',
         layouts: [
             // Layout 0: Original winding path
@@ -139,7 +139,8 @@ export const MAP_DEFS = {
         name: 'Split Creek',
         themeColor: '#d4a026',
         worldHpMultiplier: 0.60,
-        requiredLevel: 5,
+        requiredRecord: 40,
+        startingUnlocks: 30,
         environment: 'desert',
         description: 'The path forks midway — enemies randomly pick a branch.',
         layouts: [
@@ -260,7 +261,8 @@ export const MAP_DEFS = {
         name: 'The Gauntlet',
         themeColor: '#c0392b',
         worldHpMultiplier: 0.65,
-        requiredLevel: 10,
+        requiredRecord: 80,
+        startingUnlocks: 50,
         environment: 'lava',
         description: 'A short direct path — enemies arrive fast, every tower counts.',
         layouts: [
@@ -360,6 +362,7 @@ export const MAP_DEFS = {
 
 // ── Economy ────────────────────────────────────────────────
 export const STARTING_LIVES = 20;
+export const STARTING_GOLD = 300;
 export const KILL_GOLD_BONUS = 1.10;  // 10% bonus on all kill gold
 export const SELL_REFUND = 0.6;       // 60% back
 export const INTEREST_RATE = 0.02;    // 2% between waves
@@ -372,7 +375,7 @@ export const TOWER_TYPES = {
         name: 'Arrow',
         cost: 50,
         color: '#4a7c3f',
-        maxLevel: 1,
+        maxWave: 9,
         levels: [
             { damage: 13, range: 3.5, fireRate: 0.4, projSpeed: 300 },
             { damage: 19, range: 4.0, fireRate: 0.33, projSpeed: 340, upgradeCost: 35 },
@@ -384,7 +387,7 @@ export const TOWER_TYPES = {
         cost: 200,
         color: '#c0392b',
         burn: true,
-        unlockLevel: 2,
+        unlockWave: 10,
         levels: [
             { damage: 16, range: 3.5, fireRate: 0.30, projSpeed: 320, burnDamage: 3, burnDuration: 3.0 },
             { damage: 25, range: 4.0, fireRate: 0.25, projSpeed: 360, burnDamage: 5, burnDuration: 3.5, upgradeCost: 120 },
@@ -396,7 +399,7 @@ export const TOWER_TYPES = {
         cost: 75,
         color: '#5b9bd5',
         slow: true,
-        maxLevel: 1,
+        maxWave: 9,
         levels: [
             { damage: 5, range: 3.0, fireRate: 0.8, projSpeed: 250, slowFactor: 0.5, slowDuration: 2.0 },
             { damage: 8, range: 3.5, fireRate: 0.7, projSpeed: 270, slowFactor: 0.4, slowDuration: 2.5, upgradeCost: 55 },
@@ -408,7 +411,7 @@ export const TOWER_TYPES = {
         cost: 150,
         color: '#1a6b8a',
         aura: true,
-        unlockLevel: 2,
+        unlockWave: 10,
         levels: [
             { damage: 10, range: 3.0, fireRate: 1.2, slowFactor: 0.6, slowDuration: 1.5, freezeChance: 0.10, freezeDuration: 0.8 },
             { damage: 16, range: 3.5, fireRate: 0.85, slowFactor: 0.5, slowDuration: 2.0, freezeChance: 0.15, freezeDuration: 1.0, upgradeCost: 100 },
@@ -420,7 +423,7 @@ export const TOWER_TYPES = {
         cost: 125,
         color: '#9b59b6',
         chain: true,
-        maxLevel: 3,
+        maxWave: 29,
         levels: [
             { damage: 15, range: 3.5, fireRate: 1.0, projSpeed: 500, chainCount: 3, chainRange: 2.0, chainDecay: 0.7 },
             { damage: 22, range: 4.0, fireRate: 0.85, projSpeed: 550, chainCount: 4, chainRange: 2.5, chainDecay: 0.7, upgradeCost: 80 },
@@ -432,7 +435,7 @@ export const TOWER_TYPES = {
         cost: 250,
         color: '#7b3fff',
         forkChain: true,
-        unlockLevel: 4,
+        unlockWave: 30,
         levels: [
             { damage: 18, range: 4.0, fireRate: 1.1, projSpeed: 600, forkCount: 4, forkDepth: 2, chainRange: 2.5, overcharge: 0.10, shockChance: 0.15, shockDuration: 0.3 },
             { damage: 28, range: 4.5, fireRate: 0.9, projSpeed: 650, forkCount: 6, forkDepth: 2, chainRange: 3.0, overcharge: 0.10, shockChance: 0.20, shockDuration: 0.3, upgradeCost: 150 },
@@ -444,7 +447,7 @@ export const TOWER_TYPES = {
         cost: 100,
         color: '#8b5e3c',
         splash: true,
-        maxLevel: 3,
+        maxWave: 29,
         unlockWave: 2,
         levels: [
             { damage: 30, range: 3.0, fireRate: 1.2, projSpeed: 200, splashRadius: 1.2 },
@@ -458,7 +461,7 @@ export const TOWER_TYPES = {
         color: '#6b4226',
         splash: true,
         dualBarrel: true,
-        unlockLevel: 4,
+        unlockWave: 30,
         levels: [
             { damage: 35, range: 3.5, fireRate: 0.6, projSpeed: 220, splashRadius: 1.4, heavyEvery: 4, armorShred: 0.10, shredDuration: 3.0, scorchDPS: 5, scorchDuration: 2.0 },
             { damage: 55, range: 4.0, fireRate: 0.5, projSpeed: 240, splashRadius: 1.7, heavyEvery: 4, armorShred: 0.12, shredDuration: 3.5, scorchDPS: 8, scorchDuration: 2.5, upgradeCost: 120 },
@@ -470,7 +473,7 @@ export const TOWER_TYPES = {
         cost: 150,
         color: '#c0392b',
         crit: true,
-        maxLevel: 4,
+        maxWave: 49,
         unlockWave: 5,
         levels: [
             { damage: 60, range: 6.0, fireRate: 2.0, projSpeed: 600, critChance: 0.10, critMulti: 2.5 },
@@ -486,7 +489,7 @@ export const TOWER_TYPES = {
         crit: true,
         missile: true,
         size: 2,
-        unlockLevel: 5,
+        unlockWave: 50,
         levels: [
             { damage: 80, range: 7.0, fireRate: 2.5, projSpeed: 300, splashRadius: 1.2, critChance: 0.12, critMulti: 2.5 },
             { damage: 120, range: 8.0, fireRate: 2.2, projSpeed: 320, splashRadius: 1.5, critChance: 0.16, critMulti: 2.8, upgradeCost: 200 },
@@ -499,7 +502,7 @@ export const TOWER_TYPES = {
         color: '#2eaaaa',
         splash: true,
         knockback: true,
-        unlockLevel: 8,
+        unlockWave: 80,
         levels: [
             { damage: 20, range: 3.5, fireRate: 1.8, projSpeed: 200, splashRadius: 1.2, knockbackDist: 1.0 },
             { damage: 30, range: 4.0, fireRate: 1.5, projSpeed: 220, splashRadius: 1.5, knockbackDist: 1.5, upgradeCost: 150 },
@@ -508,17 +511,19 @@ export const TOWER_TYPES = {
     },
 };
 
-// ── Tower Unlock Announcements ────────────────────────────
-export const TOWER_UNLOCKS = {
-    2:  { towers: ['Fire Arrow', 'Deep Frost'], keys: ['firearrow', 'deepfrost'], replaces: ['Arrow', 'Frost'], color: '#c0392b' },
-    4:  { towers: ['Super Lightning', 'Bi-Cannon'], keys: ['superlightning', 'bicannon'], replaces: ['Lightning', 'Cannon'], color: '#7b3fff' },
-    5:  { towers: ['Missile Sniper'], keys: ['missilesniper'], replaces: ['Sniper'], color: '#6b8e23' },
-    8:  { towers: ['Pulse Cannon'], keys: ['pulsecannon'], replaces: null, color: '#2eaaaa' },
+// ── Wave Threshold Unlock Definitions ────────────────────
+export const WAVE_UNLOCKS = {
+    10: { towers: ['Fire Arrow', 'Deep Frost'], keys: ['firearrow', 'deepfrost'], replaces: ['Arrow', 'Frost'], color: '#c0392b' },
+    20: { hero: true, color: '#00e5ff' },
+    30: { towers: ['Super Lightning', 'Bi-Cannon'], keys: ['superlightning', 'bicannon'], replaces: ['Lightning', 'Cannon'], color: '#7b3fff' },
+    50: { towers: ['Missile Sniper'], keys: ['missilesniper'], replaces: ['Sniper'], color: '#6b8e23' },
+    60: { dualSpawn: true, color: '#e74c3c' },
+    80: { towers: ['Pulse Cannon'], keys: ['pulsecannon'], replaces: null, color: '#2eaaaa' },
 };
 
 // ── Hero Definitions ──────────────────────────────────────
 export const HERO_STATS = {
-    unlockLevel: 3,       // hero appears from level 3 onwards
+    unlockWave: 20,       // hero appears at wave 20
     maxHP: 200,
     speed: 150,           // px/s
     radius: 14,
@@ -535,6 +540,9 @@ export const HERO_STATS = {
     // E: Gold Magnet
     magnetRadius: 4.0,  magnetDuration: 8.0,  magnetMultiplier: 2,  magnetCooldown: 20.0,
 };
+
+// ── Dual Spawn ────────────────────────────────────────────
+export const DUAL_SPAWN_WAVE = 60;
 
 // ── Enemy Definitions ──────────────────────────────────────
 export const ENEMY_TYPES = {
@@ -602,121 +610,27 @@ export const ENEMY_TYPES = {
     },
 };
 
-// ── Wave Definitions ───────────────────────────────────────
+// ── Wave Definitions (5 intro waves, then procedural) ─────
 // { type, count, interval (seconds between spawns), delay (seconds before group) }
 export const WAVES = [
-    // Wave 1-5: Introduction — teach mechanics, ramp up faster
+    // Wave 1: Grunts — teach basic mechanics
     [{ type: 'grunt', count: 8, interval: 0.85, delay: 0 }],
+    // Wave 2: Grunts + Runners — cannon unlocks
     [{ type: 'grunt', count: 8, interval: 0.75, delay: 0 }, { type: 'runner', count: 3, interval: 0.4, delay: 1.5 }],
+    // Wave 3: Tank introduction
     [{ type: 'runner', count: 6, interval: 0.35, delay: 0 }, { type: 'grunt', count: 6, interval: 0.6, delay: 1.5 }],
+    // Wave 4: Runners + Tanks
     [{ type: 'runner', count: 14, interval: 0.25, delay: 0 }, { type: 'tank', count: 2, interval: 1.7, delay: 1.5 }],
+    // Wave 5: Mixed — sniper unlocks
     [{ type: 'grunt', count: 8, interval: 0.6, delay: 0 }, { type: 'tank', count: 3, interval: 1.3, delay: 0.5 }, { type: 'healer', count: 1, interval: 0, delay: 2.5 }],
-    // Wave 6-10: Variety — all enemy types in play
-    [{ type: 'swarm', count: 20, interval: 0.17, delay: 0 }, { type: 'tank', count: 2, interval: 1.3, delay: 1.5 }],
-    [{ type: 'tank', count: 5, interval: 1.0, delay: 0 }, { type: 'healer', count: 2, interval: 1.7, delay: 0.5 }, { type: 'grunt', count: 6, interval: 0.4, delay: 1.5 }],
-    [{ type: 'runner', count: 15, interval: 0.25, delay: 0 }, { type: 'healer', count: 3, interval: 1.3, delay: 1.5 }],
-    [{ type: 'grunt', count: 10, interval: 0.4, delay: 0 }, { type: 'tank', count: 4, interval: 1.0, delay: 0.5 }, { type: 'healer', count: 2, interval: 1.7, delay: 1.5 }, { type: 'runner', count: 6, interval: 0.35, delay: 2.5 }],
-    [{ type: 'boss', count: 1, interval: 0, delay: 0 }, { type: 'tank', count: 2, interval: 1.3, delay: 1.5 }, { type: 'grunt', count: 8, interval: 0.5, delay: 2.5 }],
-    // Wave 11-15: Escalation — composition complexity rises
-    [{ type: 'swarm', count: 25, interval: 0.15, delay: 0 }, { type: 'tank', count: 3, interval: 0.85, delay: 1.5 }],
-    [{ type: 'tank', count: 6, interval: 0.85, delay: 0 }, { type: 'healer', count: 3, interval: 1.3, delay: 0.5 }, { type: 'runner', count: 8, interval: 0.3, delay: 1.5 }],
-    [{ type: 'runner', count: 12, interval: 0.25, delay: 0 }, { type: 'tank', count: 4, interval: 1.0, delay: 1.5 }, { type: 'healer', count: 2, interval: 1.7, delay: 2.5 }],
-    [{ type: 'grunt', count: 10, interval: 0.4, delay: 0 }, { type: 'runner', count: 8, interval: 0.25, delay: 1.5 }, { type: 'healer', count: 3, interval: 1.3, delay: 2.5 }, { type: 'tank', count: 2, interval: 1.3, delay: 3 }],
-    [{ type: 'boss', count: 2, interval: 7.0, delay: 0 }, { type: 'tank', count: 3, interval: 1.3, delay: 1.5 }, { type: 'healer', count: 2, interval: 1.7, delay: 2.5 }],
-    // Wave 16-20: Endgame — tighter waves, bosses more frequent
-    [{ type: 'swarm', count: 30, interval: 0.13, delay: 0 }, { type: 'tank', count: 4, interval: 0.7, delay: 0.5 }, { type: 'healer', count: 2, interval: 1.3, delay: 1.5 }],
-    [{ type: 'tank', count: 6, interval: 0.7, delay: 0 }, { type: 'healer', count: 4, interval: 1.0, delay: 0.5 }, { type: 'boss', count: 1, interval: 0, delay: 2.5 }],
-    [{ type: 'runner', count: 12, interval: 0.2, delay: 0 }, { type: 'boss', count: 1, interval: 0, delay: 1.5 }, { type: 'tank', count: 3, interval: 0.85, delay: 2.5 }],
-    [{ type: 'grunt', count: 8, interval: 0.35, delay: 0 }, { type: 'tank', count: 4, interval: 0.7, delay: 0.5 }, { type: 'healer', count: 2, interval: 1.3, delay: 1.5 }, { type: 'boss', count: 1, interval: 0, delay: 2.5 }],
-    [{ type: 'boss', count: 2, interval: 4.0, delay: 0 }, { type: 'tank', count: 3, interval: 0.85, delay: 1.5 }, { type: 'healer', count: 2, interval: 1.3, delay: 2.5 }, { type: 'swarm', count: 15, interval: 0.15, delay: 3 }],
 ];
 
-export const TOTAL_WAVES = 20;
-export const LEVEL_HP_MULTIPLIER = 1.04;
-export const DUAL_SPAWN_LEVEL = 6;
-
-// ── Endless Mode ─────────────────────────────────────────
-export const ENDLESS_UNLOCK_LEVEL = 1;       // must have beaten Level 1
-export const ENDLESS_GOLDRUSH_INTERVAL = 10; // goldrush every 10 waves
-
-// ── Level-Specific Wave Overrides ─────────────────────────
+// ── Goldrush & Boss Events ───────────────────────────────
+export const GOLDRUSH_INTERVAL = 10;  // goldrush every 10 waves
 export const GOLD_RUSH_MULTIPLIER = 2;
 export const MIDBOSS_BOUNTY = 150;
 
 export const ARMOR_BREAK_FACTOR = 0.5; // enemies lose 50% armor on armorbreak waves
-
-export const LEVEL_WAVES = {
-    3: {
-        waves: [
-            // Wave 1: Merged intro — dense grunt+runner mix
-            [{ type: 'grunt', count: 12, interval: 0.7, delay: 0 }, { type: 'runner', count: 5, interval: 0.35, delay: 1.0 }],
-            // Wave 2: Merged — runners + early tanks
-            [{ type: 'runner', count: 10, interval: 0.3, delay: 0 }, { type: 'tank', count: 3, interval: 1.3, delay: 1.5 }],
-            // Wave 3: Healer introduction
-            [{ type: 'grunt', count: 8, interval: 0.6, delay: 0 }, { type: 'tank', count: 3, interval: 1.3, delay: 0.5 }, { type: 'healer', count: 1, interval: 0, delay: 2.5 }],
-            // Wave 4: Swarm + tanks
-            [{ type: 'swarm', count: 20, interval: 0.17, delay: 0 }, { type: 'tank', count: 2, interval: 1.3, delay: 1.5 }],
-            // Wave 5: Tank-heavy
-            [{ type: 'tank', count: 5, interval: 1.0, delay: 0 }, { type: 'healer', count: 2, interval: 1.7, delay: 0.5 }, { type: 'grunt', count: 6, interval: 0.4, delay: 1.5 }],
-            // Wave 6: Runner flood
-            [{ type: 'runner', count: 15, interval: 0.25, delay: 0 }, { type: 'healer', count: 3, interval: 1.3, delay: 1.5 }],
-            // Wave 7: GOLD RUSH — massive swarm, 2x kill gold
-            [{ type: 'swarm', count: 45, interval: 0.13, delay: 0 }, { type: 'runner', count: 10, interval: 0.3, delay: 1.0 }],
-            // Wave 8: BOUNTY BOSS — boss + tanks, +150g on boss kill
-            [{ type: 'boss', count: 1, interval: 0, delay: 0 }, { type: 'tank', count: 2, interval: 1.3, delay: 1.5 }],
-            // Wave 9: Swarm + tanks
-            [{ type: 'swarm', count: 25, interval: 0.15, delay: 0 }, { type: 'tank', count: 3, interval: 0.85, delay: 1.5 }],
-            // Wave 10: Mixed composition
-            [{ type: 'tank', count: 6, interval: 0.85, delay: 0 }, { type: 'healer', count: 3, interval: 1.3, delay: 0.5 }, { type: 'runner', count: 8, interval: 0.3, delay: 1.5 }],
-            // Wave 11: Escalation
-            [{ type: 'runner', count: 12, interval: 0.25, delay: 0 }, { type: 'tank', count: 4, interval: 1.0, delay: 1.5 }, { type: 'healer', count: 2, interval: 1.7, delay: 2.5 }],
-            // Wave 12: Double boss
-            [{ type: 'boss', count: 2, interval: 7.0, delay: 0 }, { type: 'tank', count: 3, interval: 1.3, delay: 1.5 }, { type: 'healer', count: 2, interval: 1.7, delay: 2.5 }],
-            // Wave 13: Boss + tank heavy
-            [{ type: 'tank', count: 6, interval: 0.7, delay: 0 }, { type: 'healer', count: 4, interval: 1.0, delay: 0.5 }, { type: 'boss', count: 1, interval: 0, delay: 2.5 }],
-            // Wave 14: Everything
-            [{ type: 'grunt', count: 8, interval: 0.35, delay: 0 }, { type: 'tank', count: 4, interval: 0.7, delay: 0.5 }, { type: 'healer', count: 2, interval: 1.3, delay: 1.5 }, { type: 'boss', count: 1, interval: 0, delay: 2.5 }],
-            // Wave 15: Finale
-            [{ type: 'boss', count: 2, interval: 4.0, delay: 0 }, { type: 'tank', count: 3, interval: 0.85, delay: 1.5 }, { type: 'healer', count: 2, interval: 1.3, delay: 2.5 }, { type: 'swarm', count: 15, interval: 0.15, delay: 3 }],
-        ],
-        tags: { 7: 'goldrush', 8: 'midboss' },
-    },
-    7: {
-        waves: [
-            // Wave 1: Fast opener — runners + grunts
-            [{ type: 'runner', count: 12, interval: 0.25, delay: 0 }, { type: 'grunt', count: 8, interval: 0.5, delay: 1.0 }],
-            // Wave 2: First boss + tank escort
-            [{ type: 'boss', count: 1, interval: 0, delay: 0 }, { type: 'tank', count: 3, interval: 1.0, delay: 1.0 }, { type: 'healer', count: 1, interval: 0, delay: 2.0 }],
-            // Wave 3: Swarm flood + healers
-            [{ type: 'swarm', count: 30, interval: 0.13, delay: 0 }, { type: 'healer', count: 3, interval: 1.3, delay: 1.5 }],
-            // Wave 4: Double boss + runners
-            [{ type: 'boss', count: 2, interval: 5.0, delay: 0 }, { type: 'runner', count: 10, interval: 0.3, delay: 1.5 }],
-            // Wave 5: ARMOR BREAK — tank army with halved armor
-            [{ type: 'tank', count: 8, interval: 0.7, delay: 0 }, { type: 'tank', count: 4, interval: 0.7, delay: 2.0 }, { type: 'healer', count: 3, interval: 1.0, delay: 1.0 }],
-            // Wave 6: Boss + swarm chaos
-            [{ type: 'boss', count: 1, interval: 0, delay: 0 }, { type: 'swarm', count: 25, interval: 0.15, delay: 0.5 }, { type: 'tank', count: 3, interval: 1.0, delay: 2.0 }],
-            // Wave 7: Triple boss
-            [{ type: 'boss', count: 3, interval: 4.0, delay: 0 }, { type: 'healer', count: 4, interval: 1.0, delay: 1.5 }],
-            // Wave 8: Everything mixed — no breather
-            [{ type: 'grunt', count: 10, interval: 0.35, delay: 0 }, { type: 'runner', count: 8, interval: 0.25, delay: 0.5 }, { type: 'tank', count: 5, interval: 0.7, delay: 1.0 }, { type: 'healer', count: 3, interval: 1.3, delay: 2.0 }],
-            // Wave 9: Quad boss + healers
-            [{ type: 'boss', count: 4, interval: 3.5, delay: 0 }, { type: 'healer', count: 4, interval: 1.3, delay: 1.0 }, { type: 'tank', count: 3, interval: 1.0, delay: 2.5 }],
-            // Wave 10: FINALE — 5 bosses staggered + full escort
-            [{ type: 'boss', count: 5, interval: 3.0, delay: 0 }, { type: 'tank', count: 4, interval: 0.7, delay: 1.0 }, { type: 'healer', count: 3, interval: 1.0, delay: 1.5 }, { type: 'swarm', count: 20, interval: 0.15, delay: 2.0 }],
-        ],
-        tags: { 5: 'armorbreak' },
-    },
-};
-
-export function getTotalWaves(worldLevel) {
-    const override = LEVEL_WAVES[worldLevel];
-    return override ? override.waves.length : TOTAL_WAVES;
-}
-
-export function getWaveTag(worldLevel, waveNum) {
-    const override = LEVEL_WAVES[worldLevel];
-    return override?.tags?.[waveNum] || null;
-}
 
 // ── Targeting Modes ────────────────────────────────────────
 export const TARGET_MODES = ['First', 'Closest', 'Strongest', 'Weakest'];

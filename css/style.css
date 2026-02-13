@@ -100,126 +100,6 @@ body {
     50% { text-shadow: 0 0 18px rgba(231, 76, 60, 1), 0 0 30px rgba(231, 76, 60, 0.6); }
 }
 
-.avatar-level-group {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: linear-gradient(135deg, #1a0a3a 0%, #2a1a4a 100%);
-    border: 2px solid #9b59b6;
-    border-radius: 12px;
-    padding: 4px 14px 4px 4px;
-    box-shadow: 0 0 14px rgba(155, 89, 182, 0.4), inset 0 0 8px rgba(155, 89, 182, 0.1);
-}
-
-#avatar-canvas {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 3px solid #bb86fc;
-    box-shadow: 0 0 10px rgba(187, 134, 252, 0.5);
-}
-
-.level-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    color: #d4a0ff;
-    border: none;
-    border-radius: 0;
-    padding: 0;
-    font-size: 24px;
-    font-weight: 800;
-    min-width: 50px;
-    text-align: center;
-    text-shadow: 0 0 12px rgba(187, 134, 252, 0.6);
-    letter-spacing: 0.5px;
-}
-
-#level-up-avatar {
-    margin: 16px auto;
-    display: block;
-    border-radius: 50%;
-    border: 3px solid gold;
-    box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
-    animation: avatarReveal 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
-               avatarGlow 2s ease-in-out 0.8s infinite;
-}
-
-@keyframes avatarReveal {
-    0% { transform: scale(0) rotate(-180deg); opacity: 0; }
-    70% { transform: scale(1.15) rotate(10deg); opacity: 1; }
-    100% { transform: scale(1) rotate(0deg); opacity: 1; }
-}
-
-@keyframes avatarGlow {
-    0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.5); }
-    50% { box-shadow: 0 0 35px rgba(255, 215, 0, 0.8), 0 0 60px rgba(255, 215, 0, 0.3); }
-}
-
-#level-up-screen .screen-title {
-    color: #bb86fc;
-}
-
-#level-up-screen .screen-subtitle {
-    animation: textSlideIn 0.5s ease-out 0.2s both;
-}
-
-#level-up-screen .screen-score {
-    animation: textSlideIn 0.5s ease-out 0.4s both;
-}
-
-@keyframes textSlideIn {
-    from { transform: translateX(-30px); opacity: 0; }
-    to { transform: translateX(0); opacity: 1; }
-}
-
-#level-up-screen .screen-btn {
-    animation: btnPulse 1.5s ease-in-out 0.6s infinite;
-}
-
-@keyframes btnPulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(230, 126, 34, 0.3); }
-    50% { transform: scale(1.05); box-shadow: 0 0 20px rgba(230, 126, 34, 0.6); }
-}
-
-.level-up-unlock {
-    display: none;
-    margin: 12px auto;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 18px;
-    font-weight: 700;
-    text-align: center;
-    line-height: 1.5;
-    animation: unlockReveal 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.5s both,
-               unlockGlow 2s ease-in-out 1.2s infinite;
-}
-
-.level-up-unlock .unlock-title {
-    font-size: 22px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-}
-
-.level-up-unlock .unlock-desc {
-    font-size: 14px;
-    font-weight: 400;
-    opacity: 0.85;
-}
-
-@keyframes unlockReveal {
-    0% { transform: scale(0.3) translateY(20px); opacity: 0; }
-    70% { transform: scale(1.08) translateY(-2px); opacity: 1; }
-    100% { transform: scale(1) translateY(0); opacity: 1; }
-}
-
-@keyframes unlockGlow {
-    0%, 100% { filter: brightness(1); }
-    50% { filter: brightness(1.2); }
-}
-
 
 
 .controls {
@@ -744,14 +624,6 @@ body {
     line-height: 1.5;
 }
 
-#menu-player-level {
-    font-size: 18px;
-    font-weight: 700;
-    color: #ffd700;
-    margin-bottom: 16px;
-    letter-spacing: 0.5px;
-}
-
 .screen-score {
     font-size: 18px;
     font-weight: 700;
@@ -799,16 +671,6 @@ body {
 @keyframes gameOverPulse {
     0%, 100% { text-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 20px rgba(231, 76, 60, 0.3); }
     50% { text-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 40px rgba(231, 76, 60, 0.7), 0 0 60px rgba(231, 76, 60, 0.3); }
-}
-
-#victory-screen .screen-title {
-    color: #2ecc71;
-    animation: victoryPulse 2s ease-in-out infinite;
-}
-
-@keyframes victoryPulse {
-    0%, 100% { text-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 20px rgba(46, 204, 113, 0.3); }
-    50% { text-shadow: 0 2px 8px rgba(0,0,0,0.5), 0 0 40px rgba(46, 204, 113, 0.7), 0 0 60px rgba(46, 204, 113, 0.3); }
 }
 
 /* ── Map Selection ─────────────────────────────────────── */
@@ -890,30 +752,8 @@ body {
     font-weight: 600;
 }
 
-/* ── Endless Mode Toggle ──────────────────────────────── */
-.endless-toggle {
-    background: #2c3e50;
-    font-size: 14px;
-    padding: 8px 24px;
-    margin-bottom: 12px;
-    border: 2px solid #555;
-    transition: all 0.2s;
-}
-
-.endless-toggle:hover {
-    background: #3d566e;
-    border-color: #e67e22;
-}
-
-.endless-toggle.active {
-    background: linear-gradient(135deg, #3a2000, #4a3000);
-    color: #ffd700;
-    border-color: #e67e22;
-    box-shadow: 0 0 16px rgba(230, 126, 34, 0.5);
-}
-
-/* ── Endless Game Over Info ──────────────────────────── */
-.endless-wave-reached {
+/* ── Game Over Wave Info ──────────────────────────────── */
+.wave-reached {
     font-size: 24px;
     font-weight: 700;
     color: #e67e22;
@@ -921,7 +761,7 @@ body {
     text-shadow: 0 0 12px rgba(230, 126, 34, 0.5);
 }
 
-.endless-record {
+.wave-record {
     font-size: 14px;
     color: #bbb;
     margin-bottom: 12px;

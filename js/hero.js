@@ -62,9 +62,9 @@ export class Hero {
         this.x = this.spawnX;
         this.y = this.spawnY;
 
-        // Scale hero stats with level (10% per level above 3)
-        const levelsAbove = Math.max(0, this.game.worldLevel - HERO_STATS.unlockLevel);
-        this.levelScale = 1 + levelsAbove * 0.10;
+        // Scale hero stats with wave (2% per wave above unlock)
+        const wavesAbove = Math.max(0, this.game.waves.currentWave - HERO_STATS.unlockWave);
+        this.levelScale = 1 + wavesAbove * 0.02;
 
         this.alive = true;
         this.active = true;

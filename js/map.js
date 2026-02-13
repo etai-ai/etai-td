@@ -1,4 +1,4 @@
-import { COLS, ROWS, CELL, CELL_TYPE, MAP_DEFS, DUAL_SPAWN_LEVEL } from './constants.js';
+import { COLS, ROWS, CELL, CELL_TYPE, MAP_DEFS } from './constants.js';
 import { gridToWorld } from './utils.js';
 
 // Simple deterministic hash for procedural decoration
@@ -11,7 +11,7 @@ function seedRand(x, y, i) {
 }
 
 export class GameMap {
-    constructor(mapId = 'serpentine', layoutIndex = 0, worldLevel = 0) {
+    constructor(mapId = 'serpentine', layoutIndex = 0) {
         this.mapId = mapId;
         this.def = MAP_DEFS[mapId];
         this.layout = this.def.layouts[layoutIndex % this.def.layouts.length];
@@ -24,10 +24,10 @@ export class GameMap {
         this.pathLower = null;
         this.secondaryPath = null;
 
-        this.buildGrid(worldLevel);
+        this.buildGrid();
     }
 
-    buildGrid(worldLevel) {
+    buildGrid() {
         const layout = this.layout;
 
         // Initialize all cells as buildable
@@ -89,8 +89,8 @@ export class GameMap {
             this.path = waypoints.map(wp => gridToWorld(wp.x, wp.y));
         }
 
-        // Secondary path (dual spawn, Level 6+)
-        if (layout.secondaryWaypoints && worldLevel >= DUAL_SPAWN_LEVEL) {
+        // Secondary path (always carved; enemies use it at wave 60+)
+        if (layout.secondaryWaypoints) {
             const secWP = layout.secondaryWaypoints;
             for (let i = 0; i < secWP.length - 1; i++) {
                 this.carveLine(secWP[i].x, secWP[i].y, secWP[i + 1].x, secWP[i + 1].y);

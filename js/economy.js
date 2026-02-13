@@ -1,6 +1,7 @@
-import { STARTING_LIVES } from './constants.js';
+import { STARTING_LIVES, STARTING_GOLD } from './constants.js';
 
 const RECORD_KEY = 'td_high_score';
+const WAVE_RECORD_KEY = 'td_wave_record';
 
 export class Economy {
     constructor() {
@@ -9,12 +10,12 @@ export class Economy {
         this.score = 0;
         this.record = Economy.getRecord();
 
-        // One-time fresh start for balance retuning (v4)
-        if (!localStorage.getItem('td_v4_clean')) {
+        // One-time fresh start for wave-based system (v5)
+        if (!localStorage.getItem('td_v5_clean')) {
             for (const key of Object.keys(localStorage)) {
                 if (key.startsWith('td_')) localStorage.removeItem(key);
             }
-            localStorage.setItem('td_v4_clean', '1');
+            localStorage.setItem('td_v5_clean', '1');
         }
     }
 
@@ -42,9 +43,11 @@ export class Economy {
         this.lives = Math.max(0, this.lives - count);
     }
 
-    levelUpReset(level) {
-        this.gold = 150 + level * 150;
+    startReset() {
+        this.gold = STARTING_GOLD;
         this.lives = STARTING_LIVES;
+        this.score = 0;
+        this.record = Economy.getRecord();
     }
 
     reset() {
@@ -62,35 +65,25 @@ export class Economy {
         localStorage.removeItem(RECORD_KEY);
     }
 
-    static clearPlayerLevel() {
-        localStorage.removeItem('td_player_level');
-    }
-
-    static getPlayerLevel() {
-        return parseInt(localStorage.getItem('td_player_level')) || 0;
-    }
-
-    static setPlayerLevel(level) {
-        const current = Economy.getPlayerLevel();
-        if (level > current) {
-            localStorage.setItem('td_player_level', level);
-        }
-    }
-
-    static setPlayerLevelDirect(level) {
-        localStorage.setItem('td_player_level', level);
-    }
-
-    static getEndlessRecord(mapId) {
-        const data = JSON.parse(localStorage.getItem('td_endless_record') || '{}');
+    static getWaveRecord(mapId) {
+        const data = JSON.parse(localStorage.getItem(WAVE_RECORD_KEY) || '{}');
         return mapId ? (data[mapId] || 0) : data;
     }
 
-    static setEndlessRecord(mapId, wave) {
-        const data = JSON.parse(localStorage.getItem('td_endless_record') || '{}');
+    static setWaveRecord(mapId, wave) {
+        const data = JSON.parse(localStorage.getItem(WAVE_RECORD_KEY) || '{}');
         if (wave > (data[mapId] || 0)) {
             data[mapId] = wave;
-            localStorage.setItem('td_endless_record', JSON.stringify(data));
+            localStorage.setItem(WAVE_RECORD_KEY, JSON.stringify(data));
         }
+    }
+
+    static getBestRecord() {
+        const data = JSON.parse(localStorage.getItem(WAVE_RECORD_KEY) || '{}');
+        let best = 0;
+        for (const wave of Object.values(data)) {
+            if (wave > best) best = wave;
+        }
+        return best;
     }
 }

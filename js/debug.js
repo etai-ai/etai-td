@@ -1,4 +1,4 @@
-import { TOWER_TYPES, LEVEL_HP_MULTIPLIER, getWaveHPScale } from './constants.js';
+import { TOWER_TYPES, getWaveHPScale } from './constants.js';
 
 const STORAGE_KEY = 'td_wave_debug_log_v2';
 
@@ -27,14 +27,13 @@ export class WaveDebugger {
             const data = localStorage.getItem(STORAGE_KEY);
             const raw = data ? JSON.parse(data) : [];
             // Drop legacy records missing required fields
-            this.log = raw.filter(r => r.timestamp && r.world && r.level != null);
+            this.log = raw.filter(r => r.timestamp && r.world);
         } catch { this.log = []; }
     }
 
     _resetWave() {
         this.waveNum = 0;
         this.worldHpMul = 1;
-        this.levelHpMul = 1;
         this.waveHpScale = 0;
         this.finalHpMul = 0;
         this.startGold = 0;
@@ -57,9 +56,8 @@ export class WaveDebugger {
         this._resetWave();
         this.waveNum = game.waves.currentWave;
         this.worldHpMul = game.map.def ? game.map.def.worldHpMultiplier : 1;
-        this.levelHpMul = Math.pow(LEVEL_HP_MULTIPLIER, Math.max(0, game.worldLevel - 1));
         this.waveHpScale = getWaveHPScale(this.waveNum);
-        this.finalHpMul = this.worldHpMul * this.levelHpMul * this.waveHpScale;
+        this.finalHpMul = this.worldHpMul * this.waveHpScale;
         this.startGold = game.economy.gold;
         this.startLives = game.economy.lives;
         this.startTowerCount = game.towers.towers.length;
@@ -133,10 +131,8 @@ export class WaveDebugger {
         const report = {
             timestamp: new Date().toISOString(),
             world: game.selectedMapId || '—',
-            level: game.worldLevel,
             wave: this.waveNum,
             worldHpMul: this.worldHpMul,
-            levelHpMul: this.levelHpMul,
             waveHpScale: this.waveHpScale,
             finalHpMul: this.finalHpMul,
             duration,
@@ -170,8 +166,8 @@ export class WaveDebugger {
     downloadCSV() {
         if (this.log.length === 0) return;
         const cols = [
-            'timestamp','world','level','wave',
-            'worldHpMul','levelHpMul','waveHpScale','finalHpMul',
+            'timestamp','world','wave',
+            'worldHpMul','waveHpScale','finalHpMul',
             'duration','spawned','killed','leaked','livesLost',
             'totalHP','dmgDealt','overkill','killRate',
             'dpsActual','dpsTheory','efficiency',

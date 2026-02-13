@@ -1,4 +1,4 @@
-import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, TOTAL_WAVES, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, HERO_STATS, getTotalWaves, DUAL_SPAWN_LEVEL, TOWER_UNLOCKS, VERSION, ENDLESS_UNLOCK_LEVEL } from './constants.js';
+import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, VERSION } from './constants.js';
 import { Economy } from './economy.js';
 
 export class UI {
@@ -9,8 +9,6 @@ export class UI {
         this.elWave = document.getElementById('wave-info');
         this.elLives = document.getElementById('lives-info');
         this.elGold = document.getElementById('gold-info');
-        this.elLevelInfo = document.getElementById('level-info');
-        this.elAvatarCanvas = document.getElementById('avatar-canvas');
         this.elTowerPanel = document.getElementById('tower-panel');
         this.elTowerInfo = document.getElementById('tower-info');
         this.elSpeedBtn = document.getElementById('speed-btn');
@@ -22,8 +20,6 @@ export class UI {
 
         this.elToast = document.getElementById('achievement-toast');
         this._toastBusy = false;
-        this.endlessToggle = false;
-        this.elEndlessBtn = document.getElementById('endless-btn');
 
         const versionEl = document.getElementById('about-version');
         if (versionEl) versionEl.textContent = `Version ${VERSION}`;
@@ -38,38 +34,15 @@ export class UI {
         if (!container) return;
         container.innerHTML = '';
 
-        // Show player level on menu
-        const playerLevel = Economy.getPlayerLevel();
-        const levelEl = document.getElementById('menu-player-level');
-        if (levelEl) {
-            const rec = Economy.getRecord();
-            let text = `Level ${playerLevel + 1}` + (rec > 0 ? `  |  Record: ${rec}` : '');
-            // Show best endless record across all maps
-            const allEndless = Economy.getEndlessRecord();
-            let bestWave = 0, bestMap = '';
-            for (const [mapId, wave] of Object.entries(allEndless)) {
-                if (wave > bestWave) { bestWave = wave; bestMap = mapId; }
-            }
-            if (bestWave > 0) {
-                const mapName = MAP_DEFS[bestMap]?.name || bestMap;
-                text += `  |  Endless: Wave ${bestWave} (${mapName})`;
-            }
-            levelEl.textContent = text;
-        }
+        const bestRecord = Economy.getBestRecord();
+        const allRecords = Economy.getWaveRecord();
 
         const resetBtn = document.getElementById('reset-btn');
-        if (resetBtn) resetBtn.style.display = playerLevel >= 1 ? '' : 'none';
-
-        // Endless mode toggle visibility
-        if (this.elEndlessBtn) {
-            this.elEndlessBtn.style.display = (playerLevel + 1) > ENDLESS_UNLOCK_LEVEL ? '' : 'none';
-            this.elEndlessBtn.classList.toggle('active', this.endlessToggle);
-            this.elEndlessBtn.textContent = this.endlessToggle ? 'Endless Mode: ON' : 'Endless Mode';
-        }
+        if (resetBtn) resetBtn.style.display = bestRecord > 0 ? '' : 'none';
 
         for (const [id, def] of Object.entries(MAP_DEFS)) {
-            const reqLevel = def.requiredLevel || 0;
-            const mapLocked = reqLevel > 0 && (playerLevel + 1) < reqLevel;
+            const reqRecord = def.requiredRecord || 0;
+            const mapLocked = reqRecord > 0 && bestRecord < reqRecord;
 
             const card = document.createElement('div');
             card.className = 'map-card' + (mapLocked ? ' map-locked' : '');
@@ -81,7 +54,7 @@ export class UI {
             preview.width = 240;
             preview.height = 160;
             this.drawMapPreview(preview, def);
-            if (mapLocked) this.drawLockOverlay(preview, reqLevel);
+            if (mapLocked) this.drawLockOverlay(preview, reqRecord);
 
             // Info section
             const info = document.createElement('div');
@@ -94,7 +67,12 @@ export class UI {
 
             const desc = document.createElement('div');
             desc.className = 'map-card-desc';
-            desc.textContent = mapLocked ? `Reach Level ${reqLevel} to unlock` : def.description;
+            if (mapLocked) {
+                desc.textContent = `Reach Wave ${reqRecord} on any map to unlock`;
+            } else {
+                const mapRecord = allRecords[id] || 0;
+                desc.textContent = def.description + (mapRecord > 0 ? ` (Best: Wave ${mapRecord})` : '');
+            }
 
             info.appendChild(name);
             info.appendChild(desc);
@@ -105,12 +83,7 @@ export class UI {
             if (!mapLocked) {
                 card.addEventListener('click', () => {
                     this.game.audio.ensureContext();
-                    if (this.endlessToggle) {
-                        this.game.startEndless(id);
-                    } else {
-                        this.game.selectMap(id);
-                        this.game.start();
-                    }
+                    this.game.start(id);
                 });
             }
 
@@ -170,9 +143,8 @@ export class UI {
             }
         }
 
-        // Carve secondary path if present and player level allows
-        const playerLevel = Economy.getPlayerLevel();
-        if (layout.secondaryWaypoints && (playerLevel + 1) >= DUAL_SPAWN_LEVEL) {
+        // Always carve secondary path on preview
+        if (layout.secondaryWaypoints) {
             const secWP = layout.secondaryWaypoints;
             for (let i = 0; i < secWP.length - 1; i++) {
                 carve(secWP[i].x, secWP[i].y, secWP[i + 1].x, secWP[i + 1].y);
@@ -206,14 +178,14 @@ export class UI {
         ctx.fillRect(exitPt.x * cellW, exitPt.y * cellH, cellW + 0.5, cellH + 0.5);
 
         // Secondary entry marker (dual spawn)
-        if (layout.secondaryWaypoints && (playerLevel + 1) >= DUAL_SPAWN_LEVEL) {
+        if (layout.secondaryWaypoints) {
             const secEntry = layout.secondaryWaypoints[0];
             ctx.fillStyle = '#2ecc71';
             ctx.fillRect(secEntry.x * cellW, secEntry.y * cellH, cellW + 0.5, cellH + 0.5);
         }
     }
 
-    drawLockOverlay(canvas, reqLevel) {
+    drawLockOverlay(canvas, reqRecord) {
         const ctx = canvas.getContext('2d');
         const w = canvas.width;
         const h = canvas.height;
@@ -246,11 +218,11 @@ export class UI {
         ctx.arc(cx, cy, 14, Math.PI, 0);
         ctx.stroke();
 
-        // Level text
+        // Wave requirement text
         ctx.fillStyle = '#ffd700';
         ctx.font = 'bold 16px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(`Level ${reqLevel}`, cx, cy + 48);
+        ctx.fillText(`Wave ${reqRecord}`, cx, cy + 48);
     }
 
     refreshMapRecords() {
@@ -272,13 +244,13 @@ export class UI {
             document.body.appendChild(this.tooltip);
         }
 
-        const worldLevel = this.game.worldLevel || 0;
+        const effectiveWave = this.game.getEffectiveWave ? this.game.getEffectiveWave() : 0;
 
         for (const [key, def] of Object.entries(TOWER_TYPES)) {
-            // Hide towers that are outclassed at this level
-            if (def.maxLevel && worldLevel > def.maxLevel) continue;
-            // Hide towers not yet unlocked at this level
-            if (def.unlockLevel && worldLevel < def.unlockLevel) continue;
+            // Hide towers that are outclassed at this wave
+            if (def.maxWave && effectiveWave > def.maxWave) continue;
+            // Hide towers not yet unlocked at this wave
+            if (def.unlockWave && effectiveWave < def.unlockWave) continue;
 
             if (!this.towerPreviews[key]) {
                 this.towerPreviews[key] = this.renderTowerPreview(key);
@@ -402,10 +374,10 @@ export class UI {
     showTowerTooltip(btn, key, def) {
         const stats = def.levels[0];
         // Hotkey matches visible buttons order (skipping hidden towers)
-        const worldLevel = this.game.worldLevel || 0;
+        const effectiveWave = this.game.getEffectiveWave ? this.game.getEffectiveWave() : 0;
         const visibleKeys = Object.entries(TOWER_TYPES)
-            .filter(([, d]) => !(d.maxLevel && worldLevel > d.maxLevel))
-            .filter(([, d]) => !(d.unlockLevel && worldLevel < d.unlockLevel))
+            .filter(([, d]) => !(d.maxWave && effectiveWave > d.maxWave))
+            .filter(([, d]) => !(d.unlockWave && effectiveWave < d.unlockWave))
             .map(([k]) => k);
         const hotkey = visibleKeys.indexOf(key) + 1;
         const rate = (1 / stats.fireRate).toFixed(1);
@@ -425,13 +397,8 @@ export class UI {
         };
 
         let lockHTML = '';
-        if (def.unlockWave) {
-            const locked = this.game.waves.currentWave < def.unlockWave;
-            if (locked) lockHTML = `<div class="tt-lock">Unlocks at wave ${def.unlockWave}</div>`;
-        }
-        if (def.unlockLevel) {
-            const levelLocked = this.game.worldLevel < def.unlockLevel;
-            if (levelLocked) lockHTML = `<div class="tt-lock">Requires Level ${def.unlockLevel}</div>`;
+        if (def.unlockWave && effectiveWave < def.unlockWave) {
+            lockHTML = `<div class="tt-lock">Unlocks at wave ${def.unlockWave}</div>`;
         }
 
         this.tooltip.innerHTML = `
@@ -504,21 +471,6 @@ export class UI {
         document.getElementById('restart-btn')?.addEventListener('click', () => {
             this.game.restart();
         });
-        document.getElementById('restart-btn-victory')?.addEventListener('click', () => {
-            this.game.restart();
-        });
-
-        // Level up continue button — go to map select if a new world just unlocked
-        document.getElementById('level-up-btn')?.addEventListener('click', () => {
-            const nextLevel = this.game.worldLevel + 1;
-            const newMap = Object.values(MAP_DEFS).find(d => d.requiredLevel === nextLevel);
-            if (newMap) {
-                this.game.restart();
-            } else {
-                this.game.continueNextLevel();
-            }
-        });
-
         // Exit button
         document.getElementById('exit-btn')?.addEventListener('click', () => {
             if (this.game.state !== STATE.MENU) {
@@ -540,13 +492,6 @@ export class UI {
         });
         document.getElementById('about-close-btn')?.addEventListener('click', () => {
             this.showScreen('menu');
-        });
-
-        // Endless mode toggle
-        this.elEndlessBtn?.addEventListener('click', () => {
-            this.endlessToggle = !this.endlessToggle;
-            this.elEndlessBtn.classList.toggle('active', this.endlessToggle);
-            this.elEndlessBtn.textContent = this.endlessToggle ? 'Endless Mode: ON' : 'Endless Mode';
         });
 
         // Reset progress
@@ -581,10 +526,7 @@ export class UI {
         const waves = game.waves;
 
         // Top bar info — wave + modifier badge
-        const totalWaves = getTotalWaves(game.worldLevel);
-        const waveText = game.endlessMode
-            ? `Wave ${waves.currentWave}`
-            : `Wave ${waves.currentWave}/${totalWaves}`;
+        const waveText = `Wave ${waves.currentWave}`;
         const modDef = waves.modifierDef;
         if (modDef && !waves.betweenWaves) {
             this.elWave.innerHTML = `${waveText} <span style="background:${modDef.color};color:#000;padding:1px 6px;border-radius:4px;font-size:0.8em;font-weight:700;margin-left:4px">${modDef.name}</span>`;
@@ -594,21 +536,6 @@ export class UI {
         this.elLives.innerHTML = `&#9829; ${eco.lives}`;
         this.elLives.classList.toggle('lives-critical', eco.lives <= 5 && eco.lives > 0);
         this.elGold.textContent = `\u{1FA99} ${eco.gold}`;
-        this.elLevelInfo.textContent = `Level ${game.worldLevel}`;
-
-        // Avatar
-        if (this.elAvatarCanvas && game.worldLevel > 0) {
-            const themeColor = game.map.def.themeColor || '#888';
-            game.renderer.drawAvatar(this.elAvatarCanvas.getContext('2d'), game.worldLevel, themeColor);
-            // Tint avatar border and group to match theme
-            this.elAvatarCanvas.style.borderColor = themeColor;
-            const group = this.elAvatarCanvas.parentElement;
-            if (group) {
-                group.style.borderColor = themeColor;
-                group.style.boxShadow = `0 0 14px ${themeColor}66, inset 0 0 8px ${themeColor}1a`;
-            }
-        }
-
         // Toggle hero-active class for mobile controls (only shows on mobile when hero is active)
         const canvasWrapper = document.getElementById('canvas-wrapper');
         if (canvasWrapper) {
@@ -679,21 +606,19 @@ export class UI {
         }
 
         // Tower buttons affordability + unlock
+        const effectiveWave = game.getEffectiveWave ? game.getEffectiveWave() : 0;
         const towerBtns = this.elTowerPanel.querySelectorAll('.tower-btn');
         towerBtns.forEach(btn => {
             const type = btn.dataset.type;
             const def = TOWER_TYPES[type];
-            const waveLocked = def.unlockWave > 0 && waves.currentWave < def.unlockWave;
-            const levelLocked = def.unlockLevel > 0 && game.worldLevel < def.unlockLevel;
-            const locked = waveLocked || levelLocked;
+            const locked = def.unlockWave > 0 && effectiveWave < def.unlockWave;
             const canAfford = eco.gold >= def.cost;
             btn.classList.toggle('disabled', locked || !canAfford);
             btn.classList.toggle('locked', locked);
             btn.classList.toggle('selected', game.input.selectedTowerType === type);
-            // Show/hide lock label
             const costEl = btn.querySelector('.tower-cost');
             if (costEl) {
-                costEl.textContent = levelLocked ? `Level ${def.unlockLevel}` : waveLocked ? `Wave ${def.unlockWave}` : `$${def.cost}`;
+                costEl.textContent = locked ? `Wave ${def.unlockWave}` : `$${def.cost}`;
             }
         });
     }
@@ -895,159 +820,29 @@ export class UI {
 
         // Refresh map records when returning to menu
         if (name === 'menu') {
-            this.endlessToggle = false;
             this.refreshMapRecords();
         }
 
-        // Populate score on end screens
-        const eco = this.game.economy;
-        const isNew = eco.score >= eco.record && eco.score > 0;
-        const scoreText = `Score: ${eco.score}${isNew ? ' (New Record!)' : ''} | Record: ${eco.record}`;
-        const goEl = document.getElementById('game-over-score');
-        if (goEl) goEl.textContent = scoreText;
-        const vicEl = document.getElementById('victory-score');
-        if (vicEl) vicEl.textContent = scoreText;
+        // Populate game-over screen
+        if (name === 'game-over') {
+            const eco = this.game.economy;
+            const wave = this.game.waves.currentWave;
+            const mapName = MAP_DEFS[this.game.selectedMapId]?.name || this.game.selectedMapId;
+            const record = Economy.getWaveRecord(this.game.selectedMapId);
 
-        // Endless mode game-over extras
-        const endlessInfoEl = document.getElementById('game-over-endless');
-        if (endlessInfoEl) {
-            if (this.game.endlessMode && name === 'game-over') {
-                const wave = this.game.waves.currentWave;
-                const mapName = MAP_DEFS[this.game.selectedMapId]?.name || this.game.selectedMapId;
-                const record = Economy.getEndlessRecord(this.game.selectedMapId);
+            const goEl = document.getElementById('game-over-score');
+            if (goEl) {
+                const isNew = eco.score >= eco.record && eco.score > 0;
+                goEl.textContent = `Score: ${eco.score}${isNew ? ' (New Record!)' : ''} | Record: ${eco.record}`;
+            }
+
+            const waveInfoEl = document.getElementById('game-over-wave');
+            if (waveInfoEl) {
                 const isNewRecord = wave >= record;
-                endlessInfoEl.style.display = 'block';
-                endlessInfoEl.innerHTML = `
-                    <div class="endless-wave-reached">Reached Wave ${wave}${isNewRecord ? ' — New Record!' : ''}</div>
-                    <div class="endless-record">Endless Record: Wave ${record} (${mapName})</div>
+                waveInfoEl.innerHTML = `
+                    <div class="wave-reached">Reached Wave ${wave}${isNewRecord ? ' — New Record!' : ''}</div>
+                    <div class="wave-record">Best: Wave ${record} (${mapName})</div>
                 `;
-            } else {
-                endlessInfoEl.style.display = 'none';
-            }
-        }
-
-        // Dynamic victory subtitle
-        if (name === 'victory') {
-            const totalW = getTotalWaves(this.game.worldLevel);
-            const vicSub = screen.querySelector('.screen-subtitle');
-            if (vicSub) vicSub.textContent = `You survived all ${totalW} waves! Excellent strategy!`;
-        }
-
-        // Populate level-up screen
-        if (name === 'level-up') {
-            const game = this.game;
-            const nextLevel = game.worldLevel + 1;
-            const nextGold = 150 + nextLevel * 150;
-            const subEl = document.getElementById('level-up-subtitle');
-            if (subEl) subEl.textContent = `Level ${game.worldLevel} complete!`;
-            const bonusEl = document.getElementById('level-up-bonus');
-            if (bonusEl) bonusEl.textContent = `Starting gold: ${nextGold} | Lives reset to 20`;
-            const avatarCanvas = document.getElementById('level-up-avatar');
-            if (avatarCanvas) {
-                const themeColor = game.map.def.themeColor || '#888';
-                game.renderer.drawAvatar(avatarCanvas.getContext('2d'), nextLevel, themeColor);
-            }
-
-            // World unlock announcement
-            const unlockEl = document.getElementById('level-up-unlock');
-            let worldUnlocked = null;
-            if (unlockEl) {
-                worldUnlocked = Object.values(MAP_DEFS).find(d => d.requiredLevel === nextLevel);
-                if (worldUnlocked) {
-                    unlockEl.style.display = 'block';
-                    unlockEl.style.color = worldUnlocked.themeColor;
-                    unlockEl.style.background = `linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3))`;
-                    unlockEl.style.border = `2px solid ${worldUnlocked.themeColor}`;
-                    unlockEl.style.boxShadow = `0 0 20px ${worldUnlocked.themeColor}66, inset 0 0 12px ${worldUnlocked.themeColor}22`;
-                    unlockEl.innerHTML = `
-                        <div class="unlock-title">New World Unlocked!</div>
-                        <div class="unlock-desc" style="color:#eee">${worldUnlocked.name} is now available</div>
-                    `;
-                } else {
-                    unlockEl.style.display = 'none';
-                    unlockEl.innerHTML = '';
-                }
-            }
-
-            // Tower unlock announcement
-            const towerUnlockEl = document.getElementById('level-up-tower-unlock');
-            const towerUnlock = TOWER_UNLOCKS[nextLevel] || null;
-            if (towerUnlockEl) {
-                if (towerUnlock) {
-                    const c = towerUnlock.color;
-                    towerUnlockEl.style.display = 'block';
-                    towerUnlockEl.style.color = c;
-                    towerUnlockEl.style.background = `linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3))`;
-                    towerUnlockEl.style.border = `2px solid ${c}`;
-                    towerUnlockEl.style.boxShadow = `0 0 20px ${c}66, inset 0 0 12px ${c}22`;
-                    const title = towerUnlock.towers.length > 1 ? 'New Towers Unlocked!' : 'New Tower Unlocked!';
-                    const imgs = towerUnlock.keys.map(k => {
-                        const src = this.renderTowerPreview(k);
-                        return `<img src="${src}" width="80" height="80" style="border-radius:8px;border:2px solid ${c}44;background:#0d1b2a;">`;
-                    }).join('');
-                    const verb = towerUnlock.towers.length > 1 ? 'replace' : 'replaces';
-                    let desc;
-                    if (towerUnlock.replaces) {
-                        desc = `${verb} ${towerUnlock.replaces.join(' & ')}`;
-                    } else {
-                        desc = `new addition to your arsenal`;
-                    }
-                    towerUnlockEl.innerHTML = `
-                        <div class="unlock-title">${title}</div>
-                        <div style="display:flex;justify-content:center;gap:16px;margin:8px 0">${imgs}</div>
-                        <div class="unlock-desc" style="color:#eee">${towerUnlock.towers.join(' & ')} — ${desc}</div>
-                    `;
-                } else {
-                    towerUnlockEl.style.display = 'none';
-                    towerUnlockEl.innerHTML = '';
-                }
-            }
-
-            // Hero unlock announcement
-            const heroUnlockEl = document.getElementById('level-up-hero-unlock');
-            const heroUnlocked = nextLevel === HERO_STATS.unlockLevel;
-            if (heroUnlockEl) {
-                if (heroUnlocked) {
-                    const c = HERO_STATS.color;
-                    heroUnlockEl.style.display = 'block';
-                    heroUnlockEl.style.color = c;
-                    heroUnlockEl.style.background = `linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.3))`;
-                    heroUnlockEl.style.border = `2px solid ${c}`;
-                    heroUnlockEl.style.boxShadow = `0 0 20px ${c}66, inset 0 0 12px ${c}22`;
-                    heroUnlockEl.innerHTML = `
-                        <div class="unlock-title">Hero Unlocked!</div>
-                        <div class="unlock-desc" style="color:#eee">
-                            <b>WASD</b> to move &nbsp;|&nbsp; Auto-attacks nearby enemies<br>
-                            <b>Q</b> — AoE stun &nbsp;|&nbsp; <b>E</b> — Gold magnet (2x gold)
-                        </div>
-                    `;
-                } else {
-                    heroUnlockEl.style.display = 'none';
-                    heroUnlockEl.innerHTML = '';
-                }
-            }
-
-            // Confetti burst from top-center
-            const cx = COLS * CELL / 2;
-            game.particles.spawnConfetti(cx, 40, 50);
-
-            // Expanding rings from avatar center
-            const avY = ROWS * CELL / 2;
-            game.particles.spawnAuraPulse(cx, avY, 60, '#ffd700');
-            game.particles.spawnAuraPulse(cx, avY, 90, '#bb86fc');
-
-            // Extra confetti + bigger rings for world/tower unlock
-            if (worldUnlocked) {
-                game.particles.spawnConfetti(cx, 40, 80);
-                game.particles.spawnAuraPulse(cx, avY, 120, worldUnlocked.themeColor);
-            }
-            if (towerUnlock) {
-                game.particles.spawnConfetti(cx, 40, 60);
-                game.particles.spawnAuraPulse(cx, avY, 100, towerUnlock.color);
-            }
-            if (heroUnlocked) {
-                game.particles.spawnConfetti(cx, 40, 70);
-                game.particles.spawnAuraPulse(cx, avY, 110, HERO_STATS.color);
             }
         }
     }

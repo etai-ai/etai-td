@@ -1,4 +1,4 @@
-import { STATE, CANVAS_W, CANVAS_H, HERO_STATS, DUAL_SPAWN_LEVEL, MAP_DEFS, TOWER_TYPES, TOWER_LIGHT_DEFS, MAP_AMBIENT_DARKNESS } from './constants.js';
+import { STATE, CANVAS_W, CANVAS_H, HERO_STATS, DUAL_SPAWN_WAVE, MAP_DEFS, TOWER_TYPES, TOWER_LIGHT_DEFS, MAP_AMBIENT_DARKNESS, WAVE_UNLOCKS } from './constants.js';
 import { hexToGL } from './utils.js';
 import { GameMap } from './map.js';
 import { TowerManager } from './tower.js';
@@ -25,10 +25,8 @@ export class Game {
         this.lastTime = 0;
         this.accumulator = 0;
         this.selectedMapId = null;
-        this.worldLevel = 0;
         this.adminMode = false;
         this.autoWave = true;
-        this.endlessMode = false;
         this.elapsedTime = 0;
         this.waveElapsed = 0;
 
@@ -41,6 +39,9 @@ export class Game {
 
         // Scorch zones (from Bi-Cannon heavy rounds)
         this.scorchZones = [];
+
+        // Track which wave thresholds have been triggered this run
+        this._triggeredThresholds = new Set();
 
         // Core systems
         this.map = new GameMap();
@@ -80,43 +81,36 @@ export class Game {
         }
     }
 
+    getEffectiveWave() {
+        const startingUnlocks = MAP_DEFS[this.selectedMapId]?.startingUnlocks || 0;
+        return Math.max(this.waves.currentWave, startingUnlocks);
+    }
+
     getLayoutIndex() {
-        if (this.worldLevel <= 1) return 0;
-        if (this.worldLevel >= DUAL_SPAWN_LEVEL) return this.worldLevel - 1;
         const numLayouts = MAP_DEFS[this.selectedMapId].layouts.length;
         return Math.floor(Math.random() * numLayouts);
     }
 
-    start() {
+    start(mapId) {
+        if (mapId) this.selectMap(mapId);
         if (!this.selectedMapId) return;
         this.audio.ensureContext();
-        this.worldLevel = Economy.getPlayerLevel() + 1;
-        // Set starting gold based on world level
-        this.economy.levelUpReset(this.worldLevel);
-        // Recreate map with the correct layout for this world level
-        this.map = new GameMap(this.selectedMapId, this.getLayoutIndex(), this.worldLevel);
-        this.renderer.drawTerrain();
-        this.heroDeathsThisLevel = 0;
-        if (this.worldLevel >= HERO_STATS.unlockLevel) this.hero.init(this.map);
-        else this.hero.reset();
-        this.state = STATE.PLAYING;
-        this.ui.setupTowerPanel();
-        this.ui.hideAllScreens();
-        this.waves.startNextWave();
-        this.ui.update();
-    }
 
-    startEndless(mapId) {
-        this.audio.ensureContext();
-        this.endlessMode = true;
-        this.selectMap(mapId);
-        this.worldLevel = Economy.getPlayerLevel() + 1;
-        this.economy.levelUpReset(this.worldLevel);
-        this.map = new GameMap(this.selectedMapId, this.getLayoutIndex(), this.worldLevel);
+        this.economy.startReset();
+        this._triggeredThresholds = new Set();
+
+        // Pick random layout, always build secondary paths
+        this.map = new GameMap(this.selectedMapId, this.getLayoutIndex());
         this.renderer.drawTerrain();
+
         this.heroDeathsThisLevel = 0;
-        if (this.worldLevel >= HERO_STATS.unlockLevel) this.hero.init(this.map);
-        else this.hero.reset();
+        // Init hero if starting unlocks include hero wave
+        if (this.getEffectiveWave() >= HERO_STATS.unlockWave) {
+            this.hero.init(this.map);
+        } else {
+            this.hero.reset();
+        }
+
         this.state = STATE.PLAYING;
         this.ui.setupTowerPanel();
         this.ui.hideAllScreens();
@@ -148,64 +142,71 @@ export class Game {
 
     gameOver() {
         this.state = STATE.GAME_OVER;
-        if (this.endlessMode) {
-            Economy.setEndlessRecord(this.selectedMapId, this.waves.currentWave);
+        Economy.setWaveRecord(this.selectedMapId, this.waves.currentWave);
+        this.achievements.set('highestWave', this.waves.currentWave);
+        this.achievements.set('highestScore', this.economy.score);
+        // Per-map wave record for map achievements
+        if (this.selectedMapId) {
+            this.achievements.set(`${this.selectedMapId}_best`, this.waves.currentWave);
         }
         this.audio.playGameOver();
         this.ui.showScreen('game-over');
     }
 
-    levelUp() {
-        if (this.endlessMode) return; // endless never levels up
-        this.state = STATE.LEVEL_UP;
-        Economy.setPlayerLevel(this.worldLevel);
-        this.achievements.increment('levelsCompleted');
-        this.achievements.set('highestLevel', this.worldLevel);
-        this.achievements.set('highestScore', this.economy.score);
-        this.achievements.check('levelComplete', {
-            map: this.selectedMapId,
-            heroActive: this.hero.active,
-            heroDeaths: this.heroDeathsThisLevel,
-        });
-        this.audio.playVictory();
-        this.ui.showScreen('level-up');
-    }
+    onWaveThreshold(wave) {
+        const effectiveWave = this.getEffectiveWave();
+        // Check all unlock thresholds
+        for (const [thresholdStr, unlock] of Object.entries(WAVE_UNLOCKS)) {
+            const threshold = parseInt(thresholdStr);
+            if (effectiveWave >= threshold && !this._triggeredThresholds.has(threshold)) {
+                this._triggeredThresholds.add(threshold);
 
-    continueNextLevel() {
-        this.worldLevel++;
-        this.debug.reset();
-        this.economy.levelUpReset(this.worldLevel);
-        this.enemies.reset();
-        this.towers.reset();
-        this.projectiles.reset();
-        this.particles.reset();
-        this.scorchZones = [];
-        this.waves.reset();
-        this.input.reset();
-        // Recreate map with the new layout for this world level
-        this.map = new GameMap(this.selectedMapId, this.getLayoutIndex(), this.worldLevel);
-        this.renderer.drawTerrain();
-        this.heroDeathsThisLevel = 0;
-        if (this.worldLevel >= HERO_STATS.unlockLevel) this.hero.init(this.map);
-        else this.hero.reset();
-        this.state = STATE.PLAYING;
+                // Tower unlocks
+                if (unlock.towers) {
+                    const names = unlock.towers.join(' & ');
+                    this.particles.spawnBigFloatingText(
+                        CANVAS_W / 2, CANVAS_H / 3,
+                        `NEW: ${names}!`, unlock.color
+                    );
+                    this.audio.playWaveStart(); // reuse as unlock cue
+                }
+
+                // Hero unlock
+                if (unlock.hero && !this.hero.active) {
+                    this.hero.init(this.map);
+                    this.particles.spawnBigFloatingText(
+                        CANVAS_W / 2, CANVAS_H / 4,
+                        'HERO UNLOCKED! WASD to move', HERO_STATS.color
+                    );
+                    this.particles.spawnAuraPulse(this.hero.x, this.hero.y, 60, HERO_STATS.color);
+                    this.audio.playHeroRespawn();
+                }
+
+                // Dual spawn warning
+                if (unlock.dualSpawn) {
+                    this.particles.spawnBigFloatingText(
+                        CANVAS_W / 2, CANVAS_H / 4,
+                        'WARNING: Enemies from two sides!', unlock.color
+                    );
+                    this.triggerShake(6, 0.4);
+                }
+            }
+        }
+
+        // Always rebuild tower panel when crossing a threshold
         this.ui.setupTowerPanel();
-        this.ui.hideAllScreens();
-        this.waves.startNextWave();
-        this.ui.update();
     }
 
     restart() {
         this.state = STATE.MENU;
         this.selectedMapId = null;
-        this.worldLevel = 0;
-        this.endlessMode = false;
         this.elapsedTime = 0;
         this.waveElapsed = 0;
         this.shakeTimer = 0;
         this.shakeIntensity = 0;
         this.shakeOffsetX = 0;
         this.shakeOffsetY = 0;
+        this._triggeredThresholds = new Set();
         this.debug.reset();
         this.economy.reset();
         this.enemies.reset();
@@ -280,39 +281,8 @@ export class Game {
         this.waves.waveComplete = false;
         this.waves.betweenWaves = false;
         this.waves.startNextWave();
-    }
-
-    adminSetLevel(level) {
-        // Persist player level so map unlocks work
-        Economy.setPlayerLevelDirect(level - 1);
-        this.worldLevel = level;
-        this.elapsedTime = 0;
-        this.waveElapsed = 0;
-        this.debug.reset();
-        this.economy.levelUpReset(this.worldLevel);
-        this.enemies.reset();
-        this.towers.reset();
-        this.projectiles.reset();
-        this.particles.reset();
-        this.scorchZones = [];
-        this.waves.reset();
-        this.input.reset();
-        if (this.selectedMapId) {
-            this.map = new GameMap(this.selectedMapId, this.getLayoutIndex(), this.worldLevel);
-            this.renderer.drawTerrain();
-            if (this.worldLevel >= HERO_STATS.unlockLevel) this.hero.init(this.map);
-            else this.hero.reset();
-            this.state = STATE.PLAYING;
-            this.ui.setupTowerPanel();
-            this.waves.startNextWave();
-            this.ui.update();
-        } else {
-            this.state = STATE.MENU;
-            this.hero.reset();
-            this.ui.setupTowerPanel();
-            this.ui.showScreen('menu');
-            this.ui.update();
-        }
+        // Trigger any thresholds we jumped past
+        this.onWaveThreshold(waveNum);
     }
 
     update(dt) {

@@ -7,7 +7,7 @@
 
     <!-- Open Graph / Social Media Meta Tags -->
     <meta property="og:title" content="Etai's Tower Defence">
-    <meta property="og:description" content="A strategic tower defense game with multiple maps, tower upgrades, and challenging waves. Choose your world and climb the levels!">
+    <meta property="og:description" content="A strategic tower defense game with multiple maps, tower upgrades, and endless waves. How far can you survive?">
     <meta property="og:image" content="https://yankicaura.github.io/etai-game/images/preview.png">
     <meta property="og:url" content="https://yankicaura.github.io/etai-game/">
     <meta property="og:type" content="website">
@@ -25,12 +25,7 @@
         <!-- Top Info Bar -->
         <div id="top-bar">
             <div class="info-items" style="display:flex;gap:8px;align-items:center;">
-                <div class="avatar-level-group">
-                    <canvas id="avatar-canvas" width="56" height="56"></canvas>
-                    <span id="level-info" class="level-badge">Level 1</span>
-                </div>
-                <span id="wave-info" class="wave-badge">Wave 0/20</span>
-
+                <span id="wave-info" class="wave-badge">Wave 0</span>
             </div>
             <div class="controls">
                 <button id="next-wave-btn">Next Wave</button>
@@ -83,10 +78,8 @@
             <!-- Game Screens -->
             <div id="menu-screen" class="game-screen visible">
                 <div class="screen-title">Etai's Tower Defence</div>
-                <div class="screen-subtitle">Choose a world and climb the levels!</div>
-                <div id="menu-player-level"></div>
+                <div class="screen-subtitle">Choose a world and survive as long as you can!</div>
                 <div id="map-select"></div>
-                <button id="endless-btn" class="screen-btn endless-toggle" style="display:none">Endless Mode</button>
                 <div class="key-hints">
                     <kbd>WASD</kbd> Move hero &nbsp;
                     <kbd>Q</kbd> Stun &nbsp;
@@ -117,7 +110,7 @@
 
                         <div class="manual-section">
                             <h2>Goal</h2>
-                            <p>Build and upgrade towers to stop waves of enemies from reaching the exit. Beat all waves to level up! You start with 20 lives and 300 gold. If an enemy reaches the end, you lose lives. Lose them all and it's game over.</p>
+                            <p>Build and upgrade towers to stop endless waves of enemies from reaching the exit. You start with 20 lives and 300 gold. If an enemy reaches the end, you lose lives. Lose them all and it's game over. How far can you survive?</p>
                         </div>
 
                         <div class="manual-section">
@@ -129,18 +122,18 @@
                                 </div>
                                 <div class="manual-card">
                                     <div class="manual-card-title" style="color:#d4a026">Split Creek</div>
-                                    <p>Path forks into two branches. Enemies randomly pick a route, forcing you to defend both sides. Unlocks at Level 5.</p>
+                                    <p>Path forks into two branches. Enemies randomly pick a route, forcing you to defend both sides. Unlocks at Wave 40 record.</p>
                                 </div>
                                 <div class="manual-card">
                                     <div class="manual-card-title" style="color:#c0392b">The Gauntlet</div>
-                                    <p>Short direct path with 3 turns. Enemies arrive fast — every tower counts. Unlocks at Level 10.</p>
+                                    <p>Short direct path with 3 turns. Enemies arrive fast — every tower counts. Unlocks at Wave 80 record.</p>
                                 </div>
                             </div>
-                            <p class="manual-tip">Each world has infinite levels. Beat all waves to level up. Enemies get 1.055x HP per level. At Level 6+, enemies spawn from two entry points.</p>
+                            <p class="manual-tip">Each world is an endless survival run. Enemies get stronger every wave. At Wave 60, enemies spawn from two entry points. Unlock new worlds by reaching wave milestones on any map.</p>
                         </div>
 
                         <div class="manual-section">
-                            <h2>Towers — Starter (Level 1)</h2>
+                            <h2>Towers — Starter</h2>
                             <table class="manual-table">
                                 <thead>
                                     <tr><th>Tower</th><th>Cost</th><th>Damage</th><th>Range</th><th>Rate</th><th>Special</th></tr>
@@ -149,12 +142,12 @@
                                     <tr>
                                         <td><span class="manual-dot" style="background:#4a7c3f"></span> Arrow</td>
                                         <td>$50</td><td>12/18/28</td><td>3.5/4/4.5</td><td>2.5/3/4/s</td>
-                                        <td>Cheap, fast, reliable DPS. Replaced by Fire Arrow at Lv.2.</td>
+                                        <td>Cheap, fast, reliable DPS. Replaced by Fire Arrow at Wave 10.</td>
                                     </tr>
                                     <tr>
                                         <td><span class="manual-dot" style="background:#5b9bd5"></span> Frost</td>
                                         <td>$75</td><td>5/8/12</td><td>3/3.5/4</td><td>1.3/1.4/1.7/s</td>
-                                        <td>Slows enemies 50-70%. Replaced by Deep Frost at Lv.2.</td>
+                                        <td>Slows enemies 50-70%. Replaced by Deep Frost at Wave 10.</td>
                                     </tr>
                                     <tr>
                                         <td><span class="manual-dot" style="background:#9b59b6"></span> Lightning</td>
@@ -176,8 +169,8 @@
                         </div>
 
                         <div class="manual-section">
-                            <h2>Towers — Level 2 Unlocks</h2>
-                            <p>At Level 2, Arrow and Frost are replaced by stronger versions:</p>
+                            <h2>Towers — Wave 10 Unlocks</h2>
+                            <p>At Wave 10, Arrow and Frost are replaced by stronger versions:</p>
                             <table class="manual-table">
                                 <thead>
                                     <tr><th>Tower</th><th>Cost</th><th>Damage</th><th>Range</th><th>Rate</th><th>Special</th></tr>
@@ -198,7 +191,7 @@
                         </div>
 
                         <div class="manual-section">
-                            <h2>Towers — Level 4 Unlocks</h2>
+                            <h2>Towers — Wave 30 Unlocks</h2>
                             <table class="manual-table">
                                 <thead>
                                     <tr><th>Tower</th><th>Cost</th><th>Damage</th><th>Range</th><th>Rate</th><th>Special</th></tr>
@@ -219,7 +212,7 @@
                         </div>
 
                         <div class="manual-section">
-                            <h2>Towers — Level 5 Unlock</h2>
+                            <h2>Towers — Wave 50 Unlock</h2>
                             <table class="manual-table">
                                 <thead>
                                     <tr><th>Tower</th><th>Cost</th><th>Damage</th><th>Range</th><th>Rate</th><th>Special</th></tr>
@@ -236,8 +229,24 @@
                         </div>
 
                         <div class="manual-section">
-                            <h2>Hero Unit (Level 3+)</h2>
-                            <p>At Level 3, a hero unit spawns near the castle. Move it with <kbd>WASD</kbd> or arrow keys. It auto-attacks the nearest enemy in range.</p>
+                            <h2>Towers — Wave 80 Unlock</h2>
+                            <table class="manual-table">
+                                <thead>
+                                    <tr><th>Tower</th><th>Cost</th><th>Damage</th><th>Range</th><th>Rate</th><th>Special</th></tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td><span class="manual-dot" style="background:#2eaaaa"></span> Pulse Cannon</td>
+                                        <td>$300</td><td>20/30/45</td><td>3.5/4/4.5</td><td>0.6/0.7/0.8/s</td>
+                                        <td>Splash + knockback. Pushes enemies back along the path.</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="manual-section">
+                            <h2>Hero Unit (Wave 20+)</h2>
+                            <p>At Wave 20, a hero unit spawns near the path start. Move it with <kbd>WASD</kbd> or arrow keys. It auto-attacks the nearest enemy in range.</p>
                             <table class="manual-table">
                                 <thead>
                                     <tr><th>Stat</th><th>Value</th></tr>
@@ -253,11 +262,10 @@
                         </div>
 
                         <div class="manual-section">
-                            <h2>Level 3 — Special Events</h2>
-                            <p>Level 3 has a compressed 15-wave schedule with two special events:</p>
+                            <h2>Special Events</h2>
                             <div class="manual-cards">
-                                <div class="manual-card"><strong style="color:#ffd700">Gold Rush (Wave 7)</strong> — All enemy kills give 2x gold. Farm as many kills as you can!</div>
-                                <div class="manual-card"><strong style="color:#2ecc71">Bounty Boss (Wave 8)</strong> — Killing the boss earns a +150g bonus on top of normal rewards.</div>
+                                <div class="manual-card"><strong style="color:#ffd700">Gold Rush (every 10 waves)</strong> — All enemy kills give 2x gold. Farm as many kills as you can!</div>
+                                <div class="manual-card"><strong style="color:#e74c3c">Boss Wave (every 5 waves)</strong> — A powerful boss spawns alongside regular enemies.</div>
                             </div>
                         </div>
 
@@ -276,31 +284,27 @@
                                     <tr><td style="color:#e67e22">Swarm</td><td>8</td><td>Fast</td><td>0%</td><td>Comes in huge numbers</td></tr>
                                 </tbody>
                             </table>
-                            <p class="manual-tip">HP scales exponentially each wave and each level. By wave 20, enemies have ~134x more HP than wave 1. Each new level multiplies all HP by 1.055x on top. Armor reduces ALL incoming damage by its percentage. Fire Arrow burn and Bi-Cannon scorch bypass armor.</p>
+                            <p class="manual-tip">HP scales exponentially each wave. By wave 20, enemies have ~134x more HP than wave 1. Armor reduces ALL incoming damage by its percentage. Fire Arrow burn and Bi-Cannon scorch bypass armor.</p>
                         </div>
 
                         <div class="manual-section">
-                            <h2>Leveling Up</h2>
-                            <p>Each world has infinite levels. Beat all 20 waves to complete a level and advance to the next. Higher levels unlock new towers!</p>
-                            <div class="manual-cards">
-                                <div class="manual-card"><strong>On level up:</strong> Lives reset to 20, towers cleared, gold set to starting amount for that level</div>
-                                <div class="manual-card"><strong>Starting gold:</strong> 150 + (level x 150) gold (L1=300, L2=450, L3=600...)</div>
-                                <div class="manual-card"><strong>HP scaling:</strong> Enemies get 1.055x HP per level (Level 5 = 1.24x, Level 10 = 1.70x)</div>
-                                <div class="manual-card"><strong>Score:</strong> Carries over between levels. Your global record is tracked</div>
-                            </div>
+                            <h2>Wave Progression</h2>
+                            <p>Each world is an endless survival run. New towers and abilities unlock as you reach higher waves. Your best wave record is tracked per map.</p>
                             <table class="manual-table">
-                                <thead><tr><th>Level</th><th>Unlocks</th></tr></thead>
+                                <thead><tr><th>Wave</th><th>Unlocks</th></tr></thead>
                                 <tbody>
-                                    <tr><td>1</td><td>Arrow, Frost, Lightning, Cannon (W2), Sniper (W5) — Serpentine Valley</td></tr>
-                                    <tr><td>2</td><td>Fire Arrow + Deep Frost replace Arrow + Frost</td></tr>
-                                    <tr><td>3</td><td>Hero unit (WASD), 15-wave schedule with Gold Rush + Bounty Boss</td></tr>
-                                    <tr><td>4</td><td>Super Lightning + Bi-Cannon</td></tr>
-                                    <tr><td>5</td><td>Missile Sniper (2x2) — Split Creek map</td></tr>
-                                    <tr><td>6</td><td>Dual spawn points — enemies enter from two sides</td></tr>
-                                    <tr><td>10</td><td>The Gauntlet map</td></tr>
+                                    <tr><td>1</td><td>Arrow, Frost, Lightning</td></tr>
+                                    <tr><td>2</td><td>Cannon</td></tr>
+                                    <tr><td>5</td><td>Sniper</td></tr>
+                                    <tr><td>10</td><td>Fire Arrow + Deep Frost (replace Arrow + Frost)</td></tr>
+                                    <tr><td>20</td><td>Hero unit (WASD movement, Q stun, E gold magnet)</td></tr>
+                                    <tr><td>30</td><td>Super Lightning + Bi-Cannon (replace Lightning + Cannon)</td></tr>
+                                    <tr><td>50</td><td>Missile Sniper (2x2) (replaces Sniper)</td></tr>
+                                    <tr><td>60</td><td>Dual spawn — enemies enter from two sides</td></tr>
+                                    <tr><td>80</td><td>Pulse Cannon</td></tr>
                                 </tbody>
                             </table>
-                            <p class="manual-tip">Your player level is global and saved automatically. It persists across all maps. Your tower panel updates automatically as you unlock new towers!</p>
+                            <p class="manual-tip">Split Creek and The Gauntlet start with some towers pre-unlocked. Your tower panel updates automatically as you reach new wave thresholds!</p>
                         </div>
 
                         <div class="manual-section">
@@ -350,9 +354,9 @@
                                     <tr><td><kbd>Space</kbd></td><td>Pause / Resume</td></tr>
                                     <tr><td><kbd>N</kbd></td><td>Send next wave early</td></tr>
                                     <tr><td><kbd>+</kbd> / <kbd>-</kbd></td><td>Game speed (1x / 2x / 3x)</td></tr>
-                                    <tr><td><kbd>WASD</kbd> / Arrows</td><td>Move hero (Level 3+)</td></tr>
-                                    <tr><td><kbd>Q</kbd></td><td>Hero AoE stun (Level 3+)</td></tr>
-                                    <tr><td><kbd>E</kbd></td><td>Hero gold magnet (Level 3+)</td></tr>
+                                    <tr><td><kbd>WASD</kbd> / Arrows</td><td>Move hero (Wave 20+)</td></tr>
+                                    <tr><td><kbd>Q</kbd></td><td>Hero AoE stun (Wave 20+)</td></tr>
+                                    <tr><td><kbd>E</kbd></td><td>Hero gold magnet (Wave 20+)</td></tr>
                                 </tbody>
                             </table>
                         </div>
@@ -388,7 +392,7 @@
             <div id="reset-screen" class="game-screen">
                 <div class="reset-dialog">
                     <div class="screen-title" style="color:#e74c3c;font-size:32px">Start Over?</div>
-                    <div class="screen-subtitle" style="max-width:340px">This will reset your progress back to Level 1. Your score, unlocks, and trophies will all be cleared.</div>
+                    <div class="screen-subtitle" style="max-width:340px">This will reset all wave records and your score. Your trophies will also be cleared.</div>
                     <div class="screen-subtitle" style="color:#e74c3c;font-weight:700;margin-bottom:20px">This cannot be undone!</div>
                     <div style="display:flex;gap:12px;justify-content:center">
                         <button id="reset-confirm-btn" class="screen-btn" style="background:#e74c3c">Yes, Restart</button>
@@ -400,27 +404,9 @@
             <div id="game-over-screen" class="game-screen">
                 <div class="screen-title">Game Over</div>
                 <div class="screen-subtitle">Your defenses have fallen!</div>
-                <div id="game-over-endless" style="display:none"></div>
+                <div id="game-over-wave" class="screen-score"></div>
                 <div id="game-over-score" class="screen-score"></div>
                 <button id="restart-btn" class="screen-btn">Try Again</button>
-            </div>
-
-            <div id="victory-screen" class="game-screen">
-                <div class="screen-title">Victory!</div>
-                <div class="screen-subtitle">You survived all 20 waves! Excellent strategy!</div>
-                <div id="victory-score" class="screen-score"></div>
-                <button id="restart-btn-victory" class="screen-btn">Play Again</button>
-            </div>
-
-            <div id="level-up-screen" class="game-screen">
-                <div class="screen-title">Level Complete!</div>
-                <div class="screen-subtitle" id="level-up-subtitle"></div>
-                <div id="level-up-bonus" class="screen-score"></div>
-                <div id="level-up-unlock" class="level-up-unlock"></div>
-                <div id="level-up-tower-unlock" class="level-up-unlock"></div>
-                <div id="level-up-hero-unlock" class="level-up-unlock"></div>
-                <canvas id="level-up-avatar" width="80" height="80"></canvas>
-                <button id="level-up-btn" class="screen-btn">Continue</button>
             </div>
         </div>
         <!-- Admin Sidebar -->

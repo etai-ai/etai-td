@@ -1,4 +1,5 @@
-import { WAVES, TOTAL_WAVES, LEVEL_HP_MULTIPLIER, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getWaveHPScale, WAVE_MODIFIERS, MODIFIER_START_WAVE, MODIFIER_CHANCE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, LEVEL_WAVES, getTotalWaves, getWaveTag, DUAL_SPAWN_LEVEL, ENDLESS_GOLDRUSH_INTERVAL } from './constants.js';
+import { WAVES, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getWaveHPScale, WAVE_MODIFIERS, MODIFIER_START_WAVE, MODIFIER_CHANCE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, DUAL_SPAWN_WAVE, GOLDRUSH_INTERVAL } from './constants.js';
+import { Economy } from './economy.js';
 
 export class WaveManager {
     constructor(game) {
@@ -15,7 +16,7 @@ export class WaveManager {
         this.modifierDef = null;  // full modifier object
         this.hpModifier = 1.0;    // horde HP multiplier
 
-        // Special wave tag (goldrush, midboss)
+        // Special wave tag (goldrush)
         this.waveTag = null;
 
         // Spawn state
@@ -42,18 +43,13 @@ export class WaveManager {
         this.betweenWaveTimer = 0;
         this.game.waveElapsed = 0;
 
-        // Set special wave tag
-        this.waveTag = getWaveTag(this.game.worldLevel, this.currentWave);
-        // Endless mode: goldrush every N waves
-        if (this.game.endlessMode && !this.waveTag && this.currentWave % ENDLESS_GOLDRUSH_INTERVAL === 0) {
+        // Goldrush every N waves
+        this.waveTag = null;
+        if (this.currentWave % GOLDRUSH_INTERVAL === 0) {
             this.waveTag = 'goldrush';
         }
         if (this.waveTag === 'goldrush') {
             this.game.particles.spawnBigFloatingText(CANVAS_W / 2, CANVAS_H / 3, 'GOLD RUSH!', '#ffd700');
-        } else if (this.waveTag === 'midboss') {
-            this.game.particles.spawnBigFloatingText(CANVAS_W / 2, CANVAS_H / 3, 'BOUNTY BOSS!', '#2ecc71');
-        } else if (this.waveTag === 'armorbreak') {
-            this.game.particles.spawnBigFloatingText(CANVAS_W / 2, CANVAS_H / 3, 'ARMOR BREAK!', '#ff8800');
         }
 
         // Roll for wave modifier
@@ -86,20 +82,19 @@ export class WaveManager {
         this.groupTimers = waveDef.map(g => g.delay || 0);
         this.groupIndices = waveDef.map(() => 0);
 
+        // Trigger wave threshold unlocks
+        this.game.onWaveThreshold(this.currentWave);
+
         this.game.debug.onWaveStart(this.game);
         this.game.audio.playWaveStart();
     }
 
     getWaveDefinition(waveNum) {
-        // Check level-specific wave overrides first
-        const override = LEVEL_WAVES[this.game.worldLevel];
-        if (override && waveNum <= override.waves.length) {
-            return override.waves[waveNum - 1].map(g => ({ ...g }));
-        }
-        if (waveNum <= TOTAL_WAVES) {
+        // Intro waves 1-5 from hand-crafted definitions
+        if (waveNum <= WAVES.length) {
             return WAVES[waveNum - 1].map(g => ({ ...g }));
         }
-        // Procedural waves after defined waves
+        // Wave 6+: procedural generation
         return this.generateWave(waveNum);
     }
 
@@ -143,8 +138,7 @@ export class WaveManager {
         if (!this.spawning) return;
 
         const mapMul = this.game.map.def.worldHpMultiplier || 1;
-        const levelMultiplier = Math.pow(LEVEL_HP_MULTIPLIER, this.game.worldLevel - 1);
-        const hpScale = getWaveHPScale(this.currentWave) * mapMul * levelMultiplier * this.hpModifier;
+        const hpScale = getWaveHPScale(this.currentWave) * mapMul * this.hpModifier;
         let allDone = true;
 
         for (let g = 0; g < this.spawnGroups.length; g++) {
@@ -155,7 +149,7 @@ export class WaveManager {
             this.groupTimers[g] -= dt;
 
             if (this.groupTimers[g] <= 0) {
-                const useSecondary = (this.game.worldLevel >= DUAL_SPAWN_LEVEL) && (this.spawnCounter % 2 === 1);
+                const useSecondary = (this.game.getEffectiveWave() >= DUAL_SPAWN_WAVE) && (this.spawnCounter % 2 === 1);
                 this.game.enemies.spawn(group.type, hpScale, this.modifier, useSecondary);
                 this.spawnCounter++;
                 this.groupIndices[g]++;
@@ -170,7 +164,6 @@ export class WaveManager {
 
     getNextWavePreview() {
         const nextWave = this.currentWave + 1;
-        if (!this.game.endlessMode && nextWave > getTotalWaves(this.game.worldLevel)) return null;
         const waveDef = this.getWaveDefinition(nextWave);
         // Aggregate by type
         const counts = {};
@@ -193,7 +186,12 @@ export class WaveManager {
         // Achievement: wave completion checks
         const debugReport = this.game.debug.getLastReport();
         const livesLost = debugReport ? (debugReport.livesLost || 0) : 0;
-        this.game.achievements.check('waveComplete', { livesLost });
+        this.game.achievements.check('waveComplete', {
+            livesLost,
+            wave: this.currentWave,
+            heroActive: this.game.hero.active,
+            heroDeaths: this.game.heroDeathsThisLevel || 0,
+        });
         if (this.game.speed === 3) {
             this.game.achievements.increment('wavesAt3x');
         }
@@ -210,11 +208,8 @@ export class WaveManager {
 
         this.game.particles.spawnFloatingText(CANVAS_W / 2, CANVAS_H / 3, `Wave ${this.currentWave} Complete! +${bonus + interest}g`, '#ffd700');
 
-        // Level up after completing all waves (skip in endless mode)
-        if (!this.game.endlessMode && this.currentWave >= getTotalWaves(this.game.worldLevel)) {
-            this.game.levelUp();
-            return;
-        }
+        // Save wave record as you progress
+        Economy.setWaveRecord(this.game.selectedMapId, this.currentWave);
 
         this.game.ui.update();
     }

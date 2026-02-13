@@ -1,14 +1,13 @@
 import { CELL, COLS, ROWS, STATE, TOWER_TYPES } from './constants.js';
-import { Economy } from './economy.js';
 import { worldToGrid } from './utils.js';
 
 function buildTowerKeys(game) {
-    const worldLevel = game.worldLevel || 0;
+    const effectiveWave = game.getEffectiveWave ? game.getEffectiveWave() : 0;
     const keys = {};
     let idx = 1;
     for (const [type, def] of Object.entries(TOWER_TYPES)) {
-        if (def.maxLevel && worldLevel > def.maxLevel) continue;
-        if (def.unlockLevel && worldLevel < def.unlockLevel) continue;
+        if (def.maxWave && effectiveWave > def.maxWave) continue;
+        if (def.unlockWave && effectiveWave < def.unlockWave) continue;
         keys[String(idx)] = type;
         idx++;
     }
@@ -370,24 +369,14 @@ export class InputHandler {
                     this.game.blowThemAll();
                 }
                 break;
-            case 'l':
-            case 'L':
-                if (this.game.adminMode) {
-                    const cur = this.game.worldLevel || (Economy.getPlayerLevel() + 1);
-                    const l = prompt(`Set level (current: ${cur}):`);
-                    const ln = parseInt(l);
-                    if (ln > 0) this.game.adminSetLevel(ln);
-                }
-                break;
             case 'r':
             case 'R':
                 if (this.game.adminMode) {
-                    if (confirm(`Clear record & reset player level?`)) {
-                        Economy.clearRecord();
-                        Economy.clearPlayerLevel();
+                    if (confirm(`Clear all records?`)) {
+                        localStorage.removeItem('td_wave_record');
+                        localStorage.removeItem('td_high_score');
                         this.game.economy.record = 0;
                         this.game.economy.score = 0;
-                        this.game.adminSetLevel(1);
                     }
                 }
                 break;
@@ -399,8 +388,8 @@ export class InputHandler {
 
     selectTowerType(type) {
         const def = TOWER_TYPES[type];
-        if (def.unlockWave && this.game.waves.currentWave < def.unlockWave) return;
-        if (def.unlockLevel && this.game.worldLevel < def.unlockLevel) return;
+        const effectiveWave = this.game.getEffectiveWave ? this.game.getEffectiveWave() : 0;
+        if (def.unlockWave && effectiveWave < def.unlockWave) return;
         if (this.game.economy.canAfford(def.cost)) {
             this.selectedTowerType = type;
             this.selectedTower = null;
