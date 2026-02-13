@@ -14,6 +14,7 @@ You have a global player level that persists across all games. Beat all waves on
 | 4 | Super Lightning + Bi-Cannon |
 | 5 | Missile Sniper (2x2), Split Creek map |
 | 6 | Dual spawn points — enemies alternate from left and right entries |
+| 8 | Pulse Cannon tower |
 | 10 | The Gauntlet map |
 
 Enemies get 1.04x HP per level, so higher levels are progressively harder. Your tower panel updates automatically as you unlock new towers — Arrow and Frost are replaced by Fire Arrow and Deep Frost at Level 2.
@@ -191,6 +192,20 @@ A massive emplacement that takes up 4 grid cells (2x2). Fires homing missiles th
 
 **Total investment:** $825 fully upgraded. The only tower that occupies a 2x2 area — plan placement carefully. Homing missiles never miss. At max level, crits hit for 576 splash damage. Dominates late-game waves.
 
+### Level 8 Unlock
+
+#### Pulse Cannon ($300)
+
+A teal energy cannon that fires shockwave pulses, dealing splash damage and knocking enemies backward along the path. Forces enemies to re-walk sections of the path, giving all your towers extra shots.
+
+| Level | Damage | Range | Fire Rate | Splash Radius | Knockback | Upgrade Cost |
+|-------|--------|-------|-----------|---------------|-----------|-------------|
+| 1 | 20 | 3.5 | 0.56/s | 1.2 | 1.0 cells | — |
+| 2 | 30 | 4.0 | 0.67/s | 1.5 | 1.5 cells | $150 |
+| 3 | 45 | 4.5 | 0.77/s | 1.8 | 2.0 cells | $250 |
+
+**Total investment:** $700 fully upgraded. Knockback pushes enemies backward along their path — bosses are immune, tanks resist 50%. Each enemy can only be knocked back twice, then becomes immune to further pushback. Best placed mid-path where knockback forces enemies back through your killzone.
+
 ## Enemies
 
 | Type | Shape | HP | Speed | Armor | Special | Lives Lost |
@@ -290,6 +305,7 @@ Bosses appear more frequently from wave 15 onward, including waves 17, 18, and 1
 - **Deep Frost + Lightning/Super Lightning:** Frozen enemies can't move, giving chain attacks more time to bounce between targets.
 - **Missile Sniper + Deep Frost:** Freeze groups together, then splash them all with a crit missile for devastating AoE.
 - **Sniper (Strongest) + Lightning (First):** Sniper focuses the boss while lightning clears the escort wave.
+- **Pulse Cannon + Any Damage Tower:** Knockback forces enemies to re-walk through your killzone, effectively doubling tower uptime. Place pulse mid-path with damage towers covering the same stretch.
 
 ### Tower Placement Tips
 

@@ -322,6 +322,7 @@ arrow: {
 | Super Lightning | Level 4 | $250 | — |
 | Bi-Cannon | Level 4 | $200 | — |
 | Missile Sniper | Level 5 | $325 (2x2) | — |
+| Pulse Cannon | Level 8 | $300 | — |
 
 **Special tower mechanics:**
 
@@ -336,6 +337,7 @@ arrow: {
 | Bi-Cannon | `heavyEvery`, `shredPercent`, `scorchDPS` | Dual barrel, armor shred, scorch zones |
 | Sniper | `critChance`, `critMulti` | Random crit hits for bonus damage |
 | Missile Sniper | `splashRadius`, `critChance`, `critMulti` | 2x2, homing missiles, splash + crit |
+| Pulse Cannon | `splashRadius`, `knockbackDist` | Splash + knockback, pushes enemies backward along path. Bosses immune, tanks 50% resistance, max 2 knockbacks per enemy |
 
 ### Burn Mechanic (Fire Arrow)
 
@@ -722,6 +724,7 @@ Clicking a placed tower shows a detailed info card with all stats and upgrade pr
 - **Particle explosions:** Object-pooled system (500 max) for enemy deaths and Kill All.
 - **Burn visual:** Orange glow ring + flickering flame particles on burning enemies.
 - **Fire Arrow ambient:** Flickering ember glow + orbiting embers on placed fire arrow towers.
+- **Point lighting:** Up to 32 dynamic point lights in the composite shader pass. Towers emit colored glow (scaling with upgrade level), projectiles carry moving lights, hero has cyan aura, scorch zones glow orange-red. Per-map ambient darkness (Serpentine 0.25, Creek 0.10, Gauntlet 0.35). Flash lights for explosions, boss deaths, and hero abilities. Configured via `TOWER_LIGHT_DEFS` and `MAP_AMBIENT_DARKNESS` in `constants.js`.
 
 ---
 

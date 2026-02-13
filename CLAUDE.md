@@ -59,6 +59,7 @@ Press backtick (`` ` ``) to toggle the admin panel with real-time DPS/efficiency
 - `UNPACK_FLIP_Y_WEBGL` is set to `true` to prevent Y-inversion when uploading canvas textures
 - Effect triggers: `flash(intensity, duration)`, `shockwave(nx, ny, intensity)`, `aberration(intensity, duration)`
 - Per-map tints set in `game.selectMap()`: Serpentine warm green, Split Creek cool blue, Gauntlet hot red
+- **Point lighting:** Up to 32 dynamic lights computed in the composite pass (pass 1). Towers emit colored glow (scales with upgrade level), projectiles carry moving lights, hero has cyan aura, scorch zones glow orange-red. Per-map ambient darkness dims the scene (Serpentine 0.25, Creek 0.10, Gauntlet 0.35); lights restore/amplify brightness. Quartic attenuation `(1-t²)²` with aspect ratio correction. Flash lights (`addFlashLight`) decay over time for explosions, boss deaths, and hero abilities. All light methods bail with `if (!this.enabled) return` — zero cost when PostFX off. Light registration happens in `game.registerLights()` called before `postfx.render()` in `tick()`.
 
 ## Hero Unit (Level 3+)
 
@@ -86,6 +87,7 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 - Hero WASD keys conflict with admin hotkeys (W=wave, D=download) when admin mode is active
 - PostFX canvas textures need `UNPACK_FLIP_Y_WEBGL = true` or the image renders upside-down
 - Screen flash in `renderer.js` is gated behind `!postfx.enabled` — the PostFX shader handles flash when active
+- Knockback has a per-enemy limit of 2 (`enemy.knockbackCount`) — after 2 knockbacks, further knockback is ignored (bosses are always immune)
 
 ## UI Features
 
