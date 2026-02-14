@@ -225,6 +225,11 @@ export class WaveManager {
                         const wavesIntoDual = effectiveWave - DUAL_SPAWN_WAVE - 1;
                         const chance = Math.min(DUAL_SPAWN_START_PCT + wavesIntoDual * DUAL_SPAWN_RAMP_PCT, DUAL_SPAWN_MAX_PCT);
                         useSecondary = Math.random() < chance;
+                        // No heavy enemies on secondary during first 5 dual-spawn waves
+                        if (useSecondary && wavesIntoDual < 5) {
+                            const t = group.type;
+                            if (t === 'tank' || t === 'boss' || t === 'megaboss') useSecondary = false;
+                        }
                     }
                     this.game.enemies.spawn(group.type, hpScale, this.modifier, useSecondary);
                     this.spawnCounter++;
