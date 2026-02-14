@@ -188,7 +188,7 @@ export class Hero {
         let closestDist = Infinity;
 
         for (const e of game.enemies.enemies) {
-            if (!e.alive) continue;
+            if (!e.alive || e.flying) continue;
             const d = distance(this, e);
             if (d <= rangePx && d < closestDist) {
                 closestDist = d;
@@ -239,7 +239,7 @@ export class Hero {
         const heroR = HERO_STATS.radius;
 
         for (const e of game.enemies.enemies) {
-            if (!e.alive) continue;
+            if (!e.alive || e.flying) continue;
             const d = distance(this, e);
             if (d < heroR + e.radius) {
                 const multi = HERO_STATS.contactMultipliers[e.type] || 1;

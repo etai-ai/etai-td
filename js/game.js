@@ -374,7 +374,7 @@ export class Game {
             }
             // Damage enemies in zone (bypasses armor like burn)
             for (const e of this.enemies.enemies) {
-                if (!e.alive) continue;
+                if (!e.alive || e.flying) continue;
                 const dx = e.x - zone.x;
                 const dy = e.y - zone.y;
                 if (dx * dx + dy * dy <= zone.radius * zone.radius) {

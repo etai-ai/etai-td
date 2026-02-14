@@ -64,6 +64,37 @@ export class Enemy {
         // Boss enrage (when last enemy alive)
         this.enraged = false;
 
+        // Flying state (spawns at exit, flies backward to midpoint, then walks)
+        this.flying = false;
+        this.flyTarget = null;
+        this.landingIndex = 0;
+        if (typeName === 'flying') {
+            this.flying = true;
+            this.flySpeed = 110; // px/s (slow glide)
+            // Start at the exit (last waypoint)
+            const lastWP = path[path.length - 1];
+            this.x = lastWP.x;
+            this.y = lastWP.y;
+            // Pick a landing waypoint between 40-60% of path
+            const minIdx = Math.floor(path.length * 0.4);
+            const maxIdx = Math.floor(path.length * 0.6);
+            this.landingIndex = minIdx + Math.floor(Math.random() * (maxIdx - minIdx + 1));
+            this.flyTarget = { x: path[this.landingIndex].x, y: path[this.landingIndex].y };
+            // Store starting position for altitude calculation
+            this.flyOrigin = { x: lastWP.x, y: lastWP.y };
+            // Curvy flight: progress along direct line + perpendicular sine offset
+            const fdx = this.flyTarget.x - lastWP.x;
+            const fdy = this.flyTarget.y - lastWP.y;
+            this.flyTotalDist = Math.sqrt(fdx * fdx + fdy * fdy) || 1;
+            this.flyDirX = fdx / this.flyTotalDist;
+            this.flyDirY = fdy / this.flyTotalDist;
+            this.flyPerpX = -this.flyDirY; // perpendicular
+            this.flyPerpY = this.flyDirX;
+            this.flyProgress = 0; // 0→1
+            this.flyAmplitude = 60 + Math.random() * 40; // 60-100px sine offset
+            this.flyFrequency = 2 + Math.random(); // 2-3 full sine cycles
+        }
+
         // Visual
         this.angle = 0;
         this.walkPhase = Math.random() * Math.PI * 2;
@@ -247,6 +278,31 @@ export class Enemy {
             this.hp = Math.min(this.maxHP, this.hp + this.regenRate * dt);
         }
 
+        // Flying movement: curvy sine path toward landing target
+        if (this.flying) {
+            const prevX = this.x, prevY = this.y;
+            this.flyProgress += (this.flySpeed * dt) / this.flyTotalDist;
+            if (this.flyProgress >= 1) {
+                // Landed
+                this.x = this.flyTarget.x;
+                this.y = this.flyTarget.y;
+                this.flying = false;
+                this.waypointIndex = this.landingIndex;
+                this.flyTarget = null;
+            } else {
+                // Base position along direct line
+                const baseX = this.flyOrigin.x + this.flyDirX * this.flyTotalDist * this.flyProgress;
+                const baseY = this.flyOrigin.y + this.flyDirY * this.flyTotalDist * this.flyProgress;
+                // Sine offset perpendicular to flight direction, fades to 0 at endpoints
+                const envelope = Math.sin(this.flyProgress * Math.PI); // 0 at start/end, 1 at midpoint
+                const sineOff = Math.sin(this.flyProgress * this.flyFrequency * Math.PI * 2) * this.flyAmplitude * envelope;
+                this.x = baseX + this.flyPerpX * sineOff;
+                this.y = baseY + this.flyPerpY * sineOff;
+            }
+            this.angle = Math.atan2(this.y - prevY, this.x - prevX);
+            return;
+        }
+
         const currentSpeed = (this.isFrozen || this.isShocked) ? 0 : this.baseSpeed * this.slowFactor;
 
         // Move toward next waypoint
@@ -288,7 +344,8 @@ export class EnemyManager {
     }
 
     spawn(typeName, hpScale, modifier, useSecondary) {
-        const enemy = new Enemy(typeName, hpScale, this.game.map.getEnemyPath(useSecondary));
+        // Flying enemies always use primary path (they start at the exit)
+        const enemy = new Enemy(typeName, hpScale, this.game.map.getEnemyPath(typeName === 'flying' ? false : useSecondary));
         if (modifier) enemy.applyModifier(modifier);
         // Armor break wave tag — halve armor
         if (this.game.waves.waveTag === 'armorbreak') {
@@ -385,8 +442,8 @@ export class EnemyManager {
                 continue;
             }
 
-            // Dust particles while walking
-            if (e.alive && e.dustTimer >= 0.2) {
+            // Dust particles while walking (not while flying)
+            if (e.alive && !e.flying && e.dustTimer >= 0.2) {
                 e.dustTimer = 0;
                 this.game.particles.spawnDust(e.x, e.y + e.radius * 0.5, 1);
             }
@@ -407,7 +464,7 @@ export class EnemyManager {
     getEnemiesInRange(x, y, range) {
         const rangePx = range * CELL;
         return this.enemies.filter(e =>
-            e.alive && distance({ x, y }, e) <= rangePx
+            e.alive && !e.flying && distance({ x, y }, e) <= rangePx
         );
     }
 

@@ -130,7 +130,7 @@ export class Projectile {
             if (this.isHeavy && this.armorShred > 0) {
                 const splashPx = splashRad * CELL;
                 for (const e of game.enemies.enemies) {
-                    if (!e.alive) continue;
+                    if (!e.alive || e.flying) continue;
                     if (distance(this, e) <= splashPx) {
                         e.applyArmorShred(this.armorShred, this.shredDuration);
                     }
@@ -145,7 +145,7 @@ export class Projectile {
             if (this.knockbackDist > 0) {
                 const kbSplashPx = splashRad * CELL;
                 for (const e of game.enemies.enemies) {
-                    if (!e.alive || e.deathTimer >= 0) continue;
+                    if (!e.alive || e.flying || e.deathTimer >= 0) continue;
                     if (distance(this, e) > kbSplashPx) continue;
                     e.applyKnockback(this.knockbackDist);
                 }
@@ -187,7 +187,7 @@ export class Projectile {
         const splashPx = (radius || this.splashRadius) * CELL;
         const enemies = game.enemies.enemies;
         for (const e of enemies) {
-            if (!e.alive) continue;
+            if (!e.alive || e.flying) continue;
             const dist = distance(this, e);
             if (dist <= splashPx) {
                 // Falloff: 100% at center, 50% at edge
@@ -254,7 +254,7 @@ export class Projectile {
 
                 // Find fork targets from this enemy
                 for (const e of game.enemies.enemies) {
-                    if (!e.alive || hit.has(e.id)) continue;
+                    if (!e.alive || e.flying || hit.has(e.id)) continue;
                     if (distance(enemy, e) <= chainPx) {
                         // Draw lightning arc
                         game.particles.spawnLightning(enemy.x, enemy.y, e.x, e.y);
@@ -274,7 +274,7 @@ export class Projectile {
         let bestDist = Infinity;
 
         for (const e of game.enemies.enemies) {
-            if (!e.alive || hitSet.has(e.id)) continue;
+            if (!e.alive || e.flying || hitSet.has(e.id)) continue;
             const d = distance(from, e);
             if (d <= chainPx && d < bestDist) {
                 bestDist = d;

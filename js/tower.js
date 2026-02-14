@@ -109,7 +109,7 @@ export class Tower {
     findTarget(enemies) {
         const rangePx = this.range * CELL;
         const inRange = enemies.filter(e =>
-            e.alive && distance(this, e) <= rangePx
+            e.alive && !e.flying && distance(this, e) <= rangePx
         );
 
         if (inRange.length === 0) return null;

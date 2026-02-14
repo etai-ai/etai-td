@@ -111,11 +111,19 @@ export class WaveManager {
 
     getWaveDefinition(waveNum) {
         // Intro waves 1-5 from hand-crafted definitions
+        let def;
         if (waveNum <= WAVES.length) {
-            return WAVES[waveNum - 1].map(g => ({ ...g }));
+            def = WAVES[waveNum - 1].map(g => ({ ...g }));
+        } else {
+            // Wave 6+: procedural generation
+            def = this.generateWave(waveNum);
         }
-        // Wave 6+: procedural generation
-        return this.generateWave(waveNum);
+        // Append flying enemies: 1 at wave 15, scaling to 10 by wave 30
+        if (waveNum >= DUAL_SPAWN_WAVE) {
+            const flyCount = Math.min(10, 1 + Math.round((waveNum - DUAL_SPAWN_WAVE) * 9 / 15));
+            def.push({ type: 'flying', count: flyCount, interval: 0.8, delay: 0 });
+        }
+        return def;
     }
 
     generateWave(waveNum) {

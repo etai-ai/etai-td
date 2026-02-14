@@ -533,6 +533,29 @@ export class Renderer {
         ctx.closePath();
     }
 
+    drawWing(ctx, x, y, r) {
+        // Bird/bat silhouette: diamond body with swept wings
+        ctx.beginPath();
+        // Body diamond
+        ctx.moveTo(x, y - r * 0.7);
+        ctx.lineTo(x + r * 0.35, y);
+        ctx.lineTo(x, y + r * 0.7);
+        ctx.lineTo(x - r * 0.35, y);
+        ctx.closePath();
+        // Right wing
+        ctx.moveTo(x + r * 0.3, y - r * 0.1);
+        ctx.lineTo(x + r * 1.4, y - r * 0.6);
+        ctx.lineTo(x + r * 1.1, y + r * 0.1);
+        ctx.lineTo(x + r * 0.3, y + r * 0.1);
+        ctx.closePath();
+        // Left wing
+        ctx.moveTo(x - r * 0.3, y - r * 0.1);
+        ctx.lineTo(x - r * 1.4, y - r * 0.6);
+        ctx.lineTo(x - r * 1.1, y + r * 0.1);
+        ctx.lineTo(x - r * 0.3, y + r * 0.1);
+        ctx.closePath();
+    }
+
     drawEnemyShape(ctx, e, x, y, r) {
         switch (e.type) {
             case 'grunt':
@@ -552,6 +575,9 @@ export class Renderer {
                 break;
             case 'swarm':
                 this.drawTriangle(ctx, x, y, r, e.angle);
+                break;
+            case 'flying':
+                this.drawWing(ctx, x, y, r);
                 break;
             default:
                 ctx.beginPath();
@@ -579,9 +605,16 @@ export class Renderer {
             }
 
             // Walk bob
-            const bob = e.alive && !isDying ? Math.sin(e.walkPhase) * 1.5 : 0;
+            const bob = e.alive && !isDying && !e.flying ? Math.sin(e.walkPhase) * 1.5 : 0;
             const drawX = e.x;
-            const drawY = e.y + bob;
+
+            // Flying altitude: arc peaking at 40px, using sine envelope on progress
+            let altitude = 0;
+            if (e.flying && e.flyProgress !== undefined) {
+                altitude = Math.sin(e.flyProgress * Math.PI) * 40;
+            }
+
+            const drawY = e.y + bob - altitude;
             const r = e.radius * scale;
 
             ctx.globalAlpha = alpha;
@@ -594,8 +627,9 @@ export class Renderer {
                 ctx.translate(-drawX, -drawY);
             }
 
-            // Shadow
-            ctx.fillStyle = 'rgba(0,0,0,0.2)';
+            // Shadow (drawn at ground level; larger offset when flying)
+            const shadowAlpha = e.flying ? 0.12 : 0.2;
+            ctx.fillStyle = `rgba(0,0,0,${shadowAlpha})`;
             ctx.beginPath();
             ctx.ellipse(drawX + 2, e.y + 2 + e.radius * 0.3, r, r * 0.5, 0, 0, Math.PI * 2);
             ctx.fill();

@@ -406,9 +406,9 @@ export const TOWER_TYPES = {
         slow: true,
         maxWave: 9,
         levels: [
-            { damage: 5, range: 3.0, fireRate: 0.8, projSpeed: 250, slowFactor: 0.5, slowDuration: 2.0 },
-            { damage: 8, range: 3.5, fireRate: 0.7, projSpeed: 270, slowFactor: 0.4, slowDuration: 2.5, upgradeCost: 55 },
-            { damage: 12, range: 4.0, fireRate: 0.6, projSpeed: 290, slowFactor: 0.3, slowDuration: 3.0, upgradeCost: 100 },
+            { damage: 5, range: 3.0, fireRate: 0.8, projSpeed: 250, slowFactor: 0.575, slowDuration: 2.0 },
+            { damage: 8, range: 3.5, fireRate: 0.7, projSpeed: 270, slowFactor: 0.49, slowDuration: 2.5, upgradeCost: 55 },
+            { damage: 13, range: 4.0, fireRate: 0.6, projSpeed: 290, slowFactor: 0.405, slowDuration: 3.0, upgradeCost: 100 },
         ],
     },
     deepfrost: {
@@ -418,9 +418,9 @@ export const TOWER_TYPES = {
         aura: true,
         unlockWave: 10,
         levels: [
-            { damage: 10, range: 3.0, fireRate: 1.2, slowFactor: 0.6, slowDuration: 1.5, freezeChance: 0.10, freezeDuration: 0.8 },
-            { damage: 16, range: 3.5, fireRate: 0.85, slowFactor: 0.5, slowDuration: 2.0, freezeChance: 0.15, freezeDuration: 1.0, upgradeCost: 100 },
-            { damage: 24, range: 4.0, fireRate: 0.7, slowFactor: 0.4, slowDuration: 2.5, freezeChance: 0.20, freezeDuration: 1.2, upgradeCost: 175 },
+            { damage: 11, range: 3.0, fireRate: 1.2, slowFactor: 0.66, slowDuration: 1.5, freezeChance: 0.10, freezeDuration: 0.8 },
+            { damage: 17, range: 3.5, fireRate: 0.85, slowFactor: 0.575, slowDuration: 2.0, freezeChance: 0.15, freezeDuration: 1.0, upgradeCost: 100 },
+            { damage: 25, range: 4.0, fireRate: 0.7, slowFactor: 0.49, slowDuration: 2.5, freezeChance: 0.20, freezeDuration: 1.2, upgradeCost: 175 },
         ],
     },
     lightning: {
@@ -556,11 +556,11 @@ export const WAVE_GEN = {
     COUNT_BASE: 4,             // base enemies per group
     COUNT_PER_WAVE: 0.6,       // +N enemies per wave
     COUNT_RANDOM: 4,           // random variance on count
-    COUNT_MULTIPLIER: 0.85,    // global enemy count scalar
+    COUNT_MULTIPLIER: 0.82,    // global enemy count scalar
     INTERVAL_BASE: 0.8,        // base spawn interval (seconds)
     INTERVAL_DECAY: 0.01,      // interval shrinks per wave
     INTERVAL_MIN: 0.30,        // floor for spawn interval
-    INTERVAL_MULTI: { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3 },
+    INTERVAL_MULTI: { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3, flying: 1.0 },
     GROUP_OVERLAP: 0.5,        // next group starts at this fraction of previous
     GROUP_GAP_MIN: 1.0,        // min gap between groups (seconds)
     GROUP_GAP_RANDOM: 1.5,     // random extra gap
@@ -619,7 +619,7 @@ export const ENEMY_TYPES = {
     },
     boss: {
         name: 'Boss',
-        baseHP: 400,
+        baseHP: 388,
         speed: 26,     // (+15%)
         reward: 42,
         livesCost: 5,
@@ -635,6 +635,16 @@ export const ENEMY_TYPES = {
         livesCost: 1,
         color: '#e67e22',
         radius: 6,
+        armor: 0,
+    },
+    flying: {
+        name: 'Flying',
+        baseHP: 25,
+        speed: 80,
+        reward: 8,
+        livesCost: 1,
+        color: '#9b59b6',
+        radius: 11,
         armor: 0,
     },
 };
