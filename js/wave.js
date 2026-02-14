@@ -124,11 +124,10 @@ export class WaveManager {
             // Wave 6+: procedural generation
             def = this.generateWave(waveNum);
         }
-        // Append flying enemies: offset by startingWaveHP so advanced maps get them earlier
-        const hpOffset = this.game?.map?.def?.startingWaveHP || 0;
-        const flyWave = waveNum + hpOffset;
-        if (flyWave >= FLYING_START_WAVE) {
-            const flyCount = Math.min(10, 1 + Math.round((flyWave - FLYING_START_WAVE) * 9 / 13));
+        // Append flying enemies (per-map flyingStartWave, default FLYING_START_WAVE)
+        const flyStart = this.game?.map?.def?.flyingStartWave ?? FLYING_START_WAVE;
+        if (waveNum >= flyStart) {
+            const flyCount = Math.min(10, 1 + Math.round((waveNum - flyStart) * 9 / 13));
             def.push({ type: 'flying', count: flyCount, interval: 0.8, delay: 0 });
         }
         return def;

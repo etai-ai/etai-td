@@ -148,6 +148,7 @@ export const MAP_DEFS = {
         startingUnlocks: 30,
         startingWaveHP: 5,
         startingGold: 1000,
+        flyingStartWave: 7,
         environment: 'desert',
         description: 'The path forks midway — enemies randomly pick a branch.',
         layouts: [
@@ -272,6 +273,7 @@ export const MAP_DEFS = {
         startingUnlocks: 50,
         startingWaveHP: 15,
         startingGold: 1000,
+        flyingStartWave: 2,
         environment: 'lava',
         description: 'A short direct path — enemies arrive fast, every tower counts.',
         layouts: [
