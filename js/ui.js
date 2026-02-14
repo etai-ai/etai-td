@@ -865,8 +865,8 @@ export class UI {
                 extras += `<div class="unlock-extra" style="color:#00e5ff">HERO UNLOCKED! Move with WASD, Q to stun, E for gold magnet</div>`;
             }
             if (unlock.dualSpawn) {
-                extras += `<div class="unlock-extra" style="color:#e74c3c;font-size:1.3em;font-weight:bold">&#x26A0; Enemies now attack from two sides!</div>`;
-                extras += `<div class="unlock-extra" style="color:#e74c3c;font-size:0.85em;opacity:0.85">Starting slow — ramps up over the next 8 waves</div>`;
+                extras += `<div class="unlock-extra" style="color:#e74c3c;font-size:1.3em;font-weight:bold">&#x26A0; Enemies will attack from two sides!</div>`;
+                extras += `<div class="unlock-extra" style="color:#e74c3c;font-size:0.85em;opacity:0.85">+100g — Build defenses on the second path now! Dual spawning begins next wave.</div>`;
             }
         }
 

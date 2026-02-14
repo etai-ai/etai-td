@@ -133,9 +133,9 @@ export class WaveManager {
             const type = available[Math.floor(Math.random() * available.length)];
             lastType = type;
 
-            // Ease enemy count during dual spawn introduction (waves 15-20)
-            const dualEase = (waveNum >= DUAL_SPAWN_WAVE && waveNum < DUAL_SPAWN_WAVE + 5)
-                ? 0.70 + (waveNum - DUAL_SPAWN_WAVE) * 0.06 : 1.0;
+            // Ease enemy count during dual spawn ramp (waves 16-20)
+            const dualEase = (waveNum > DUAL_SPAWN_WAVE && waveNum <= DUAL_SPAWN_WAVE + 5)
+                ? 0.70 + (waveNum - DUAL_SPAWN_WAVE - 1) * 0.06 : 1.0;
             const count = Math.floor((W.COUNT_BASE + waveNum * W.COUNT_PER_WAVE + Math.random() * W.COUNT_RANDOM) * W.COUNT_MULTIPLIER * dualEase);
             const baseInterval = Math.max(W.INTERVAL_MIN, W.INTERVAL_BASE - waveNum * W.INTERVAL_DECAY);
             const interval = baseInterval * (W.INTERVAL_MULTI[type] || 1.0);
@@ -191,12 +191,12 @@ export class WaveManager {
             this.groupTimers[g] -= dt;
 
             if (this.groupTimers[g] <= 0) {
-                // Gradual dual-spawn ramp over 8 waves: ~6% → 50%
+                // Dual-spawn ramp: wave 15 = 0% (build phase), wave 16+ ramps 8%→50%
                 let useSecondary = false;
                 const effectiveWave = this.game.getEffectiveWave();
-                if (effectiveWave >= DUAL_SPAWN_WAVE) {
-                    const wavesIntoDual = effectiveWave - DUAL_SPAWN_WAVE;
-                    const chance = Math.min(0.06 + wavesIntoDual * 0.063, 0.50);
+                if (effectiveWave > DUAL_SPAWN_WAVE) {
+                    const wavesIntoDual = effectiveWave - DUAL_SPAWN_WAVE - 1;
+                    const chance = Math.min(0.08 + wavesIntoDual * 0.06, 0.50);
                     useSecondary = Math.random() < chance;
                 }
                 this.game.enemies.spawn(group.type, hpScale, this.modifier, useSecondary);

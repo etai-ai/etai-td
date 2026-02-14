@@ -206,6 +206,11 @@ export class Game {
                     this.hero.init(this.map);
                     this.particles.spawnAuraPulse(this.hero.x, this.hero.y, 60, HERO_STATS.color);
                 }
+
+                // Dual spawn bonus gold to help build secondary defenses
+                if (unlock.dualSpawn) {
+                    this.economy.addGold(100);
+                }
             }
         }
 
