@@ -424,9 +424,9 @@ export const TOWER_TYPES = {
         aura: true,
         unlockWave: 10,
         levels: [
-            { damage: 11, range: 3.0, fireRate: 1.2, slowFactor: 0.66, slowDuration: 1.5, freezeChance: 0.10, freezeDuration: 0.8 },
-            { damage: 17, range: 3.5, fireRate: 0.85, slowFactor: 0.575, slowDuration: 2.0, freezeChance: 0.15, freezeDuration: 1.0, upgradeCost: 100 },
-            { damage: 25, range: 4.0, fireRate: 0.7, slowFactor: 0.49, slowDuration: 2.5, freezeChance: 0.20, freezeDuration: 1.2, upgradeCost: 175 },
+            { damage: 14, range: 3.0, fireRate: 1.2, slowFactor: 0.66, slowDuration: 1.5, freezeChance: 0.10, freezeDuration: 0.8 },
+            { damage: 22, range: 3.5, fireRate: 0.85, slowFactor: 0.575, slowDuration: 2.0, freezeChance: 0.15, freezeDuration: 1.0, upgradeCost: 100 },
+            { damage: 30, range: 4.0, fireRate: 0.7, slowFactor: 0.49, slowDuration: 2.5, freezeChance: 0.20, freezeDuration: 1.2, upgradeCost: 175 },
         ],
     },
     lightning: {
