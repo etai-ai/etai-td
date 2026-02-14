@@ -639,7 +639,7 @@ export const ENEMY_TYPES = {
     },
     swarm: {
         name: 'Swarm',
-        baseHP: 6,
+        baseHP: 5,
         speed: 105,    // (+15%)
         reward: 4,
         livesCost: 1,
@@ -649,7 +649,7 @@ export const ENEMY_TYPES = {
     },
     flying: {
         name: 'Flying',
-        baseHP: 13,
+        baseHP: 12,
         speed: 97,
         reward: 10,
         livesCost: 1,
