@@ -597,7 +597,7 @@ export const ENEMY_TYPES = {
     },
     runner: {
         name: 'Runner',
-        baseHP: 16,
+        baseHP: 14,
         speed: 125,    // (+15%)
         reward: 5,
         livesCost: 1,
@@ -607,7 +607,7 @@ export const ENEMY_TYPES = {
     },
     tank: {
         name: 'Tank',
-        baseHP: 98,
+        baseHP: 95,
         speed: 40,     // (+15%)
         reward: 14,
         livesCost: 2,
@@ -617,7 +617,7 @@ export const ENEMY_TYPES = {
     },
     healer: {
         name: 'Healer',
-        baseHP: 50,
+        baseHP: 40,
         speed: 65,     // (+15%)
         reward: 10,
         livesCost: 1,
@@ -639,7 +639,7 @@ export const ENEMY_TYPES = {
     },
     swarm: {
         name: 'Swarm',
-        baseHP: 8,
+        baseHP: 6,
         speed: 105,    // (+15%)
         reward: 4,
         livesCost: 1,
@@ -649,7 +649,7 @@ export const ENEMY_TYPES = {
     },
     flying: {
         name: 'Flying',
-        baseHP: 31,
+        baseHP: 28,
         speed: 97,
         reward: 10,
         livesCost: 1,
