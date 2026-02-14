@@ -72,7 +72,7 @@ export const MAP_DEFS = {
                 ],
                 paths: null,
                 secondaryWaypoints: [
-                    {x:29,y:18},{x:25,y:18},{x:25,y:15},{x:29,y:15},{x:29,y:13}
+                    {x:29,y:1},{x:25,y:1},{x:25,y:10},{x:29,y:10},{x:29,y:13}
                 ],
             },
             // Layout 2: Center spiral with dual clusters (kill zones: y=5,7 left, y=13,15 right)

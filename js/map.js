@@ -89,13 +89,21 @@ export class GameMap {
             this.path = waypoints.map(wp => gridToWorld(wp.x, wp.y));
         }
 
-        // Secondary path (always carved; enemies use it at wave 60+)
+        // Secondary path (always carved visually)
         if (layout.secondaryWaypoints) {
             const secWP = layout.secondaryWaypoints;
             for (let i = 0; i < secWP.length - 1; i++) {
                 this.carveLine(secWP[i].x, secWP[i].y, secWP[i + 1].x, secWP[i + 1].y);
             }
-            this.secondaryPath = secWP.map(wp => gridToWorld(wp.x, wp.y));
+            // Only activate for spawning if entry is far enough from castle (min 6 cells)
+            const exitGrid = layout.paths
+                ? layout.paths.suffix[layout.paths.suffix.length - 1]
+                : layout.waypoints[layout.waypoints.length - 1];
+            const dx = secWP[0].x - exitGrid.x;
+            const dy = secWP[0].y - exitGrid.y;
+            if (Math.sqrt(dx * dx + dy * dy) >= 6) {
+                this.secondaryPath = secWP.map(wp => gridToWorld(wp.x, wp.y));
+            }
         }
 
         // Mark blocked cells
