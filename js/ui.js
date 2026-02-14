@@ -894,6 +894,7 @@ export class UI {
             document.getElementById('unlock-screen').classList.remove('visible');
             if (topBar) topBar.style.display = 'flex';
             if (bottomBar) bottomBar.style.display = 'flex';
+            this.game._unlockScreenActive = false;
             if (this.game.state === STATE.PAUSED) {
                 this.game.state = STATE.PLAYING;
             }

@@ -122,6 +122,7 @@ export class Game {
         }
 
         this.state = STATE.PLAYING;
+        this._unlockScreenActive = false;
         this.ui.setupTowerPanel();
         this.ui.hideAllScreens();
         this.waves.startNextWave();
@@ -136,6 +137,8 @@ export class Game {
     }
 
     togglePause() {
+        // Block pause toggle while unlock screen is waiting for Continue
+        if (this._unlockScreenActive) return;
         if (this.state === STATE.PLAYING) {
             this.state = STATE.PAUSED;
             this.hero.clearMovement();
@@ -210,6 +213,7 @@ export class Game {
             this.ui.setupTowerPanel();
             this.ui.showUnlockScreen(unlocksBatch);
             this.state = STATE.PAUSED;
+            this._unlockScreenActive = true;
             this.triggerShake(5, 0.3);
             if (this.postfx.enabled) {
                 this.postfx.flash(0.2, 0.3);
@@ -226,6 +230,7 @@ export class Game {
             Economy.setWaveRecord(this.selectedMapId, this.waves.currentWave);
         }
         this.state = STATE.MENU;
+        this._unlockScreenActive = false;
         this.selectedMapId = null;
         this.elapsedTime = 0;
         this.waveElapsed = 0;
