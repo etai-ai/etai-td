@@ -553,8 +553,8 @@ export const HERO_STATS = {
 
 // ── Dual Spawn ────────────────────────────────────────────
 export const DUAL_SPAWN_WAVE = 15;
-export const DUAL_SPAWN_START_PCT = 0.04;   // 4% at first dual-spawn wave
-export const DUAL_SPAWN_RAMP_PCT = 0.02;    // +2% per wave
+export const DUAL_SPAWN_START_PCT = 0.02;   // 2% at first dual-spawn wave
+export const DUAL_SPAWN_RAMP_PCT = 0.015;   // +1.5% per wave
 export const DUAL_SPAWN_MAX_PCT = 0.20;     // cap at 20%
 export const FLYING_START_WAVE = 17;
 
