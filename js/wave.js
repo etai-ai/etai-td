@@ -1,4 +1,4 @@
-import { WAVES, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getWaveHPScale, WAVE_MODIFIERS, MODIFIER_START_WAVE, MODIFIER_CHANCE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, DUAL_SPAWN_WAVE, GOLDRUSH_INTERVAL } from './constants.js';
+import { WAVES, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getWaveHPScale, WAVE_MODIFIERS, MODIFIER_START_WAVE, MODIFIER_CHANCE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, DUAL_SPAWN_WAVE, GOLDRUSH_INTERVAL, SPEED_MAX, WAVE_GEN } from './constants.js';
 import { Economy } from './economy.js';
 
 export class WaveManager {
@@ -107,12 +107,11 @@ export class WaveManager {
     }
 
     generateWave(waveNum) {
+        const W = WAVE_GEN;
         const types = ['grunt', 'runner', 'tank', 'healer', 'swarm'];
-        // Speed-aware interval multipliers — spread fast movers, tighten slow ones
-        const intervalMulti = { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3 };
 
         const groups = [];
-        const groupCount = Math.min(6, 2 + Math.floor(waveNum / 5));
+        const groupCount = Math.min(W.GROUP_MAX, W.GROUP_BASE + Math.floor(waveNum / W.GROUP_PER_WAVES));
         let runningDelay = 0;
         let lastType = null;
 
@@ -122,9 +121,9 @@ export class WaveManager {
             const type = available[Math.floor(Math.random() * available.length)];
             lastType = type;
 
-            const count = Math.floor((4 + waveNum * 0.6 + Math.random() * 4) * 0.95);
-            const baseInterval = Math.max(0.30, 0.8 - waveNum * 0.01);
-            const interval = baseInterval * (intervalMulti[type] || 1.0);
+            const count = Math.floor((W.COUNT_BASE + waveNum * W.COUNT_PER_WAVE + Math.random() * W.COUNT_RANDOM) * W.COUNT_MULTIPLIER);
+            const baseInterval = Math.max(W.INTERVAL_MIN, W.INTERVAL_BASE - waveNum * W.INTERVAL_DECAY);
+            const interval = baseInterval * (W.INTERVAL_MULTI[type] || 1.0);
 
             groups.push({
                 type,
@@ -133,9 +132,9 @@ export class WaveManager {
                 delay: runningDelay,
             });
 
-            // Next group starts halfway through this one + small gap (partial overlap)
-            const gap = 1 + Math.random() * 1.5;
-            runningDelay += count * interval * 0.5 + gap;
+            // Next group starts partway through this one + small gap
+            const gap = W.GROUP_GAP_MIN + Math.random() * W.GROUP_GAP_RANDOM;
+            runningDelay += count * interval * W.GROUP_OVERLAP + gap;
         }
 
         // Boss every 5 waves — arrives after all groups finish
@@ -144,8 +143,8 @@ export class WaveManager {
             groups.push({
                 type: 'boss',
                 count: bossCount,
-                interval: 4.0,
-                delay: runningDelay + 1,
+                interval: W.BOSS_INTERVAL,
+                delay: runningDelay + W.BOSS_DELAY,
             });
         }
 
@@ -177,7 +176,14 @@ export class WaveManager {
             this.groupTimers[g] -= dt;
 
             if (this.groupTimers[g] <= 0) {
-                const useSecondary = (this.game.getEffectiveWave() >= DUAL_SPAWN_WAVE) && (this.spawnCounter % 2 === 1);
+                // Gradual dual-spawn ramp: 10% → 20% → 50% secondary path
+                let useSecondary = false;
+                const effectiveWave = this.game.getEffectiveWave();
+                if (effectiveWave >= DUAL_SPAWN_WAVE) {
+                    const wavesIntoDual = effectiveWave - DUAL_SPAWN_WAVE;
+                    const chance = wavesIntoDual <= 0 ? 0.10 : wavesIntoDual <= 1 ? 0.20 : 0.50;
+                    useSecondary = Math.random() < chance;
+                }
                 this.game.enemies.spawn(group.type, hpScale, this.modifier, useSecondary);
                 this.spawnCounter++;
                 this.groupIndices[g]++;
@@ -222,7 +228,7 @@ export class WaveManager {
             heroActive: this.game.hero.active,
             heroDeaths: this.game.heroDeathsThisLevel || 0,
         });
-        if (this.game.speed === 3) {
+        if (this.game.speed === SPEED_MAX) {
             this.game.achievements.increment('wavesAt3x');
         }
 

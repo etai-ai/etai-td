@@ -543,6 +543,31 @@ export const HERO_STATS = {
 // ── Dual Spawn ────────────────────────────────────────────
 export const DUAL_SPAWN_WAVE = 15;
 
+// ── Wave Generation Tuning ────────────────────────────────
+export const WAVE_GEN = {
+    GROUP_BASE: 2,             // base number of groups
+    GROUP_PER_WAVES: 5,        // +1 group every N waves
+    GROUP_MAX: 6,              // max groups per wave
+    COUNT_BASE: 4,             // base enemies per group
+    COUNT_PER_WAVE: 0.6,       // +N enemies per wave
+    COUNT_RANDOM: 4,           // random variance on count
+    COUNT_MULTIPLIER: 0.85,    // global enemy count scalar
+    INTERVAL_BASE: 0.8,        // base spawn interval (seconds)
+    INTERVAL_DECAY: 0.01,      // interval shrinks per wave
+    INTERVAL_MIN: 0.30,        // floor for spawn interval
+    INTERVAL_MULTI: { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3 },
+    GROUP_OVERLAP: 0.5,        // next group starts at this fraction of previous
+    GROUP_GAP_MIN: 1.0,        // min gap between groups (seconds)
+    GROUP_GAP_RANDOM: 1.5,     // random extra gap
+    BOSS_INTERVAL: 4.0,        // spawn interval between bosses
+    BOSS_DELAY: 1.0,           // delay after last group before boss
+};
+
+// ── Game Speed ────────────────────────────────────────────
+export const SPEED_MULTIPLIERS = { 1: 1.1, 2: 2.1, 3: 3.1 };
+export const SPEED_MIN = 1;
+export const SPEED_MAX = 3;
+
 // ── Enemy Definitions ──────────────────────────────────────
 export const ENEMY_TYPES = {
     grunt: {

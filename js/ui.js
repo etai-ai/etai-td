@@ -1,4 +1,4 @@
-import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, VERSION } from './constants.js';
+import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, VERSION, SPEED_MAX } from './constants.js';
 import { Economy } from './economy.js';
 
 export class UI {
@@ -81,7 +81,7 @@ export class UI {
                 if (mapRecord > 0) {
                     const record = document.createElement('div');
                     record.className = 'map-card-record';
-                    record.textContent = `Wave ${mapRecord}`;
+                    record.textContent = `Record: Wave ${mapRecord}`;
                     info.appendChild(record);
                 }
             }
@@ -440,7 +440,7 @@ export class UI {
         // Speed button — cycles 1→2→3→1
         this.elSpeedBtn.addEventListener('click', () => {
             this.game.audio.ensureContext();
-            const next = this.game.speed % 3 + 1;
+            const next = this.game.speed % SPEED_MAX + 1;
             this.game.setSpeed(next);
         });
 
@@ -693,7 +693,7 @@ export class UI {
         let html = `
             <div class="tower-info-header">
                 <span class="tower-info-name" style="color:${def.color}">${tower.name} Tower</span>
-                <span class="tower-info-level">Lv.${tower.level + 1}</span>
+                <span class="tower-info-level${tower.level >= def.levels.length - 1 ? ' max-level' : ''}">${tower.level >= def.levels.length - 1 ? 'MAX' : `Lv.${tower.level + 1}`}</span>
             </div>
             <div class="tower-info-body">
                 <div class="tower-info-stats">${statsHtml}</div>
@@ -734,7 +734,7 @@ export class UI {
                 this.towerInfoTimer = setTimeout(() => {
                     this.game.input.selectedTower = null;
                     this.hideTowerInfo();
-                }, 1000);
+                }, 500);
             };
             const cancelClose = () => {
                 if (this.towerInfoTimer) { clearTimeout(this.towerInfoTimer); this.towerInfoTimer = null; }
@@ -865,7 +865,7 @@ export class UI {
                 extras += `<div class="unlock-extra" style="color:#00e5ff">HERO UNLOCKED! Move with WASD, Q to stun, E for gold magnet</div>`;
             }
             if (unlock.dualSpawn) {
-                extras += `<div class="unlock-extra" style="color:#e74c3c">WARNING: Enemies now spawn from two sides!</div>`;
+                extras += `<div class="unlock-extra" style="color:#e74c3c">Beware! Enemies now attack from two sides!</div>`;
             }
         }
 

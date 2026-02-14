@@ -1,4 +1,4 @@
-import { STATE, CANVAS_W, CANVAS_H, HERO_STATS, MAP_DEFS, TOWER_TYPES, TOWER_LIGHT_DEFS, MAP_AMBIENT_DARKNESS, WAVE_UNLOCKS } from './constants.js';
+import { STATE, CANVAS_W, CANVAS_H, HERO_STATS, MAP_DEFS, TOWER_TYPES, TOWER_LIGHT_DEFS, MAP_AMBIENT_DARKNESS, WAVE_UNLOCKS, SPEED_MULTIPLIERS, SPEED_MIN, SPEED_MAX } from './constants.js';
 import { hexToGL } from './utils.js';
 import { GameMap } from './map.js';
 import { TowerManager } from './tower.js';
@@ -206,10 +206,23 @@ export class Game {
             }
         }
 
-        // Rebuild tower panel when crossing a threshold
-        if (unlocksBatch.length > 0) {
+        // Separate dual-spawn-only announcements from real unlocks
+        const hasDualSpawn = unlocksBatch.some(u => u.dualSpawn);
+        const realUnlocks = unlocksBatch.filter(u => !u.dualSpawn || u.towers || u.hero);
+        const dualSpawnOnly = hasDualSpawn && !unlocksBatch.some(u => u.towers || u.hero);
+
+        if (hasDualSpawn && dualSpawnOnly) {
+            // Just a warning text — no unlock screen, no pause
+            this.particles.spawnBigFloatingText(CANVAS_W / 2, CANVAS_H / 3, 'Beware! Enemies now attack from two sides!', '#e74c3c');
+            this.triggerShake(5, 0.3);
+            this.audio.playExplosion();
             this.ui.setupTowerPanel();
-            this.ui.showUnlockScreen(unlocksBatch);
+        }
+
+        // Show full unlock screen for tower/hero unlocks
+        if (realUnlocks.length > 0 && !dualSpawnOnly) {
+            this.ui.setupTowerPanel();
+            this.ui.showUnlockScreen(realUnlocks);
             this.state = STATE.PAUSED;
             this.triggerShake(5, 0.3);
             if (this.postfx.enabled) {
@@ -257,7 +270,7 @@ export class Game {
         this.lastTime = timestamp;
 
         if (this.state === STATE.PLAYING) {
-            this.accumulator += frameDelta * this.speed;
+            this.accumulator += frameDelta * (SPEED_MULTIPLIERS[this.speed] || this.speed);
             while (this.accumulator >= FIXED_DT) {
                 this.update(FIXED_DT);
                 this.accumulator -= FIXED_DT;

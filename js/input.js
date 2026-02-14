@@ -1,4 +1,4 @@
-import { CELL, COLS, ROWS, STATE, TOWER_TYPES } from './constants.js';
+import { CELL, COLS, ROWS, STATE, TOWER_TYPES, SPEED_MIN, SPEED_MAX } from './constants.js';
 import { worldToGrid } from './utils.js';
 
 function buildTowerKeys(game) {
@@ -42,7 +42,22 @@ export class InputHandler {
         this.canvas.addEventListener('click', e => this.onClick(e));
         this.canvas.addEventListener('contextmenu', e => {
             e.preventDefault();
-            this.cancelSelection();
+            if (this.game.state !== STATE.PLAYING && this.game.state !== STATE.PAUSED) return;
+            const pos = this.getCanvasPos(e);
+            const grid = worldToGrid(pos.x, pos.y);
+            const tower = this.game.towers.getTowerAt(grid.x, grid.y);
+            if (tower) {
+                this.selectedTower = tower;
+                this.selectedTowerType = null;
+                if (this.game.towers.upgradeTower(tower)) {
+                    this.game.ui.showTowerInfo(tower);
+                    this.game.ui.update();
+                } else {
+                    this.game.ui.showTowerInfo(tower);
+                }
+            } else {
+                this.cancelSelection();
+            }
         });
 
         // Touch events (mobile)
@@ -328,10 +343,10 @@ export class InputHandler {
                 break;
             case '+':
             case '=':
-                this.game.setSpeed(Math.min(3, this.game.speed + 1));
+                this.game.setSpeed(Math.min(SPEED_MAX, this.game.speed + 1));
                 break;
             case '-':
-                this.game.setSpeed(Math.max(1, this.game.speed - 1));
+                this.game.setSpeed(Math.max(SPEED_MIN, this.game.speed - 1));
                 break;
             case 'n':
             case 'N':
