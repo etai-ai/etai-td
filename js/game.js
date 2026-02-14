@@ -1,4 +1,4 @@
-import { STATE, CANVAS_W, CANVAS_H, HERO_STATS, DUAL_SPAWN_WAVE, MAP_DEFS, TOWER_TYPES, TOWER_LIGHT_DEFS, MAP_AMBIENT_DARKNESS, WAVE_UNLOCKS } from './constants.js';
+import { STATE, CANVAS_W, CANVAS_H, HERO_STATS, MAP_DEFS, TOWER_TYPES, TOWER_LIGHT_DEFS, MAP_AMBIENT_DARKNESS, WAVE_UNLOCKS } from './constants.js';
 import { hexToGL } from './utils.js';
 import { GameMap } from './map.js';
 import { TowerManager } from './tower.js';
@@ -97,7 +97,17 @@ export class Game {
         this.audio.ensureContext();
 
         this.economy.startReset();
+
+        // Pre-mark thresholds below starting unlocks so we don't announce pre-unlocked content
         this._triggeredThresholds = new Set();
+        const startingUnlocks = MAP_DEFS[this.selectedMapId]?.startingUnlocks || 0;
+        if (startingUnlocks > 0) {
+            for (const [thresholdStr] of Object.entries(WAVE_UNLOCKS)) {
+                if (parseInt(thresholdStr) <= startingUnlocks) {
+                    this._triggeredThresholds.add(parseInt(thresholdStr));
+                }
+            }
+        }
 
         // Pick random layout, always build secondary paths
         this.map = new GameMap(this.selectedMapId, this.getLayoutIndex());
@@ -155,46 +165,60 @@ export class Game {
 
     onWaveThreshold(wave) {
         const effectiveWave = this.getEffectiveWave();
-        // Check all unlock thresholds
+        // Collect all unlocks that fire this wave
+        const unlocksBatch = [];
+
         for (const [thresholdStr, unlock] of Object.entries(WAVE_UNLOCKS)) {
             const threshold = parseInt(thresholdStr);
             if (effectiveWave >= threshold && !this._triggeredThresholds.has(threshold)) {
                 this._triggeredThresholds.add(threshold);
+                unlocksBatch.push(unlock);
 
-                // Tower unlocks
-                if (unlock.towers) {
-                    const names = unlock.towers.join(' & ');
-                    this.particles.spawnBigFloatingText(
-                        CANVAS_W / 2, CANVAS_H / 3,
-                        `NEW: ${names}!`, unlock.color
-                    );
-                    this.audio.playWaveStart(); // reuse as unlock cue
+                // Auto-upgrade placed towers to their replacements
+                if (unlock.towers && unlock.replacesKeys) {
+                    for (let i = 0; i < unlock.replacesKeys.length; i++) {
+                        const oldKey = unlock.replacesKeys[i];
+                        const newKey = unlock.keys[i];
+                        const newDef = TOWER_TYPES[newKey];
+                        for (const t of this.towers.towers) {
+                            if (t.type !== oldKey) continue;
+                            t.type = newKey;
+                            t.name = newDef.name;
+                            t.color = newDef.color;
+                            t.size = newDef.size || 1;
+                            t.aura = newDef.aura || false;
+                            t.missile = newDef.missile || false;
+                            t.dualBarrel = newDef.dualBarrel || false;
+                            t.totalInvested = newDef.cost;
+                            t.level = 0;
+                            t.updateStats();
+                            this.particles.spawnExplosion(t.x, t.y, newDef.color);
+                        }
+                    }
+                    this.renderer.drawTerrain();
                 }
 
                 // Hero unlock
                 if (unlock.hero && !this.hero.active) {
                     this.hero.init(this.map);
-                    this.particles.spawnBigFloatingText(
-                        CANVAS_W / 2, CANVAS_H / 4,
-                        'HERO UNLOCKED! WASD to move', HERO_STATS.color
-                    );
                     this.particles.spawnAuraPulse(this.hero.x, this.hero.y, 60, HERO_STATS.color);
-                    this.audio.playHeroRespawn();
-                }
-
-                // Dual spawn warning
-                if (unlock.dualSpawn) {
-                    this.particles.spawnBigFloatingText(
-                        CANVAS_W / 2, CANVAS_H / 4,
-                        'WARNING: Enemies from two sides!', unlock.color
-                    );
-                    this.triggerShake(6, 0.4);
                 }
             }
         }
 
-        // Always rebuild tower panel when crossing a threshold
-        this.ui.setupTowerPanel();
+        // Rebuild tower panel when crossing a threshold
+        if (unlocksBatch.length > 0) {
+            this.ui.setupTowerPanel();
+            this.ui.showUnlockScreen(unlocksBatch);
+            this.state = STATE.PAUSED;
+            this.triggerShake(5, 0.3);
+            if (this.postfx.enabled) {
+                this.postfx.flash(0.2, 0.3);
+            } else {
+                this.screenFlash = 0.2;
+            }
+            this.audio.playExplosion();
+        }
     }
 
     restart() {
@@ -280,6 +304,7 @@ export class Game {
         this.waves.spawning = false;
         this.waves.waveComplete = false;
         this.waves.betweenWaves = false;
+        this.waves._nextWaveCache = null;
         this.waves.startNextWave();
         // Trigger any thresholds we jumped past
         this.onWaveThreshold(waveNum);

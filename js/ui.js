@@ -70,11 +70,22 @@ export class UI {
             if (mapLocked) {
                 desc.textContent = `Reach Wave ${reqRecord} on any map to unlock`;
             } else {
-                const mapRecord = allRecords[id] || 0;
-                desc.textContent = def.description + (mapRecord > 0 ? ` (Best: Wave ${mapRecord})` : '');
+                desc.textContent = def.description;
             }
 
             info.appendChild(name);
+
+            // Prominent wave record display
+            if (!mapLocked) {
+                const mapRecord = allRecords[id] || 0;
+                if (mapRecord > 0) {
+                    const record = document.createElement('div');
+                    record.className = 'map-card-record';
+                    record.textContent = `Wave ${mapRecord}`;
+                    info.appendChild(record);
+                }
+            }
+
             info.appendChild(desc);
 
             card.appendChild(preview);
@@ -242,6 +253,12 @@ export class UI {
             this.tooltip = document.createElement('div');
             this.tooltip.id = 'tower-tooltip';
             document.body.appendChild(this.tooltip);
+            // Pre-generate icons for ALL tower types (needed for unlock screen)
+            for (const key of Object.keys(TOWER_TYPES)) {
+                this.towerPreviews[key] = this.renderTowerPreview(key);
+                this.towerIcons[key] = this.renderTowerIcon(key, 64);
+                this.towerIconsLg[key] = this.renderTowerIcon(key, 80);
+            }
         }
 
         const effectiveWave = this.game.getEffectiveWave ? this.game.getEffectiveWave() : 0;
@@ -251,14 +268,6 @@ export class UI {
             if (def.maxWave && effectiveWave > def.maxWave) continue;
             // Hide towers not yet unlocked at this wave
             if (def.unlockWave && effectiveWave < def.unlockWave) continue;
-
-            if (!this.towerPreviews[key]) {
-                this.towerPreviews[key] = this.renderTowerPreview(key);
-            }
-            if (!this.towerIcons[key]) {
-                this.towerIcons[key] = this.renderTowerIcon(key, 64);
-                this.towerIconsLg[key] = this.renderTowerIcon(key, 80);
-            }
 
             const btn = document.createElement('button');
             btn.className = 'tower-btn';
@@ -802,6 +811,91 @@ export class UI {
         this._hoverOnCard = false;
         this._hoverOnTower = false;
         this.elTowerInfo.style.display = 'none';
+    }
+
+    showUnlockScreen(unlocksBatch) {
+        const container = document.getElementById('unlock-content');
+        if (!container) return;
+
+        // Ensure tower icon cache exists
+        if (!this.towerIconsLg) {
+            this.setupTowerPanel(); // forces icon generation
+        }
+
+        // Collect all tower cards, extras (hero, dual spawn)
+        let towerCards = '';
+        let extras = '';
+        let replacesText = '';
+        let titleColor = '#ffd700';
+
+        for (const unlock of unlocksBatch) {
+            if (unlock.towers) {
+                titleColor = unlock.color;
+                for (let i = 0; i < unlock.keys.length; i++) {
+                    const key = unlock.keys[i];
+                    const def = TOWER_TYPES[key];
+                    const stats = def.levels[0];
+                    const iconSrc = this.towerIconsLg?.[key] || '';
+                    let special = '';
+                    if (stats.burnDamage) special = `Burn ${stats.burnDamage} DPS (bypasses armor)`;
+                    else if (def.aura) special = `AoE aura pulse, ${(stats.freezeChance * 100).toFixed(0)}% freeze`;
+                    else if (stats.forkCount) special = `Fork chain ${stats.forkCount}, ${(stats.shockChance * 100).toFixed(0)}% shock`;
+                    else if (def.dualBarrel) special = `Dual barrel, armor shred ${(stats.armorShred * 100).toFixed(0)}%`;
+                    else if (def.missile) special = `Homing missiles, splash + ${(stats.critChance * 100).toFixed(0)}% crit`;
+                    else if (stats.knockbackDist) special = `Splash + knockback ${stats.knockbackDist} cells`;
+                    else if (stats.splashRadius) special = `Splash radius ${stats.splashRadius}`;
+                    else if (stats.chainCount) special = `Chains to ${stats.chainCount} enemies`;
+
+                    towerCards += `
+                        <div class="unlock-tower-card" style="--tc:${def.color}">
+                            ${iconSrc ? `<img class="unlock-tower-icon" src="${iconSrc}">` : ''}
+                            <div class="unlock-tower-name" style="color:${def.color}">${def.name}</div>
+                            <div class="unlock-tower-desc">
+                                Dmg ${stats.damage} | Range ${stats.range} | $${def.cost}
+                                ${special ? `<br>${special}` : ''}
+                            </div>
+                        </div>`;
+                }
+                if (unlock.replacesKeys) {
+                    const oldNames = unlock.replacesKeys.map(k => TOWER_TYPES[k]?.name || k).join(' & ');
+                    replacesText += `<div class="unlock-replaces">Replaces ${oldNames} — existing towers auto-upgraded!</div>`;
+                }
+            }
+            if (unlock.hero) {
+                extras += `<div class="unlock-extra" style="color:#00e5ff">HERO UNLOCKED! Move with WASD, Q to stun, E for gold magnet</div>`;
+            }
+            if (unlock.dualSpawn) {
+                extras += `<div class="unlock-extra" style="color:#e74c3c">WARNING: Enemies now spawn from two sides!</div>`;
+            }
+        }
+
+        container.innerHTML = `
+            <div class="unlock-title" style="color:${titleColor}">NEW UNLOCKS!</div>
+            <div class="unlock-subtitle">Wave ${this.game.waves.currentWave} reached</div>
+            ${towerCards ? `<div class="unlock-towers">${towerCards}</div>` : ''}
+            ${replacesText}
+            ${extras}
+            <button class="unlock-btn" id="unlock-continue-btn">Continue</button>
+        `;
+
+        // Show the screen and hide gameplay bars
+        document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('visible'));
+        document.getElementById('unlock-screen').classList.add('visible');
+        const topBar = document.getElementById('top-bar');
+        const bottomBar = document.getElementById('bottom-bar');
+        if (topBar) topBar.style.display = 'none';
+        if (bottomBar) bottomBar.style.display = 'none';
+
+        // Continue button resumes gameplay
+        document.getElementById('unlock-continue-btn').addEventListener('click', () => {
+            document.getElementById('unlock-screen').classList.remove('visible');
+            if (topBar) topBar.style.display = 'flex';
+            if (bottomBar) bottomBar.style.display = 'flex';
+            if (this.game.state === STATE.PAUSED) {
+                this.game.state = STATE.PLAYING;
+            }
+            this.game.audio.ensureContext();
+        }, { once: true });
     }
 
     showScreen(name) {

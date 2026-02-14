@@ -747,9 +747,126 @@ body {
 }
 
 .map-card-record {
+    font-size: 22px;
+    color: #ffd700;
+    font-weight: 700;
+    text-align: center;
+    margin: 4px 0;
+    text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+}
+
+/* ── Unlock Screen ───────────────────────────────────── */
+.unlock-dialog {
+    background: rgba(13, 27, 42, 0.96);
+    border: 3px solid #ffd700;
+    border-radius: 16px;
+    padding: 36px 48px;
+    box-shadow: 0 0 60px rgba(255, 215, 0, 0.3);
+    text-align: center;
+    max-width: 700px;
+    animation: unlockAppear 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes unlockAppear {
+    0% { transform: scale(0.5); opacity: 0; }
+    70% { transform: scale(1.05); opacity: 1; }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+.unlock-title {
+    font-size: 36px;
+    font-weight: 700;
+    margin-bottom: 8px;
+    text-shadow: 0 0 20px currentColor;
+}
+
+.unlock-subtitle {
+    font-size: 15px;
+    color: #bbb;
+    margin-bottom: 24px;
+}
+
+.unlock-towers {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.unlock-tower-card {
+    background: rgba(15, 52, 96, 0.7);
+    border: 2px solid var(--tc, #1a4a8a);
+    border-radius: 12px;
+    padding: 16px 20px;
+    min-width: 180px;
+    box-shadow: 0 0 20px color-mix(in srgb, var(--tc, #1a4a8a) 30%, transparent);
+    animation: towerCardReveal 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.unlock-tower-card:nth-child(2) {
+    animation-delay: 0.15s;
+}
+
+@keyframes towerCardReveal {
+    0% { transform: translateY(30px) scale(0.8); opacity: 0; }
+    100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.unlock-tower-icon {
+    width: 96px;
+    height: 96px;
+    margin: 0 auto 8px;
+    display: block;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.6));
+}
+
+.unlock-tower-name {
+    font-size: 20px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.unlock-tower-desc {
     font-size: 12px;
+    color: #aaa;
+    line-height: 1.4;
+}
+
+.unlock-replaces {
+    font-size: 13px;
     color: #e67e22;
-    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.unlock-extra {
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    text-shadow: 0 0 12px currentColor;
+}
+
+.unlock-btn {
+    background: #e67e22;
+    color: #fff;
+    border: none;
+    padding: 14px 48px;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.15s;
+    animation: unlockBtnPulse 1.5s ease-in-out 0.8s infinite;
+}
+
+.unlock-btn:hover {
+    background: #f39c12;
+    transform: scale(1.05);
+}
+
+@keyframes unlockBtnPulse {
+    0%, 100% { box-shadow: 0 0 10px rgba(230, 126, 34, 0.3); }
+    50% { box-shadow: 0 0 24px rgba(230, 126, 34, 0.7); }
 }
 
 /* ── Game Over Wave Info ──────────────────────────────── */

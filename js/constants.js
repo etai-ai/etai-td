@@ -139,7 +139,7 @@ export const MAP_DEFS = {
         name: 'Split Creek',
         themeColor: '#d4a026',
         worldHpMultiplier: 0.60,
-        requiredRecord: 40,
+        requiredRecord: 30,
         startingUnlocks: 30,
         environment: 'desert',
         description: 'The path forks midway — enemies randomly pick a branch.',
@@ -261,7 +261,7 @@ export const MAP_DEFS = {
         name: 'The Gauntlet',
         themeColor: '#c0392b',
         worldHpMultiplier: 0.65,
-        requiredRecord: 80,
+        requiredRecord: 40,
         startingUnlocks: 50,
         environment: 'lava',
         description: 'A short direct path — enemies arrive fast, every tower counts.',
@@ -362,12 +362,12 @@ export const MAP_DEFS = {
 
 // ── Economy ────────────────────────────────────────────────
 export const STARTING_LIVES = 20;
-export const STARTING_GOLD = 300;
+export const STARTING_GOLD = 275;
 export const KILL_GOLD_BONUS = 1.10;  // 10% bonus on all kill gold
 export const SELL_REFUND = 0.6;       // 60% back
-export const INTEREST_RATE = 0.02;    // 2% between waves
+export const INTEREST_RATE = 0.01;    // 1% between waves
 export const WAVE_BONUS_BASE = 25;
-export const WAVE_BONUS_PER = 8;
+export const WAVE_BONUS_PER = 6;
 
 // ── Tower Definitions ──────────────────────────────────────
 export const TOWER_TYPES = {
@@ -423,7 +423,7 @@ export const TOWER_TYPES = {
         cost: 125,
         color: '#9b59b6',
         chain: true,
-        maxWave: 29,
+        maxWave: 24,
         levels: [
             { damage: 15, range: 3.5, fireRate: 1.0, projSpeed: 500, chainCount: 3, chainRange: 2.0, chainDecay: 0.7 },
             { damage: 22, range: 4.0, fireRate: 0.85, projSpeed: 550, chainCount: 4, chainRange: 2.5, chainDecay: 0.7, upgradeCost: 80 },
@@ -435,7 +435,7 @@ export const TOWER_TYPES = {
         cost: 250,
         color: '#7b3fff',
         forkChain: true,
-        unlockWave: 30,
+        unlockWave: 25,
         levels: [
             { damage: 18, range: 4.0, fireRate: 1.1, projSpeed: 600, forkCount: 4, forkDepth: 2, chainRange: 2.5, overcharge: 0.10, shockChance: 0.15, shockDuration: 0.3 },
             { damage: 28, range: 4.5, fireRate: 0.9, projSpeed: 650, forkCount: 6, forkDepth: 2, chainRange: 3.0, overcharge: 0.10, shockChance: 0.20, shockDuration: 0.3, upgradeCost: 150 },
@@ -447,7 +447,7 @@ export const TOWER_TYPES = {
         cost: 100,
         color: '#8b5e3c',
         splash: true,
-        maxWave: 29,
+        maxWave: 24,
         unlockWave: 2,
         levels: [
             { damage: 30, range: 3.0, fireRate: 1.2, projSpeed: 200, splashRadius: 1.2 },
@@ -461,7 +461,7 @@ export const TOWER_TYPES = {
         color: '#6b4226',
         splash: true,
         dualBarrel: true,
-        unlockWave: 30,
+        unlockWave: 25,
         levels: [
             { damage: 35, range: 3.5, fireRate: 0.6, projSpeed: 220, splashRadius: 1.4, heavyEvery: 4, armorShred: 0.10, shredDuration: 3.0, scorchDPS: 5, scorchDuration: 2.0 },
             { damage: 55, range: 4.0, fireRate: 0.5, projSpeed: 240, splashRadius: 1.7, heavyEvery: 4, armorShred: 0.12, shredDuration: 3.5, scorchDPS: 8, scorchDuration: 2.5, upgradeCost: 120 },
@@ -473,7 +473,7 @@ export const TOWER_TYPES = {
         cost: 150,
         color: '#c0392b',
         crit: true,
-        maxWave: 49,
+        maxWave: 19,
         unlockWave: 5,
         levels: [
             { damage: 60, range: 6.0, fireRate: 2.0, projSpeed: 600, critChance: 0.10, critMulti: 2.5 },
@@ -489,7 +489,7 @@ export const TOWER_TYPES = {
         crit: true,
         missile: true,
         size: 2,
-        unlockWave: 50,
+        unlockWave: 20,
         levels: [
             { damage: 80, range: 7.0, fireRate: 2.5, projSpeed: 300, splashRadius: 1.2, critChance: 0.12, critMulti: 2.5 },
             { damage: 120, range: 8.0, fireRate: 2.2, projSpeed: 320, splashRadius: 1.5, critChance: 0.16, critMulti: 2.8, upgradeCost: 200 },
@@ -502,7 +502,7 @@ export const TOWER_TYPES = {
         color: '#2eaaaa',
         splash: true,
         knockback: true,
-        unlockWave: 80,
+        unlockWave: 30,
         levels: [
             { damage: 20, range: 3.5, fireRate: 1.8, projSpeed: 200, splashRadius: 1.2, knockbackDist: 1.0 },
             { damage: 30, range: 4.0, fireRate: 1.5, projSpeed: 220, splashRadius: 1.5, knockbackDist: 1.5, upgradeCost: 150 },
@@ -513,12 +513,11 @@ export const TOWER_TYPES = {
 
 // ── Wave Threshold Unlock Definitions ────────────────────
 export const WAVE_UNLOCKS = {
-    10: { towers: ['Fire Arrow', 'Deep Frost'], keys: ['firearrow', 'deepfrost'], replaces: ['Arrow', 'Frost'], color: '#c0392b' },
-    20: { hero: true, color: '#00e5ff' },
-    30: { towers: ['Super Lightning', 'Bi-Cannon'], keys: ['superlightning', 'bicannon'], replaces: ['Lightning', 'Cannon'], color: '#7b3fff' },
-    50: { towers: ['Missile Sniper'], keys: ['missilesniper'], replaces: ['Sniper'], color: '#6b8e23' },
-    60: { dualSpawn: true, color: '#e74c3c' },
-    80: { towers: ['Pulse Cannon'], keys: ['pulsecannon'], replaces: null, color: '#2eaaaa' },
+    10: { towers: ['Fire Arrow', 'Deep Frost'], keys: ['firearrow', 'deepfrost'], replacesKeys: ['arrow', 'frost'], color: '#c0392b' },
+    15: { dualSpawn: true, color: '#e74c3c' },
+    20: { hero: true, towers: ['Missile Sniper'], keys: ['missilesniper'], replacesKeys: ['sniper'], color: '#00e5ff' },
+    25: { towers: ['Super Lightning', 'Bi-Cannon'], keys: ['superlightning', 'bicannon'], replacesKeys: ['lightning', 'cannon'], color: '#7b3fff' },
+    30: { towers: ['Pulse Cannon'], keys: ['pulsecannon'], replacesKeys: null, color: '#2eaaaa' },
 };
 
 // ── Hero Definitions ──────────────────────────────────────
@@ -542,7 +541,7 @@ export const HERO_STATS = {
 };
 
 // ── Dual Spawn ────────────────────────────────────────────
-export const DUAL_SPAWN_WAVE = 60;
+export const DUAL_SPAWN_WAVE = 15;
 
 // ── Enemy Definitions ──────────────────────────────────────
 export const ENEMY_TYPES = {
@@ -570,7 +569,7 @@ export const ENEMY_TYPES = {
         name: 'Tank',
         baseHP: 100,
         speed: 40,     // (+15%)
-        reward: 17,
+        reward: 14,
         livesCost: 2,
         color: '#2c3e50',
         radius: 13,
@@ -580,7 +579,7 @@ export const ENEMY_TYPES = {
         name: 'Healer',
         baseHP: 50,
         speed: 65,     // (+15%)
-        reward: 11,
+        reward: 10,
         livesCost: 1,
         color: '#2ecc71',
         radius: 9,
@@ -592,7 +591,7 @@ export const ENEMY_TYPES = {
         name: 'Boss',
         baseHP: 400,
         speed: 26,     // (+15%)
-        reward: 53,
+        reward: 42,
         livesCost: 5,
         color: '#8e44ad',
         radius: 18,
@@ -602,7 +601,7 @@ export const ENEMY_TYPES = {
         name: 'Swarm',
         baseHP: 8,
         speed: 105,    // (+15%)
-        reward: 3,
+        reward: 4,
         livesCost: 1,
         color: '#e67e22',
         radius: 6,
@@ -618,9 +617,9 @@ export const WAVES = [
     // Wave 2: Grunts + Runners — cannon unlocks
     [{ type: 'grunt', count: 8, interval: 0.75, delay: 0 }, { type: 'runner', count: 3, interval: 0.4, delay: 1.5 }],
     // Wave 3: Tank introduction
-    [{ type: 'runner', count: 6, interval: 0.35, delay: 0 }, { type: 'grunt', count: 6, interval: 0.6, delay: 1.5 }],
+    [{ type: 'runner', count: 6, interval: 0.50, delay: 0 }, { type: 'grunt', count: 6, interval: 0.6, delay: 1.5 }],
     // Wave 4: Runners + Tanks
-    [{ type: 'runner', count: 14, interval: 0.25, delay: 0 }, { type: 'tank', count: 2, interval: 1.7, delay: 1.5 }],
+    [{ type: 'runner', count: 14, interval: 0.45, delay: 0 }, { type: 'tank', count: 2, interval: 1.7, delay: 1.5 }],
     // Wave 5: Mixed — sniper unlocks
     [{ type: 'grunt', count: 8, interval: 0.6, delay: 0 }, { type: 'tank', count: 3, interval: 1.3, delay: 0.5 }, { type: 'healer', count: 1, interval: 0, delay: 2.5 }],
 ];
@@ -655,7 +654,7 @@ export const MODIFIER_START_WAVE = 3;
 export const MODIFIER_CHANCE = 0.35;
 
 // ── Early-Send Bonus ──────────────────────────────────────
-export const EARLY_SEND_MAX_BONUS = 50;
+export const EARLY_SEND_MAX_BONUS = 30;
 export const EARLY_SEND_DECAY = 5; // gold lost per second of waiting
 
 // ── Point Light System ───────────────────────────────────

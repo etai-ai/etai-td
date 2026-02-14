@@ -24,6 +24,9 @@ export class WaveManager {
         this.groupTimers = [];
         this.groupIndices = [];
         this.spawnCounter = 0;
+
+        // Cached next wave (so preview matches actual spawn)
+        this._nextWaveCache = null;
     }
 
     startNextWave() {
@@ -68,7 +71,9 @@ export class WaveManager {
             );
         }
 
-        const waveDef = this.getWaveDefinition(this.currentWave);
+        // Use cached definition if available (matches what preview showed)
+        const waveDef = this._nextWaveCache || this.getWaveDefinition(this.currentWave);
+        this._nextWaveCache = null;
 
         // Apply horde modifier: more enemies, less HP
         if (this.modifier === 'horde') {
@@ -82,7 +87,10 @@ export class WaveManager {
         this.groupTimers = waveDef.map(g => g.delay || 0);
         this.groupIndices = waveDef.map(() => 0);
 
-        // Trigger wave threshold unlocks
+        // Rebuild tower panel (handles unlockWave/maxWave visibility each wave)
+        this.game.ui.setupTowerPanel();
+
+        // Trigger wave threshold unlocks (auto-upgrade, unlock screen, hero, dual spawn)
         this.game.onWaveThreshold(this.currentWave);
 
         this.game.debug.onWaveStart(this.game);
@@ -100,27 +108,47 @@ export class WaveManager {
 
     generateWave(waveNum) {
         const types = ['grunt', 'runner', 'tank', 'healer', 'swarm'];
+        // Speed-aware interval multipliers — spread fast movers, tighten slow ones
+        const intervalMulti = { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3 };
+
         const groups = [];
         const groupCount = 2 + Math.floor(waveNum / 5);
+        let runningDelay = 0;
+        let lastType = null;
+
         for (let i = 0; i < groupCount; i++) {
-            const type = types[Math.floor(Math.random() * types.length)];
-            const count = Math.floor(5 + waveNum * 0.8 + Math.random() * 5);
+            // Pick type, avoiding adjacent repeats
+            let available = types.filter(t => t !== lastType);
+            const type = available[Math.floor(Math.random() * available.length)];
+            lastType = type;
+
+            const count = Math.floor((4 + waveNum * 0.6 + Math.random() * 4) * 0.95);
+            const baseInterval = Math.max(0.30, 0.8 - waveNum * 0.01);
+            const interval = baseInterval * (intervalMulti[type] || 1.0);
+
             groups.push({
                 type,
                 count,
-                interval: Math.max(0.15, 0.8 - waveNum * 0.01),
-                delay: i * 3,
+                interval,
+                delay: runningDelay,
             });
+
+            // Next group starts halfway through this one + small gap (partial overlap)
+            const gap = 1 + Math.random() * 1.5;
+            runningDelay += count * interval * 0.5 + gap;
         }
-        // Boss every 5 waves
+
+        // Boss every 5 waves — arrives after all groups finish
         if (waveNum % 5 === 0) {
+            const bossCount = Math.floor(waveNum / 10) + 1;
             groups.push({
                 type: 'boss',
-                count: Math.floor(waveNum / 10) + 1,
+                count: bossCount,
                 interval: 4.0,
-                delay: 2,
+                delay: runningDelay + 1,
             });
         }
+
         return groups;
     }
 
@@ -163,8 +191,7 @@ export class WaveManager {
     }
 
     getNextWavePreview() {
-        const nextWave = this.currentWave + 1;
-        const waveDef = this.getWaveDefinition(nextWave);
+        const waveDef = this._nextWaveCache || this.getWaveDefinition(this.currentWave + 1);
         // Aggregate by type
         const counts = {};
         for (const g of waveDef) {
@@ -180,6 +207,9 @@ export class WaveManager {
     onWaveComplete() {
         this.waveComplete = true;
         this.betweenWaves = true;
+
+        // Pre-generate next wave so preview is stable and matches actual spawn
+        this._nextWaveCache = this.getWaveDefinition(this.currentWave + 1);
 
         this.game.debug.onWaveEnd(this.game);
 
@@ -228,5 +258,6 @@ export class WaveManager {
         this.groupTimers = [];
         this.groupIndices = [];
         this.spawnCounter = 0;
+        this._nextWaveCache = null;
     }
 }
