@@ -54,8 +54,9 @@ Every world is an **endless wave-based survival run**. No levels — you play un
 | 2 | Cannon | — |
 | 5 | Sniper | — |
 | 10 | Fire Arrow, Deep Frost | Arrow, Frost (auto-upgraded) |
-| 15 | Dual Spawn | — |
-| 20 | Hero (WASD unit) + Missile Sniper | Sniper (auto-upgraded) |
+| 14 | Hero (WASD unit) | — |
+| 15 | Dual Spawn (gradual ramp ~6%→50% over 8 waves) | — |
+| 20 | Missile Sniper | Sniper (auto-upgraded) |
 | 25 | Super Lightning, Bi-Cannon | Lightning, Cannon (auto-upgraded) |
 | 30 | Pulse Cannon | — |
 
@@ -93,13 +94,13 @@ Press backtick (`` ` ``) to toggle the admin panel with real-time DPS/efficiency
 - Per-map tints set in `game.selectMap()`: Serpentine warm green, Split Creek cool blue, Gauntlet hot red
 - **Point lighting:** Up to 32 dynamic lights computed in the composite pass (pass 1). Towers emit colored glow (scales with upgrade level), projectiles carry moving lights, hero has cyan aura, scorch zones glow orange-red. Per-map ambient darkness dims the scene (Serpentine 0.25, Creek 0.10, Gauntlet 0.35); lights restore/amplify brightness. Quartic attenuation `(1-t²)²` with aspect ratio correction. Flash lights (`addFlashLight`) decay over time for explosions, boss deaths, and hero abilities. All light methods bail with `if (!this.enabled) return` — zero cost when PostFX off. Light registration happens in `game.registerLights()` called before `postfx.render()` in `tick()`.
 
-## Hero Unit (Wave 20+)
+## Hero Unit (Wave 14+)
 
-WASD-controlled hero spawns when `getEffectiveWave() >= 20` (unlockWave in HERO_STATS). Auto-attacks nearest enemy (15 dmg, 3.5 range, 2/s). Two abilities: Q = AoE stun (3-cell radius, 1.5s, 15s cooldown), E = gold magnet (2x kill gold in 4-cell radius, 8s duration, 20s cooldown). Takes contact damage from enemies (type-dependent multipliers). Dies at 0 HP, respawns after 5s. Managed by `hero.js`, updated after enemies/before towers in game loop.
+WASD-controlled hero spawns when `getEffectiveWave() >= 14` (unlockWave in HERO_STATS). Auto-attacks nearest enemy (15 dmg, 3.5 range, 2/s). Two abilities: Q = AoE stun (3-cell radius, 1.5s, 15s cooldown), E = gold magnet (2x kill gold in 4-cell radius, 8s duration, 20s cooldown). Takes contact damage from enemies (type-dependent multipliers). Dies at 0 HP, respawns after 5s. Managed by `hero.js`, updated after enemies/before towers in game loop.
 
 ## Dual Spawn Points (Wave 15+)
 
-At `getEffectiveWave() >= DUAL_SPAWN_WAVE` (15), enemies spawn from two entry points. Each layout in `MAP_DEFS` has `secondaryWaypoints` entering from x=29 (right edge), converging at the same exit. `WaveManager` alternates spawns: odd-numbered enemies use the secondary path. Secondary paths are always carved in `GameMap` (so they appear on previews). Split Creek primary enemies still fork upper/lower; secondary enemies use a single right-side path.
+At `getEffectiveWave() >= DUAL_SPAWN_WAVE` (15), enemies can spawn from a second entry point. Each layout in `MAP_DEFS` has `secondaryWaypoints` entering from x=29 (right edge), converging at the same exit. Secondary usage ramps gradually: ~6% at wave 15, increasing ~6.3% per wave, capping at 50% by wave 22. Unlock triggers a full unlock screen (bold warning + Continue button). Secondary paths are always carved in `GameMap` (so they appear on previews). Split Creek primary enemies still fork upper/lower; secondary enemies use a single right-side path.
 
 ## Ambient Map Effects
 

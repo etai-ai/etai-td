@@ -1,4 +1,4 @@
-import { WAVES, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getWaveHPScale, WAVE_MODIFIERS, MODIFIER_START_WAVE, MODIFIER_CHANCE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, DUAL_SPAWN_WAVE, GOLDRUSH_INTERVAL, SPEED_MAX, WAVE_GEN } from './constants.js';
+import { WAVES, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getWaveHPScale, WAVE_MODIFIERS, MODIFIER_START_WAVE, MODIFIER_CHANCE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, DUAL_SPAWN_WAVE, GOLDRUSH_INTERVAL, SPEED_MAX, WAVE_GEN, STATE } from './constants.js';
 import { Economy } from './economy.js';
 
 export class WaveManager {
@@ -18,6 +18,7 @@ export class WaveManager {
 
         // Special wave tag (goldrush)
         this.waveTag = null;
+        this._pendingWaveSetup = false;
 
         // Spawn state
         this.spawnGroups = [];
@@ -44,6 +45,18 @@ export class WaveManager {
         // Trigger unlocks/announcements BEFORE the wave starts
         this.game.ui.setupTowerPanel();
         this.game.onWaveThreshold(this.currentWave);
+
+        // If unlock screen paused the game, defer wave setup until Continue is clicked
+        if (this.game.state === STATE.PAUSED) {
+            this._pendingWaveSetup = true;
+            return;
+        }
+
+        this._beginWave();
+    }
+
+    _beginWave() {
+        this._pendingWaveSetup = false;
 
         this.spawning = true;
         this.waveComplete = false;
@@ -120,7 +133,10 @@ export class WaveManager {
             const type = available[Math.floor(Math.random() * available.length)];
             lastType = type;
 
-            const count = Math.floor((W.COUNT_BASE + waveNum * W.COUNT_PER_WAVE + Math.random() * W.COUNT_RANDOM) * W.COUNT_MULTIPLIER);
+            // Ease enemy count during dual spawn introduction (waves 15-20)
+            const dualEase = (waveNum >= DUAL_SPAWN_WAVE && waveNum < DUAL_SPAWN_WAVE + 5)
+                ? 0.70 + (waveNum - DUAL_SPAWN_WAVE) * 0.06 : 1.0;
+            const count = Math.floor((W.COUNT_BASE + waveNum * W.COUNT_PER_WAVE + Math.random() * W.COUNT_RANDOM) * W.COUNT_MULTIPLIER * dualEase);
             const baseInterval = Math.max(W.INTERVAL_MIN, W.INTERVAL_BASE - waveNum * W.INTERVAL_DECAY);
             const interval = baseInterval * (W.INTERVAL_MULTI[type] || 1.0);
 

@@ -2,44 +2,43 @@
 
 Defend your base against waves of enemies by building and upgrading towers along the path. Enemies follow the path from entry to exit — if they reach the end, you lose lives. Lose all 20 lives and it's game over.
 
-## Player Level
+## Wave-Based Progression
 
-You have a global player level that persists across all games. Beat all waves on any map to level up (20 waves default, 15 for Level 3). Your level unlocks new maps and towers:
+Every world is an **endless survival run** — you play until you lose all 20 lives. New towers, the hero unit, and dual spawn points unlock at wave thresholds mid-run:
 
-| Level | Unlocks |
-|-------|---------|
-| 1 | Serpentine Valley, Arrow, Frost, Lightning, Cannon (W2), Sniper (W5) |
-| 2 | Fire Arrow + Deep Frost (replace Arrow + Frost) |
-| 3 | Hero unit (WASD-controlled), compressed 15-wave schedule |
-| 4 | Super Lightning + Bi-Cannon |
-| 5 | Missile Sniper (2x2), Split Creek map |
-| 6 | Dual spawn points — enemies alternate from left and right entries |
-| 8 | Pulse Cannon tower |
-| 10 | The Gauntlet map |
+| Wave | Unlock | Replaces |
+|------|--------|----------|
+| 1 | Arrow, Frost, Lightning | — |
+| 2 | Cannon | — |
+| 5 | Sniper | — |
+| 10 | Fire Arrow, Deep Frost | Arrow, Frost (auto-upgraded) |
+| 14 | Hero unit (WASD-controlled) | — |
+| 15 | Dual Spawn — enemies attack from two sides | — |
+| 20 | Missile Sniper | Sniper (auto-upgraded) |
+| 25 | Super Lightning, Bi-Cannon | Lightning, Cannon (auto-upgraded) |
+| 30 | Pulse Cannon | — |
 
-Enemies get 1.04x HP per level, so higher levels are progressively harder. Your tower panel updates automatically as you unlock new towers — Arrow and Frost are replaced by Fire Arrow and Deep Frost at Level 2.
+When a threshold is crossed, the game pauses and shows an unlock screen with the new tower stats. Click **Continue** to resume. Replaced towers on the field are auto-upgraded for free.
 
-Level 3 features a compressed 15-wave schedule (instead of 20) with two special events: a **Gold Rush** wave where all kills give double gold, and a **Bounty Boss** wave where killing the boss earns a +150g bonus.
+**Dual spawn** starts at just ~6% of enemies using the second entry and ramps up over 8 waves to 50%.
 
-Level 7 is a **Boss Rush** — only 10 waves, but bosses appear every other wave. Wave 5 is an **Armor Break** event where all enemies spawn with halved armor. The finale features 5 bosses with a full escort.
-
-At Level 6+, enemies spawn from **two entry points** on opposite sides of the map, alternating between left and right. Both paths converge at the castle exit.
+**Goldrush** waves occur every 10 waves — all kills give double gold. **Bosses** appear every 5 waves from wave 10 onward.
 
 ## Maps
 
 Each world offers a different strategic challenge. Enemy HP is adjusted per world to keep difficulty balanced — shorter paths have lower HP multipliers so no world is inherently harder than another.
 
-| Map | Style | HP Multiplier | Required Level | Description |
-|-----|-------|---------------|----------------|-------------|
-| **Serpentine Valley** | Long path | 1.0x | 1 | Winding path with 10+ turns. Lots of build space. Lightning towers shine at corners where the path doubles back. |
-| **Split Creek** | Split path | 0.60x | 5 | Path forks into two branches midway. Enemies randomly take upper or lower route, forcing you to defend both sides. |
-| **The Gauntlet** | Short path | 0.65x | 10 | Direct path with only 3 turns. Fewer tower slots — every placement counts. Concentrated killzones are essential. |
+| Map | Style | HP Multiplier | Unlock Requirement | Description |
+|-----|-------|---------------|-------------------|-------------|
+| **Serpentine Valley** | Long path | 1.0x | Always open | Winding path with 10+ turns. Lots of build space. Lightning towers shine at corners where the path doubles back. |
+| **Split Creek** | Split path | 0.60x | Wave 30 on any map | Path forks into two branches midway. Enemies randomly take upper or lower route, forcing you to defend both sides. Starts with wave 1-30 towers pre-unlocked. |
+| **The Gauntlet** | Short path | 0.65x | Wave 40 on any map | Direct path with only 3 turns. Fewer tower slots — every placement counts. Starts with wave 1-50 towers pre-unlocked. |
 
-Each map has 3 layout variants that cycle as you level up. Each environment has unique ambient effects — falling leaves and fireflies in forests, sand wisps in the desert, and rising embers over lava.
+Each map has multiple layout variants randomly selected each run. Each environment has unique ambient effects — falling leaves and fireflies in forests, sand wisps in the desert, and rising embers over lava.
 
-## Hero Unit (Level 3+)
+## Hero Unit (Wave 14+)
 
-At Level 3, you unlock a hero unit that spawns near the castle (exit). Control it with WASD (or arrow keys) to move around the battlefield.
+At wave 14, you unlock a hero unit that spawns near the path start. Control it with WASD (or arrow keys) to move around the battlefield.
 
 **Auto-Attack:** The hero automatically fires at the nearest enemy within range (15 damage, 3.5 cell range, 2 shots/sec).
 
@@ -60,13 +59,13 @@ At Level 3, you unlock a hero unit that spawns near the castle (exit). Control i
 
 ## Towers
 
-Hover over any tower button in the bottom bar to see a preview card with the tower image, stats, and special ability. Click a placed tower to see its full info card with all stats (damage, range, fire rate, slow, freeze, chain, shock, crit, etc.) plus upgrade previews. The tower panel is dynamic — it shows only the towers available at your current level. Keys 1-5 always map to whichever towers are visible.
+Hover over any tower button in the bottom bar to see a preview card with the tower image, stats, and special ability. Click a placed tower to see its full info card with all stats (damage, range, fire rate, slow, freeze, chain, shock, crit, etc.) plus upgrade previews. The tower panel is dynamic — it shows only the towers unlocked at your current wave. Keys 1-5 always map to whichever towers are visible.
 
-### Starter Towers (Level 1)
+### Starter Towers (Wave 1)
 
 #### Arrow ($50) — Available from wave 1
 
-Your bread-and-butter tower. Fast fire rate, decent range, cheap to build and upgrade. Best for sustained single-target damage. Replaced by Fire Arrow at Level 2.
+Your bread-and-butter tower. Fast fire rate, decent range, cheap to build and upgrade. Best for sustained single-target damage. Replaced by Fire Arrow at wave 10.
 
 | Level | Damage | Range | Fire Rate | Upgrade Cost |
 |-------|--------|-------|-----------|-------------|
@@ -78,7 +77,7 @@ Your bread-and-butter tower. Fast fire rate, decent range, cheap to build and up
 
 #### Frost ($75) — Available from wave 1
 
-Low damage but slows enemies, making them spend more time in range of your other towers. The most important support tower. Replaced by Deep Frost at Level 2.
+Low damage but slows enemies, making them spend more time in range of your other towers. The most important support tower. Replaced by Deep Frost at wave 10.
 
 | Level | Damage | Range | Fire Rate | Slow | Duration | Upgrade Cost |
 |-------|--------|-------|-----------|------|----------|-------------|
@@ -124,9 +123,9 @@ Extreme range, high single-target damage, slow fire rate. Has a chance to deal c
 
 **Total investment:** $440 fully upgraded. Best against bosses and tanks. At max level, crits hit for 420 damage. Place centrally — the huge range covers most of the map.
 
-### Level 2 Unlocks
+### Wave 10 Unlocks
 
-At Level 2, Arrow and Frost are replaced in the tower panel by these upgraded versions:
+At wave 10, Arrow and Frost are replaced in the tower panel by these upgraded versions:
 
 #### Fire Arrow ($200) — Replaces Arrow
 
@@ -152,7 +151,21 @@ An aura-based tower that pulses cold damage to ALL enemies in range simultaneous
 
 **Total investment:** $425 fully upgraded. The aura pulse hits all enemies in range — no projectiles to miss. Frozen enemies stop completely (speed = 0). Place at chokepoints for maximum crowd control.
 
-### Level 4 Unlocks
+### Wave 20 Unlock
+
+#### Missile Sniper ($325)
+
+A precision emplacement that fires homing missiles dealing splash damage with a chance to crit. Combines the best of sniper range and cannon splash. Replaces the basic Sniper.
+
+| Level | Damage | Range | Fire Rate | Splash Radius | Crit Chance | Crit Multi | Upgrade Cost |
+|-------|--------|-------|-----------|---------------|-------------|------------|-------------|
+| 1 | 80 | 7.0 | 0.4/s | 1.2 | 12% | 2.5x | — |
+| 2 | 120 | 8.0 | 0.45/s | 1.5 | 16% | 2.8x | $200 |
+| 3 | 180 | 9.0 | 0.56/s | 1.8 | 20% | 3.2x | $300 |
+
+**Total investment:** $825 fully upgraded. Homing missiles never miss. At max level, crits hit for 576 splash damage. Dominates late-game waves.
+
+### Wave 25 Unlocks
 
 #### Super Lightning ($250)
 
@@ -178,21 +191,7 @@ A dual-barreled cannon that fires twice as fast as a regular cannon. Every 3-4 s
 
 **Total investment:** $520 fully upgraded. Armor shred reduces enemy armor temporarily — devastating when paired with other damage towers. Scorch zones bypass armor like burn damage.
 
-### Level 5 Unlock
-
-#### Missile Sniper ($325) — 2x2 Size
-
-A massive emplacement that takes up 4 grid cells (2x2). Fires homing missiles that deal splash damage with a chance to crit. Combines the best of sniper range and cannon splash.
-
-| Level | Damage | Range | Fire Rate | Splash Radius | Crit Chance | Crit Multi | Upgrade Cost |
-|-------|--------|-------|-----------|---------------|-------------|------------|-------------|
-| 1 | 80 | 7.0 | 0.4/s | 1.2 | 12% | 2.5x | — |
-| 2 | 120 | 8.0 | 0.45/s | 1.5 | 16% | 2.8x | $200 |
-| 3 | 180 | 9.0 | 0.56/s | 1.8 | 20% | 3.2x | $300 |
-
-**Total investment:** $825 fully upgraded. The only tower that occupies a 2x2 area — plan placement carefully. Homing missiles never miss. At max level, crits hit for 576 splash damage. Dominates late-game waves.
-
-### Level 8 Unlock
+### Wave 30 Unlock
 
 #### Pulse Cannon ($300)
 
@@ -236,18 +235,18 @@ Modifiers are random — about 35% of waves from wave 3 onward will have one. Pl
 
 ## Early-Send Bonus
 
-When a wave ends, pressing N to send the next wave early earns bonus gold. The bonus starts at 50g and decays by 5g per second of waiting. Send immediately for maximum gold, or wait and build first if you need to prepare. The bonus amount is shown on the Next Wave button.
+When a wave ends, pressing N to send the next wave early earns bonus gold. The bonus starts at 30g and decays by 5g per second of waiting. Send immediately for maximum gold, or wait and build first if you need to prepare. The bonus amount is shown on the Next Wave button.
 
 ## Economy
 
-- **Starting gold:** 150 + (level x 150) per level (L1=300, L2=450, L3=600...)
+- **Starting gold:** 275g (same for all worlds)
 - **Kill rewards:** Base reward + 10% bonus
-- **Wave completion bonus:** 25 + (wave number x 8) gold
-- **Interest:** 2% of your gold at end of each wave
+- **Wave completion bonus:** 25 + (wave number x 6) gold
+- **Interest:** 1% of your gold at end of each wave
 - **Sell refund:** 60% of total invested gold (base cost + all upgrades)
-- **Early-send bonus:** Up to 50g for sending the next wave immediately (decays 5g/s)
+- **Early-send bonus:** Up to 30g for sending the next wave immediately (decays 5g/s)
 
-**Tip:** Banking gold between waves earns interest, but sending the next wave early gives up to 50g bonus. Balance these two strategies based on whether you need time to build or can handle the pressure.
+**Tip:** Banking gold between waves earns interest, but sending the next wave early gives bonus gold. Balance these two strategies based on whether you need time to build or can handle the pressure.
 
 ## Targeting Modes
 
@@ -273,9 +272,9 @@ Set frost/deep frost towers to **First** so they slow the leading enemy. Set sni
 | Space / P | Pause / Resume |
 | N | Send next wave early |
 | +/- | Change game speed (1x / 2x / 3x) |
-| WASD / Arrows | Move hero unit (Level 3+) |
-| Q | Hero AoE stun (Level 3+) |
-| E | Hero gold magnet (Level 3+) |
+| WASD / Arrows | Move hero unit (Wave 14+) |
+| Q | Hero AoE stun (Wave 14+) |
+| E | Hero gold magnet (Wave 14+) |
 
 ## HUD Features
 
@@ -294,9 +293,9 @@ Start with 2-3 Arrow towers at the first major corner. Runners appear at wave 2 
 
 Wave 6 is a swarm wave (20 fast enemies). Have at least one Cannon or Lightning ready. Wave 9 is a mixed assault with grunts, tanks, healers, and runners — your defenses need to handle all types. Wave 10 is your first boss with tank escorts — a Sniper set to Strongest targeting makes a big difference. Watch for wave modifiers — an Armored or Swift modifier on a tough wave can catch you off guard.
 
-### Late Game (Waves 11-20)
+### Late Game (Waves 11+)
 
-Bosses appear more frequently from wave 15 onward, including waves 17, 18, and 19. Healers escort tanks and bosses making them hard to bring down — set a tower to Weakest targeting to pick off healers quickly. Wave 20 has 2 bosses with tanks, healers, and a swarm finale. Use the early-send bonus aggressively to bank extra gold for upgrades.
+Bosses appear every 5 waves. At wave 14, the hero unlocks — position it at chokepoints for free DPS and stun crowd control. Wave 15 introduces dual spawn (enemies from two directions), ramping up gradually. At wave 20 Missile Sniper replaces Sniper, and at wave 25 Super Lightning and Bi-Cannon replace Lightning and Cannon. Use the early-send bonus aggressively to bank extra gold for upgrades.
 
 ### Tower Synergies
 
@@ -314,7 +313,7 @@ Bosses appear more frequently from wave 15 onward, including waves 17, 18, and 1
 - **Don't spread thin.** A concentrated killzone of 4-5 towers beats 8 towers spread across the map.
 - **Path coverage number.** When placing a tower, you'll see a yellow number showing how many path cells are in range. Aim for 8+.
 - **Upgrade > new tower.** A maxed tower outperforms two level 1 towers for less gold. Prioritize upgrading towers at key positions.
-- **Missile Sniper placement.** The 2x2 footprint needs careful planning. Place it where the 4 cells have good path coverage — corners with space are ideal.
+- **Missile Sniper placement.** Its huge range covers most of the map. Place centrally where its splash can hit groups.
 
 ### Map-Specific Tips
 

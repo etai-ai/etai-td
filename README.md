@@ -22,8 +22,8 @@ Open `http://localhost:8000` in a modern browser with WebGL2 support.
 - **11 tower types** with unique mechanics — burn, freeze, chain lightning, splash, knockback, homing missiles, and more
 - **6 enemy types** — grunts, runners, tanks, healers, bosses, and swarms
 - **3 maps** with distinct strategic challenges — long winding paths, split forks, and short gauntlets
-- **Hero unit** (Wave 20+) — WASD-controlled character with AoE stun and gold magnet abilities
-- **Dual spawn points** (Wave 15+) — enemies attack from two directions
+- **Hero unit** (Wave 14+) — WASD-controlled character with AoE stun and gold magnet abilities
+- **Dual spawn points** (Wave 15+) — enemies gradually attack from two directions
 - **WebGL2 post-processing** — bloom, vignette, color grading, dynamic point lighting, shockwave distortion, chromatic aberration
 - **Procedural audio** — all sound generated via Web Audio API, no audio files
 - **Wave modifiers** — random buffs (armored, swift, regen, horde) keep each run fresh

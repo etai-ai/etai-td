@@ -897,6 +897,10 @@ export class UI {
             if (this.game.state === STATE.PAUSED) {
                 this.game.state = STATE.PLAYING;
             }
+            // Resume deferred wave setup if unlock screen interrupted startNextWave
+            if (this.game.waves._pendingWaveSetup) {
+                this.game.waves._beginWave();
+            }
             this.game.audio.ensureContext();
         }, { once: true });
     }

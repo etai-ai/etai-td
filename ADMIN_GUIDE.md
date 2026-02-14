@@ -137,10 +137,10 @@ serpentine: {
 | Field | Purpose | Tuning notes |
 |-------|---------|--------------|
 | `worldHpMultiplier` | Scales ALL enemy HP for this world | Compensates for path length — shorter paths get lower values. Current: Serpentine 1.0, Split Creek 0.60, Gauntlet 0.65 |
-| `requiredRecord` | Best wave record on any map needed to unlock | Serpentine: 0 (always open), Split Creek: 40, Gauntlet: 80 |
+| `requiredRecord` | Best wave record on any map needed to unlock | Serpentine: 0 (always open), Split Creek: 30, Gauntlet: 40 |
 | `startingUnlocks` | Effective wave for initial tower visibility | Higher = more towers available from wave 1 |
 | `environment` | Visual theme (`forest`/`desert`/`lava`) | No gameplay effect |
-| `layouts` | Array of 3 path variants (randomly selected) | See "Map Layouts" below |
+| `layouts` | Array of path variants, randomly selected (3-5 per map) | See "Map Layouts" below |
 
 ---
 
@@ -265,15 +265,15 @@ arrow: {
 |-------|--------|------|-------------|
 | Arrow | Wave 1 | $50 | Wave 9 |
 | Frost | Wave 1 | $75 | Wave 9 |
-| Lightning | Wave 1 | $125 | Wave 29 |
-| Cannon | Wave 2 | $100 | Wave 29 |
-| Sniper | Wave 5 | $150 | Wave 49 |
+| Lightning | Wave 1 | $125 | Wave 24 |
+| Cannon | Wave 2 | $100 | Wave 24 |
+| Sniper | Wave 5 | $150 | Wave 19 |
 | Fire Arrow | Wave 10 | $200 | — |
 | Deep Frost | Wave 10 | $150 | — |
-| Super Lightning | Wave 30 | $250 | — |
-| Bi-Cannon | Wave 30 | $200 | — |
-| Missile Sniper | Wave 50 | $325 (2x2) | — |
-| Pulse Cannon | Wave 80 | $300 | — |
+| Missile Sniper | Wave 20 | $325 | — |
+| Super Lightning | Wave 25 | $250 | — |
+| Bi-Cannon | Wave 25 | $200 | — |
+| Pulse Cannon | Wave 30 | $300 | — |
 
 **Special tower mechanics:**
 
@@ -287,7 +287,7 @@ arrow: {
 | Cannon | `splashRadius` | AoE damage in grid cells |
 | Bi-Cannon | `heavyEvery`, `shredPercent`, `scorchDPS` | Dual barrel, armor shred, scorch zones |
 | Sniper | `critChance`, `critMulti` | Random crit hits for bonus damage |
-| Missile Sniper | `splashRadius`, `critChance`, `critMulti` | 2x2, homing missiles, splash + crit |
+| Missile Sniper | `splashRadius`, `critChance`, `critMulti` | Homing missiles, splash + crit |
 | Pulse Cannon | `splashRadius`, `knockbackDist` | Splash + knockback. Bosses immune, tanks 50% resistance, max 2 knockbacks per enemy |
 
 ### Burn Mechanic (Fire Arrow)
@@ -303,7 +303,7 @@ Current burn stats:
 
 ## 5. Hero Unit
 
-The hero unit (`hero.js`) is a player-controlled character that spawns at Wave 20+ (`HERO_STATS.unlockWave`). Managed independently from towers. Stats scale with waves above unlock: `scale = 1 + wavesAbove * 0.02`.
+The hero unit (`hero.js`) is a player-controlled character that spawns at Wave 14+ (`HERO_STATS.unlockWave`). Managed independently from towers. Stats scale with waves above unlock: `scale = 1 + wavesAbove * 0.02`.
 
 **Stats (from `HERO_STATS` in `constants.js`):**
 
@@ -334,19 +334,19 @@ The hero unit (`hero.js`) is a player-controlled character that spawns at Wave 2
 ## 6. Economy
 
 ```js
-export const STARTING_GOLD = 300;
+export const STARTING_GOLD = 275;
 export const STARTING_LIVES = 20;
 export const SELL_REFUND = 0.6;       // 60% of total invested
-export const INTEREST_RATE = 0.02;    // 2% of gold between waves
+export const INTEREST_RATE = 0.01;    // 1% of gold between waves
 export const WAVE_BONUS_BASE = 25;    // base gold per wave clear
-export const WAVE_BONUS_PER = 8;      // additional per wave number
+export const WAVE_BONUS_PER = 6;      // additional per wave number
 ```
 
 **Income per wave clear:** `WAVE_BONUS_BASE + currentWave × WAVE_BONUS_PER + floor(gold × INTEREST_RATE)`
 
 **Kill income:** `enemy.reward × 1.10` (hardcoded 10% bonus in `enemy.js`)
 
-**Starting gold:** Fixed 300g for all worlds (no level-based scaling).
+**Starting gold:** Fixed 275g for all worlds (no level-based scaling).
 
 ---
 
@@ -387,7 +387,7 @@ Per-environment animated particles rendered on the game canvas as a ground layer
 Players earn bonus gold for sending the next wave early (pressing N between waves):
 
 ```js
-export const EARLY_SEND_MAX_BONUS = 50;
+export const EARLY_SEND_MAX_BONUS = 30;
 export const EARLY_SEND_DECAY = 5;
 ```
 
@@ -397,7 +397,7 @@ export const EARLY_SEND_DECAY = 5;
 
 ## 10. Map Layouts
 
-Each world has 3 layout variants, randomly selected at game start.
+Each world has 3-5 layout variants, randomly selected at game start (Serpentine has 5).
 
 A layout contains:
 
@@ -410,7 +410,7 @@ A layout contains:
 }
 ```
 
-Secondary paths are always carved (visible on map previews), but enemies only use them when `getEffectiveWave() >= DUAL_SPAWN_WAVE` (30).
+Secondary paths are always carved (visible on map previews), but enemies only use them when `getEffectiveWave() >= DUAL_SPAWN_WAVE` (15). Usage ramps gradually: ~6% at wave 15, increasing ~6.3% per wave, capping at 50% by wave 22.
 
 **Rules for waypoints:**
 - Consecutive waypoints MUST be axis-aligned (same x or same y) — no diagonals
@@ -447,9 +447,9 @@ Uses `localStorage` with `td_` prefix:
 | S | Sell selected tower (or move hero down if no tower selected) |
 | T | Cycle target mode (First/Closest/Strongest/Weakest) |
 | +/- | Speed up/down (1x-3x) |
-| WASD / Arrows | Move hero unit (wave 20+) |
-| Q | Hero AoE stun (wave 20+) |
-| E | Hero gold magnet (wave 20+) |
+| WASD / Arrows | Move hero unit (wave 14+) |
+| Q | Hero AoE stun (wave 14+) |
+| E | Hero gold magnet (wave 14+) |
 
 ### Admin Shortcuts (requires admin mode)
 
