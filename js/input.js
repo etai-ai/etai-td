@@ -1,4 +1,4 @@
-import { CELL, COLS, ROWS, STATE, TOWER_TYPES, SPEED_MIN, SPEED_MAX } from './constants.js';
+import { CELL, COLS, ROWS, STATE, TOWER_TYPES, SPEED_MIN, SPEED_MAX, CANVAS_W, CANVAS_H } from './constants.js';
 import { worldToGrid } from './utils.js';
 
 function buildTowerKeys(game) {
@@ -393,6 +393,13 @@ export class InputHandler {
                         this.game.economy.record = 0;
                         this.game.economy.score = 0;
                     }
+                }
+                break;
+            case 'g':
+            case 'G':
+                if (this.game.adminMode && this.game.state === STATE.PLAYING) {
+                    this.game.economy.addGold(1000);
+                    this.game.particles.spawnBigFloatingText(CANVAS_W / 2, CANVAS_H / 3, '+1000g', '#ffd700');
                 }
                 break;
             case '`':
