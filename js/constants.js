@@ -514,15 +514,16 @@ export const TOWER_TYPES = {
 // ── Wave Threshold Unlock Definitions ────────────────────
 export const WAVE_UNLOCKS = {
     10: { towers: ['Fire Arrow', 'Deep Frost'], keys: ['firearrow', 'deepfrost'], replacesKeys: ['arrow', 'frost'], color: '#c0392b' },
+    14: { hero: true, color: '#00e5ff' },
     15: { dualSpawn: true, color: '#e74c3c' },
-    20: { hero: true, towers: ['Missile Sniper'], keys: ['missilesniper'], replacesKeys: ['sniper'], color: '#00e5ff' },
+    20: { towers: ['Missile Sniper'], keys: ['missilesniper'], replacesKeys: ['sniper'], color: '#6b8e23' },
     25: { towers: ['Super Lightning', 'Bi-Cannon'], keys: ['superlightning', 'bicannon'], replacesKeys: ['lightning', 'cannon'], color: '#7b3fff' },
     30: { towers: ['Pulse Cannon'], keys: ['pulsecannon'], replacesKeys: null, color: '#2eaaaa' },
 };
 
 // ── Hero Definitions ──────────────────────────────────────
 export const HERO_STATS = {
-    unlockWave: 20,       // hero appears at wave 20
+    unlockWave: 14,       // hero appears at wave 14
     maxHP: 200,
     speed: 150,           // px/s
     radius: 14,

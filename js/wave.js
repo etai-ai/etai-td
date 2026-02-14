@@ -112,7 +112,7 @@ export class WaveManager {
         const intervalMulti = { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3 };
 
         const groups = [];
-        const groupCount = 2 + Math.floor(waveNum / 5);
+        const groupCount = Math.min(6, 2 + Math.floor(waveNum / 5));
         let runningDelay = 0;
         let lastType = null;
 
