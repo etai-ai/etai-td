@@ -566,7 +566,7 @@ export const WAVE_GEN = {
     GROUP_PER_WAVES: 5,        // +1 group every N waves
     GROUP_MAX: 6,              // max groups per wave
     COUNT_BASE: 4,             // base enemies per group
-    COUNT_PER_WAVE: 0.6,       // +N enemies per wave
+    COUNT_PER_WAVE: 0.45,      // +N enemies per wave
     COUNT_RANDOM: 4,           // random variance on count
     COUNT_MULTIPLIER: 0.78,    // global enemy count scalar
     INTERVAL_BASE: 0.8,        // base spawn interval (seconds)
@@ -574,8 +574,8 @@ export const WAVE_GEN = {
     INTERVAL_MIN: 0.22,        // floor for spawn interval
     INTERVAL_MULTI: { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3, wobbler: 1.0, flying: 1.0, megaboss: 0.7 },
     GROUP_OVERLAP: 0.5,        // next group starts at this fraction of previous
-    GROUP_GAP_MIN: 1.0,        // min gap between groups (seconds)
-    GROUP_GAP_RANDOM: 1.5,     // random extra gap
+    GROUP_GAP_MIN: 0.7,        // min gap between groups (seconds)
+    GROUP_GAP_RANDOM: 1.0,     // random extra gap
     BOSS_INTERVAL: 4.0,        // spawn interval between bosses
     BOSS_DELAY: 1.0,           // delay after last group before boss
 };
@@ -591,7 +591,7 @@ export const ENEMY_TYPES = {
         name: 'Grunt',
         baseHP: 18,
         speed: 70,     // px per second (+15%)
-        reward: 6,
+        reward: 7,
         livesCost: 1,
         color: '#e74c3c',
         radius: 9,
@@ -601,7 +601,7 @@ export const ENEMY_TYPES = {
         name: 'Runner',
         baseHP: 6,
         speed: 125,    // (+15%)
-        reward: 5,
+        reward: 6,
         livesCost: 1,
         color: '#f39c12',
         radius: 10,
@@ -611,7 +611,7 @@ export const ENEMY_TYPES = {
         name: 'Tank',
         baseHP: 75,
         speed: 40,     // (+15%)
-        reward: 14,
+        reward: 15,
         livesCost: 2,
         color: '#2c3e50',
         radius: 13,
@@ -621,7 +621,7 @@ export const ENEMY_TYPES = {
         name: 'Healer',
         baseHP: 25,
         speed: 65,     // (+15%)
-        reward: 10,
+        reward: 11,
         livesCost: 1,
         color: '#2ecc71',
         radius: 9,
@@ -633,7 +633,7 @@ export const ENEMY_TYPES = {
         name: 'Boss',
         baseHP: 349,
         speed: 26,     // (+15%)
-        reward: 42,
+        reward: 46,
         livesCost: 5,
         color: '#8e44ad',
         radius: 24,
@@ -663,7 +663,7 @@ export const ENEMY_TYPES = {
         name: 'Flying',
         baseHP: 10,
         speed: 97,
-        reward: 10,
+        reward: 11,
         livesCost: 1,
         color: '#9b59b6',
         radius: 11,
@@ -673,7 +673,7 @@ export const ENEMY_TYPES = {
         name: 'Mega Boss',
         baseHP: 392,
         speed: 58,
-        reward: 80,
+        reward: 88,
         livesCost: 5,
         color: '#8b0000',
         radius: 34,
@@ -711,8 +711,8 @@ export const MAX_PARTICLES = 500;
 
 // ── HP Scaling ─────────────────────────────────────────────
 export function getWaveHPScale(wave) {
-    // Wave 1≈1.10, Wave 10≈25.9, Wave 20≈134
-    return wave * Math.pow(1.10, wave);
+    // Wave 1≈1.12, Wave 10≈31.1, Wave 20≈192
+    return wave * Math.pow(1.12, wave);
 }
 
 // ── Wave Modifiers ────────────────────────────────────────
