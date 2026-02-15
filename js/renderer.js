@@ -175,8 +175,11 @@ export class Renderer {
         }
 
         // Ambient map effects (ground layer, behind everything)
-        this.updateAmbients(1 / 60);
-        this.drawAmbients(ctx);
+        // Skip in 3D mode — renderer3d handles its own 3D ambient particles
+        if (!this.game.use3D) {
+            this.updateAmbients(1 / 60);
+            this.drawAmbients(ctx);
+        }
 
         // Draw scorch zones (ground layer, below enemies)
         this.drawScorchZones(ctx);
