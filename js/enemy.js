@@ -58,8 +58,11 @@ export class Enemy {
         // Wave modifier tag (for visual indicator)
         this.waveModifier = null;
 
-        // Knockback limit
-        this.knockbackCount = 0;
+        // Healer cooldown (reduces O(n²) checks)
+        this.healCooldown = 0;
+
+        // Knockback tracking (per tower ID)
+        this.knockbackSources = new Set(); // Track which towers have knocked this enemy back
 
         // Boss enrage (when last enemy alive)
         this.enraged = false;
@@ -133,8 +136,11 @@ export class Enemy {
     }
 
     applyArmorShred(amount, duration) {
-        this.armorShredAmount = Math.max(this.armorShredAmount, amount);
-        this.armorShredStacks = Math.min(3, this.armorShredStacks + 1);
+        // Only add stack if shred amount matches current (or is stronger)
+        if (amount >= this.armorShredAmount) {
+            this.armorShredAmount = amount;
+            this.armorShredStacks = Math.min(3, this.armorShredStacks + 1);
+        }
         this.armorShredTimer = Math.max(this.armorShredTimer, duration);
         this.armor = Math.max(0, this.baseArmor - this.armorShredAmount * this.armorShredStacks);
     }
@@ -145,11 +151,12 @@ export class Enemy {
         if (duration > this.burnTimer) this.burnTimer = duration;
     }
 
-    applyKnockback(cells) {
-        // Bosses and mega bosses immune, tanks 50% resistance, max 2 knockbacks per enemy
+    applyKnockback(cells, towerId) {
+        // Bosses and mega bosses immune, tanks 50% resistance
         if (this.type === 'boss' || this.type === 'megaboss') return;
-        if (this.knockbackCount >= 2) return;
-        this.knockbackCount++;
+        // Each pulse tower can only knockback this enemy once
+        if (towerId !== undefined && this.knockbackSources.has(towerId)) return;
+        if (towerId !== undefined) this.knockbackSources.add(towerId);
         if (this.type === 'tank') cells *= 0.5;
 
         const knockPx = cells * CELL;
@@ -271,6 +278,7 @@ export class Enemy {
             if (this.hp <= 0) {
                 this.hp = 0;
                 this.alive = false;
+                this.deathTimer = 0; // Trigger death animation & rewards
             }
         }
 
@@ -452,13 +460,17 @@ export class EnemyManager {
                 this.game.particles.spawnDust(e.x, e.y + e.radius * 0.5, 1);
             }
 
-            // Healer logic
+            // Healer logic (throttled to reduce O(n²))
             if (e.alive && e.healRate > 0 && e.healRadius > 0) {
-                const healRange = e.healRadius * CELL;
-                for (const other of this.enemies) {
-                    if (other === e || !other.alive) continue;
-                    if (distance(e, other) <= healRange) {
-                        other.heal(e.healRate * dt);
+                e.healCooldown -= dt;
+                if (e.healCooldown <= 0) {
+                    e.healCooldown = 0.1; // Check every 0.1s instead of every frame
+                    const healRange = e.healRadius * CELL;
+                    for (const other of this.enemies) {
+                        if (other === e || !other.alive) continue;
+                        if (distance(e, other) <= healRange) {
+                            other.heal(e.healRate * 0.1); // Heal 0.1s worth
+                        }
                     }
                 }
             }

@@ -271,7 +271,7 @@ export const MAP_DEFS = {
         worldHpMultiplier: 1.0,
         requiredRecord: 40,
         startingUnlocks: 50,
-        startingWaveHP: 15,
+        startingWaveHP: 10,
         startingGold: 1000,
         flyingStartWave: 2,
         environment: 'lava',
@@ -508,7 +508,7 @@ export const TOWER_TYPES = {
     },
     pulsecannon: {
         name: 'Pulse Cannon',
-        cost: 300,
+        cost: 600,
         color: '#2eaaaa',
         splash: true,
         knockback: true,

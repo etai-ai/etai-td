@@ -12,6 +12,7 @@ export class Projectile {
         this.speed = tower.projSpeed;
         this.damage = tower.damage;
         this.towerType = tower.type;
+        this.towerId = tower.id; // Track source tower for per-tower knockback immunity
         this.alive = true;
 
         // Special properties inherited from tower
@@ -49,6 +50,7 @@ export class Projectile {
         // Visual
         this.angle = angle(this, target);
         this.trail = [];
+        this.trailIndex = 0; // Circular buffer index
     }
 
     update(dt, game) {
@@ -78,10 +80,14 @@ export class Projectile {
             this.y += (dy / dist) * move;
         }
 
-        // Trail
-        this.trail.push({ x: this.x, y: this.y });
+        // Trail (circular buffer - avoid O(n) shift)
         const maxTrail = this.missile ? 10 : 5;
-        if (this.trail.length > maxTrail) this.trail.shift();
+        if (this.trail.length < maxTrail) {
+            this.trail.push({ x: this.x, y: this.y });
+        } else {
+            this.trail[this.trailIndex] = { x: this.x, y: this.y };
+            this.trailIndex = (this.trailIndex + 1) % maxTrail;
+        }
 
         // Missile exhaust particles during flight
         if (this.missile && game && Math.random() < 0.3) {
@@ -147,7 +153,7 @@ export class Projectile {
                 for (const e of game.enemies.enemies) {
                     if (!e.alive || e.flying || e.deathTimer >= 0) continue;
                     if (distance(this, e) > kbSplashPx) continue;
-                    e.applyKnockback(this.knockbackDist);
+                    e.applyKnockback(this.knockbackDist, this.towerId);
                 }
             }
         } else if (this.forkCount > 0) {
