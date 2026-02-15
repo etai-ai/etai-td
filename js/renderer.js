@@ -669,11 +669,16 @@ export class Renderer {
     }
 
     drawEnemies(ctx) {
+        const use3D = this.game.use3D && this.game.renderer3d;
+
         for (const e of this.game.enemies.enemies) {
             // Skip enemies that reached the end
             if (e.reached) continue;
 
             const isDying = e.deathTimer >= 0;
+
+            // In 3D mode, death animation is handled by 3D renderer
+            if (use3D && isDying) continue;
 
             // Death animation: scale down + fade + spin + color shift
             let scale = 1;
@@ -701,6 +706,8 @@ export class Renderer {
 
             ctx.globalAlpha = alpha;
 
+            // ── 2D-only body rendering (skipped in 3D mode) ──
+            if (!use3D) {
             // Apply death spin
             if (isDying) {
                 ctx.save();
@@ -859,6 +866,7 @@ export class Renderer {
                 this.drawEnemyShape(ctx, e, drawX, drawY, r);
                 ctx.fill();
             }
+            } // end if (!use3D)
 
             // Healer glow
             if (e.healRate > 0 && !isDying) {
@@ -880,9 +888,10 @@ export class Renderer {
 
             // Freeze effect indicator
             if (e.isFrozen && !isDying) {
-                // Cyan tinted overlay
+                // Cyan tinted overlay (circle in 3D mode, shape in 2D)
                 ctx.fillStyle = 'rgba(0, 255, 255, 0.25)';
-                this.drawEnemyShape(ctx, e, drawX, drawY, r);
+                if (use3D) { ctx.beginPath(); ctx.arc(drawX, drawY, r, 0, Math.PI * 2); }
+                else this.drawEnemyShape(ctx, e, drawX, drawY, r);
                 ctx.fill();
 
                 // Cyan ring
@@ -906,9 +915,10 @@ export class Renderer {
 
             // Shock effect indicator
             if (e.isShocked && !isDying) {
-                // White flash overlay
+                // White flash overlay (circle in 3D mode, shape in 2D)
                 ctx.fillStyle = 'rgba(255, 255, 255, 0.4)';
-                this.drawEnemyShape(ctx, e, drawX, drawY, r);
+                if (use3D) { ctx.beginPath(); ctx.arc(drawX, drawY, r, 0, Math.PI * 2); }
+                else this.drawEnemyShape(ctx, e, drawX, drawY, r);
                 ctx.fill();
 
                 // Electric ring
@@ -1041,6 +1051,8 @@ export class Renderer {
     }
 
     drawTowerTurrets(ctx) {
+        const use3D = this.game.use3D && this.game.renderer3d;
+
         for (const tower of this.game.towers.towers) {
             const cx = tower.x;
             const cy = tower.y;
@@ -1098,7 +1110,8 @@ export class Renderer {
             // Per-type ambient effects (drawn behind turret, world-space)
             this.drawTowerAmbient(ctx, tower, cx, cy);
 
-            // Recoil offset
+            // 2D turret shape (skipped in 3D mode — 3D meshes have turrets)
+            if (!use3D) {
             const recoilAmount = tower.recoilTimer > 0 ? (tower.recoilTimer / 0.12) * 5 : 0;
 
             ctx.save();
@@ -1149,6 +1162,7 @@ export class Renderer {
             }
 
             ctx.restore();
+            } // end if (!use3D)
 
             // Target mode label below tower
             const mode = TARGET_MODES[tower.targetMode];

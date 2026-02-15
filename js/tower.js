@@ -281,7 +281,7 @@ export class TowerManager {
         this.game.achievements.increment(`tower_${typeName}_placed`);
         this.game.achievements.increment('totalGoldSpent', def.cost);
         this.game.achievements.check('towerPlaced', { type: typeName });
-        this.game.renderer.drawTerrain();
+        this.game.refreshTerrain();
         this.game.audio.playPlace();
 
         // Placement visual feedback
@@ -309,7 +309,7 @@ export class TowerManager {
         this.game.particles.spawnSellDissolve(tower.x, tower.y, TOWER_TYPES[tower.type].color, tower.size);
 
         this.towers = this.towers.filter(t => t !== tower);
-        this.game.renderer.drawTerrain();
+        this.game.refreshTerrain();
         this.game.particles.spawnFloatingText(tower.x, tower.y - 10, `+${value}g`, '#ffd700');
     }
 
@@ -327,7 +327,7 @@ export class TowerManager {
         if (tower.level >= def.levels.length - 1) {
             this.game.achievements.increment('towersMaxed');
         }
-        this.game.renderer.drawTerrain();
+        this.game.refreshTerrain();
 
         // Upgrade visual feedback
         this.game.particles.spawnUpgradeSparkle(tower.x, tower.y);

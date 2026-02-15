@@ -15,6 +15,7 @@ import { WaveDebugger } from './debug.js';
 import { PostFX } from './postfx.js';
 import { Hero } from './hero.js';
 import { Achievements } from './achievements.js';
+// Renderer3D loaded dynamically to avoid breaking the game if Three.js CDN is unavailable
 
 const FIXED_DT = 1 / 60; // 60 Hz physics
 
@@ -43,6 +44,9 @@ export class Game {
         // Track which wave thresholds have been triggered this run
         this._triggeredThresholds = new Set();
 
+        // Store canvas references for 3D toggle visibility
+        this._canvases = canvases;
+
         // Core systems
         this.map = new GameMap();
         this.economy = new Economy();
@@ -60,14 +64,40 @@ export class Game {
         this.postfx = new PostFX(canvases.fx, canvases.terrain, canvases.game);
         this.achievements = new Achievements();
 
+        // 3D renderer (Three.js) — loaded dynamically so CDN failure doesn't break 2D game
+        this.renderer3d = null;
+        this.use3D = false;
+        this._init3D(canvases);
+
         // Initial terrain render
+        this.refreshTerrain();
+    }
+
+    async _init3D(canvases) {
+        if (!canvases.three) return;
+        try {
+            const { Renderer3D } = await import('./renderer3d.js');
+            this.renderer3d = new Renderer3D(canvases, this);
+            if (localStorage.getItem('td_use3d') === '1') {
+                this.use3D = true;
+                this._apply3DVisibility();
+                this.renderer3d.drawTerrain();
+            }
+        } catch (e) {
+            console.warn('Three.js 3D renderer unavailable:', e.message);
+        }
+    }
+
+    /** Call instead of renderer.drawTerrain() to keep both renderers in sync */
+    refreshTerrain() {
         this.renderer.drawTerrain();
+        if (this.renderer3d) this.renderer3d.drawTerrain();
     }
 
     selectMap(mapId) {
         this.selectedMapId = mapId;
         this.map = new GameMap(mapId);
-        this.renderer.drawTerrain();
+        this.refreshTerrain();
         // Per-map color grading
         const tints = {
             serpentine: [0.95, 1.0, 0.9],
@@ -117,7 +147,7 @@ export class Game {
 
         // Pick random layout, always build secondary paths
         this.map = new GameMap(this.selectedMapId, this.getLayoutIndex());
-        this.renderer.drawTerrain();
+        this.refreshTerrain();
 
         this.heroDeathsThisLevel = 0;
         // Init hero if starting unlocks include hero wave
@@ -133,6 +163,52 @@ export class Game {
         this.ui.hideAllScreens();
         this.waves.startNextWave();
         this.ui.update();
+    }
+
+    toggle3D() {
+        if (!this.renderer3d) return;
+        this.use3D = !this.use3D;
+        localStorage.setItem('td_use3d', this.use3D ? '1' : '0');
+        this._apply3DVisibility();
+        if (this.use3D) {
+            this.renderer3d.drawTerrain();
+        } else {
+            this.refreshTerrain();
+        }
+    }
+
+    _apply3DVisibility() {
+        if (this.use3D) {
+            // Three-canvas always active (WebGL renders to it) when 3D is on
+            this._canvases.three.style.display = 'block';
+            if (this.postfx.enabled) {
+                // PostFX composites tilted 3D scene + foreshortened 2D overlays
+                this.postfx.terrainCanvas = this._canvases.three;
+                this.postfx.setTerrainDirty();
+                this._canvases.terrain.style.visibility = 'hidden';
+                this._canvases.game.style.visibility = 'hidden';
+                this._canvases.three.style.visibility = 'hidden'; // PostFX reads it
+                this._canvases.fx.style.display = '';
+            } else {
+                // No PostFX: three-canvas shows terrain+meshes, game-canvas overlays on top
+                this._canvases.terrain.style.visibility = 'hidden';
+                this._canvases.game.style.visibility = 'visible';
+                this._canvases.three.style.visibility = 'visible';
+                this._canvases.fx.style.display = 'none';
+            }
+        } else {
+            this._canvases.three.style.display = 'none';
+            if (this.postfx.enabled) {
+                this.postfx.terrainCanvas = this._canvases.terrain;
+                this.postfx.setTerrainDirty();
+                this._canvases.terrain.style.visibility = 'hidden';
+                this._canvases.game.style.visibility = 'hidden';
+                this._canvases.fx.style.display = '';
+            } else {
+                this._canvases.terrain.style.visibility = '';
+                this._canvases.game.style.visibility = '';
+            }
+        }
     }
 
     toggleAdmin() {
@@ -205,7 +281,7 @@ export class Game {
                             this.particles.spawnExplosion(t.x, t.y, newDef.color);
                         }
                     }
-                    this.renderer.drawTerrain();
+                    this.refreshTerrain();
                 }
 
                 // Hero unlock
@@ -261,7 +337,7 @@ export class Game {
         this.waves.reset();
         this.input.reset();
         this.hero.reset();
-        this.renderer.drawTerrain();
+        this.refreshTerrain();
         this.ui.setupTowerPanel();
         this.ui.showScreen('menu');
         this.ui.update();
@@ -280,7 +356,15 @@ export class Game {
             }
         }
 
+        if (this.use3D && this.renderer3d) {
+            this.renderer3d.drawFrame(this.accumulator / FIXED_DT);
+            // Three-canvas updates every frame — tell PostFX to re-read it
+            if (this.postfx.enabled) this.postfx.setTerrainDirty();
+        }
+
+        // Draw 2D overlays (enemies HP bars, projectiles, particles, etc.)
         this.renderer.drawFrame(this.accumulator / FIXED_DT);
+
         if (this.postfx.enabled) {
             this.registerLights();
             this.postfx.render();

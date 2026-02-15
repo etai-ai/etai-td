@@ -329,6 +329,7 @@ body {
 #terrain-canvas { z-index: 0; }
 #game-canvas { z-index: 1; }
 #fx-canvas { z-index: 2; pointer-events: none; }
+#three-canvas { z-index: 0; display: none; }
 #ui-canvas { z-index: 3; }
 
 /* ── Bottom Panel ──────────────────────────────────────── */

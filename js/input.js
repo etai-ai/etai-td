@@ -415,6 +415,10 @@ export class InputHandler {
                     this.game.particles.spawnBigFloatingText(CANVAS_W / 2, CANVAS_H / 3, '+1000g', '#ffd700');
                 }
                 break;
+            case 'v':
+            case 'V':
+                this.game.toggle3D();
+                break;
             case '`':
                 this.game.toggleAdmin();
                 break;

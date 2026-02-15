@@ -19,6 +19,14 @@
     <meta name="twitter:image" content="https://yankicaura.github.io/etai-game/images/preview.png">
 
     <link rel="stylesheet" href="css/style.css">
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+            "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+        }
+    }
+    </script>
 </head>
 <body>
     <div id="game-container">
@@ -49,6 +57,7 @@
             <canvas id="terrain-canvas"></canvas>
             <canvas id="game-canvas"></canvas>
             <canvas id="fx-canvas"></canvas>
+            <canvas id="three-canvas"></canvas>
             <canvas id="ui-canvas"></canvas>
 
             <!-- Tower Info Popup -->

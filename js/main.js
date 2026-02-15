@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
         game: document.getElementById('game-canvas'),
         ui: document.getElementById('ui-canvas'),
         fx: document.getElementById('fx-canvas'),
+        three: document.getElementById('three-canvas'),
     };
 
     const game = new Game(canvases);
