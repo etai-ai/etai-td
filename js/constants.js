@@ -542,7 +542,7 @@ export const HERO_STATS = {
     damage: 15,  range: 3.5,  fireRate: 0.5,  projSpeed: 350,
     // Contact damage (DPS tick every 0.5s)
     contactTick: 0.5,  contactBase: 10,
-    contactMultipliers: { grunt: 1, runner: 0.8, tank: 2, healer: 0.6, boss: 3, swarm: 0.5, megaboss: 4 },
+    contactMultipliers: { grunt: 1, runner: 0.8, tank: 2, healer: 0.6, boss: 3, swarm: 0.5, wobbler: 0.3, megaboss: 4 },
     // Respawn
     respawnDelay: 5.0,
     // Q: AoE Stun
@@ -553,7 +553,7 @@ export const HERO_STATS = {
 
 // ── Dual Spawn ────────────────────────────────────────────
 export const DUAL_SPAWN_WAVE = 15;
-export const DUAL_SPAWN_START_PCT = 0.05;   // 5% at wave 20 (start of % ramp)
+export const DUAL_SPAWN_START_PCT = 0.025;  // 2.5% at wave 21 (start of % ramp)
 export const DUAL_SPAWN_RAMP_PCT = 0.015;   // +1.5% per wave
 export const DUAL_SPAWN_MAX_PCT = 0.20;     // cap at 20%
 export const FLYING_START_WAVE = 17;
@@ -566,11 +566,11 @@ export const WAVE_GEN = {
     COUNT_BASE: 4,             // base enemies per group
     COUNT_PER_WAVE: 0.6,       // +N enemies per wave
     COUNT_RANDOM: 4,           // random variance on count
-    COUNT_MULTIPLIER: 0.82,    // global enemy count scalar
+    COUNT_MULTIPLIER: 0.78,    // global enemy count scalar
     INTERVAL_BASE: 0.8,        // base spawn interval (seconds)
     INTERVAL_DECAY: 0.01,      // interval shrinks per wave
     INTERVAL_MIN: 0.22,        // floor for spawn interval
-    INTERVAL_MULTI: { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3, flying: 1.0, megaboss: 0.7 },
+    INTERVAL_MULTI: { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3, wobbler: 1.0, flying: 1.0, megaboss: 0.7 },
     GROUP_OVERLAP: 0.5,        // next group starts at this fraction of previous
     GROUP_GAP_MIN: 1.0,        // min gap between groups (seconds)
     GROUP_GAP_RANDOM: 1.5,     // random extra gap
@@ -597,7 +597,7 @@ export const ENEMY_TYPES = {
     },
     runner: {
         name: 'Runner',
-        baseHP: 7,
+        baseHP: 6,
         speed: 125,    // (+15%)
         reward: 5,
         livesCost: 1,
@@ -607,7 +607,7 @@ export const ENEMY_TYPES = {
     },
     tank: {
         name: 'Tank',
-        baseHP: 90,
+        baseHP: 80,
         speed: 40,     // (+15%)
         reward: 14,
         livesCost: 2,
@@ -617,7 +617,7 @@ export const ENEMY_TYPES = {
     },
     healer: {
         name: 'Healer',
-        baseHP: 30,
+        baseHP: 25,
         speed: 65,     // (+15%)
         reward: 10,
         livesCost: 1,
@@ -647,9 +647,19 @@ export const ENEMY_TYPES = {
         radius: 6,
         armor: 0,
     },
+    wobbler: {
+        name: 'Wobbler',
+        baseHP: 8,
+        speed: 29,
+        reward: 3,
+        livesCost: 1,
+        color: '#ff69b4',
+        radius: 14,
+        armor: 0,
+    },
     flying: {
         name: 'Flying',
-        baseHP: 12,
+        baseHP: 10,
         speed: 97,
         reward: 10,
         livesCost: 1,
@@ -659,7 +669,7 @@ export const ENEMY_TYPES = {
     },
     megaboss: {
         name: 'Mega Boss',
-        baseHP: 612,
+        baseHP: 551,
         speed: 58,
         reward: 80,
         livesCost: 5,

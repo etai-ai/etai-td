@@ -568,6 +568,21 @@ export class Renderer {
         ctx.closePath();
     }
 
+    drawWobble(ctx, x, y, r, phase) {
+        // Wobbly blob: asymmetric circle that squishes over time
+        const t = phase || 0;
+        ctx.beginPath();
+        for (let i = 0; i <= 20; i++) {
+            const a = (i / 20) * Math.PI * 2;
+            const wobble = 1 + 0.18 * Math.sin(a * 3 + t * 6) + 0.10 * Math.cos(a * 2 - t * 4);
+            const px = x + Math.cos(a) * r * wobble;
+            const py = y + Math.sin(a) * r * wobble;
+            if (i === 0) ctx.moveTo(px, py);
+            else ctx.lineTo(px, py);
+        }
+        ctx.closePath();
+    }
+
     drawEnemyShape(ctx, e, x, y, r) {
         switch (e.type) {
             case 'grunt':
@@ -587,6 +602,9 @@ export class Renderer {
                 break;
             case 'swarm':
                 this.drawTriangle(ctx, x, y, r, e.angle);
+                break;
+            case 'wobbler':
+                this.drawWobble(ctx, x, y, r, e.walkPhase);
                 break;
             case 'flying':
                 this.drawWing(ctx, x, y, r);
@@ -761,6 +779,28 @@ export class Renderer {
                     ctx.moveTo(sx, sy);
                     ctx.lineTo(sx + Math.cos(backAngle) * 5, sy + Math.sin(backAngle) * 5);
                     ctx.stroke();
+                }
+            } else if (e.type === 'wobbler' && !isDying) {
+                // Googly eyes
+                const eyeOff = r * 0.32;
+                const eyeR = r * 0.30;
+                const pupilR = r * 0.15;
+                const pupilShift = r * 0.10;
+                for (const side of [-1, 1]) {
+                    // White of eye
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(drawX + side * eyeOff, drawY - r * 0.15, eyeR, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Pupil — offset in movement direction
+                    ctx.fillStyle = '#111';
+                    ctx.beginPath();
+                    ctx.arc(
+                        drawX + side * eyeOff + Math.cos(e.angle) * pupilShift,
+                        drawY - r * 0.15 + Math.sin(e.angle) * pupilShift,
+                        pupilR, 0, Math.PI * 2
+                    );
+                    ctx.fill();
                 }
             }
 

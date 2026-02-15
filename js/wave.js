@@ -219,30 +219,36 @@ export class WaveManager {
                 this.groupTimers[g] -= dt;
 
                 if (this.groupTimers[g] <= 0) {
-                    // Dual-spawn: wave 15 = build phase, 16-19 = fixed count, 20+ = % ramp
+                    // Dual-spawn: wave 15 = build phase, 16-20 = wobblers, 21+ = % ramp
                     let useSecondary = false;
                     const effectiveWave = this.game.getEffectiveWave();
                     if (effectiveWave > DUAL_SPAWN_WAVE) {
                         const wavesIntoDual = effectiveWave - DUAL_SPAWN_WAVE;
                         if (wavesIntoDual <= 2) {
-                            // Waves 16-17: max 1 enemy on secondary
+                            // Waves 16-17: max 1 wobbler on secondary
                             useSecondary = this.secondaryCount < 1 && Math.random() < 0.10;
                         } else if (wavesIntoDual <= 4) {
-                            // Waves 18-19: max 2 enemies on secondary
+                            // Waves 18-19: max 2 wobblers on secondary
                             useSecondary = this.secondaryCount < 2 && Math.random() < 0.10;
+                        } else if (wavesIntoDual <= 5) {
+                            // Wave 20: max 3 wobblers on secondary
+                            useSecondary = this.secondaryCount < 3 && Math.random() < 0.15;
                         } else {
-                            // Wave 20+: percentage ramp from 5% to 20%
-                            const chance = Math.min(DUAL_SPAWN_MAX_PCT, DUAL_SPAWN_START_PCT + (wavesIntoDual - 5) * DUAL_SPAWN_RAMP_PCT);
+                            // Wave 21+: percentage ramp from 2.5% to 20%
+                            const chance = Math.min(DUAL_SPAWN_MAX_PCT, DUAL_SPAWN_START_PCT + (wavesIntoDual - 6) * DUAL_SPAWN_RAMP_PCT);
                             useSecondary = Math.random() < chance;
                         }
-                        // No heavy enemies on secondary during intro waves 16-19
-                        if (useSecondary && wavesIntoDual <= 4) {
+                        // No heavy enemies on secondary during wobbler waves 16-20
+                        if (useSecondary && wavesIntoDual <= 5) {
                             const t = group.type;
                             if (t === 'tank' || t === 'boss' || t === 'megaboss') useSecondary = false;
                         }
                     }
                     if (useSecondary) this.secondaryCount++;
-                    this.game.enemies.spawn(group.type, hpScale, this.modifier, useSecondary);
+                    // Waves 16-20: send wobblers on secondary instead of normal enemies
+                    const wavesIntoDualForType = effectiveWave - DUAL_SPAWN_WAVE;
+                    const spawnType = (useSecondary && wavesIntoDualForType <= 5) ? 'wobbler' : group.type;
+                    this.game.enemies.spawn(spawnType, hpScale, this.modifier, useSecondary);
                     this.spawnCounter++;
                     this.groupIndices[g]++;
                     this.groupTimers[g] = group.interval;
