@@ -711,8 +711,8 @@ export const MAX_PARTICLES = 500;
 
 // ── HP Scaling ─────────────────────────────────────────────
 export function getWaveHPScale(wave) {
-    // Wave 1≈1.12, Wave 10≈31.1, Wave 20≈192
-    return wave * Math.pow(1.12, wave);
+    // Wave 1≈1.11, Wave 10≈28.3, Wave 20≈161
+    return wave * Math.pow(1.11, wave);
 }
 
 // ── Wave Modifiers ────────────────────────────────────────
