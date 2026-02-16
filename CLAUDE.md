@@ -40,11 +40,10 @@ Open `http://localhost:8000` in a modern browser. There are no tests or linters 
 Every world is an **endless wave-based survival run**. No levels — you play until you die.
 
 - **Wave-based unlocks:** Towers, hero, and dual spawn unlock at wave thresholds mid-run via `WAVE_UNLOCKS` in constants.js
-- `getEffectiveWave() = max(currentWave, MAP_DEFS[mapId].startingUnlocks)` determines what's available
-- **HP scaling:** `getWaveHPScale(wave + startingWaveHP) * mapHpMultiplier * hpModifier` where `getWaveHPScale(w) = w * 1.11^w`. Advanced maps add `startingWaveHP` (Split Creek: +5, Gauntlet: +10) to inflate enemy HP beyond their actual wave number, balancing the fact that you start with late-game towers pre-unlocked.
+- **HP scaling:** `getWaveHPScale(currentWave) * worldHpMultiplier * hpModifier` where `getWaveHPScale(w) = w * 1.11^w`. All maps use the same natural HP curve; `worldHpMultiplier` adjusts per-map (Citadel 0.5x, Creek/Gauntlet 1.1x).
 - Waves 1-5: hand-crafted intro waves. Wave 6+: procedural via `generateWave()`
 - **Special wave events:** Goldrush every 10 waves (2x kill gold). Boss every 5 waves (waves 5-20), replaced by Megaboss every 2 waves starting wave 25 (25, 27, 29...). Megaboss count scales: 1→1→2→3→4→5→5→6+
-- **Starting gold:** 300g (STARTING_GOLD constant). Advanced maps override: Split Creek & Gauntlet start with 1000g
+- **Starting gold:** Per-map via `startingGold` in MAP_DEFS (Serpentine 300g, Citadel 400g, Creek/Gauntlet 1000g)
 - **Auto-wave:** Enabled by default (`game.autoWave`), auto-starts next wave after 5s. Early-send bonus: max +30g, decays by 5g/sec waited
 - Wave record saved per map in `td_wave_record` localStorage key (JSON object `{mapId: wave}`)
 
@@ -68,16 +67,16 @@ When a threshold is crossed, `onWaveThreshold()` in game.js:
 3. Pauses the game and shows the unlock screen (HTML overlay)
 4. Player clicks Continue to resume
 
-### World Unlock & Starting Bonuses
+### World Unlock & Map Parameters
 
-| World | Required Record | Starting Unlocks | Starting Gold | HP Multiplier | Effect |
-|-------|----------------|-----------------|---------------|---------------|--------|
-| Serpentine | Always open | 0 | 300g | 1.0x | Full progression from wave 1 |
-| The Citadel | Wave 5 on any map | 0 | 300g | 0.5x | 4-direction siege, no dual spawn, full progression |
-| Split Creek | Wave 30 on any map | 30 | 1000g | 1.0x (+5 HP waves) | Wave 1-30 towers unlocked, enemies HP scaled as wave 6-35 |
-| Gauntlet | Wave 40 on any map | 50 | 1000g | 1.0x (+10 HP waves) | Wave 1-50 towers unlocked, enemies HP scaled as wave 11-60 |
+| World | Required Record | Starting Gold | HP Multiplier | Dual Spawn Wave | Environment |
+|-------|----------------|---------------|---------------|-----------------|-------------|
+| Serpentine | Always open | 300g | 1.0x | 15 | Forest |
+| The Citadel | Wave 5 on any map | 400g | 0.5x | Never | Ruins |
+| Split Creek | Wave 20 on any map | 1000g | 1.1x | 2 | Desert |
+| Gauntlet | Wave 30 on any map | 1000g | 1.1x | 2 | Lava |
 
-Advanced maps use `startingWaveHP` to inflate enemy HP, preventing trivial difficulty when starting with late-game towers. Maps with `startingUnlocks > 0` pre-populate `_triggeredThresholds` so those unlocks aren't announced again.
+All maps use the same natural progression — towers, hero, and abilities unlock at the same wave thresholds regardless of map. `requiredRecord` is the sole entry gate (checked via `Economy.getMaxWaveRecord()`). Per-map `dualSpawnWave` controls when secondary spawning begins (`Infinity` = never). Per-map `startingGold` and `worldHpMultiplier` provide economic and difficulty tuning.
 
 ## Damage Mechanics
 
@@ -122,9 +121,9 @@ WASD-controlled hero spawns when `getEffectiveWave() >= 14` (unlockWave in HERO_
 - Cooldown icon drawn as 3rd indicator (Z) below hero alongside Q and E
 - Hero level scaling: 2% per wave above unlock wave (HP, damage) — `levelScale = 1 + (currentWave - 14) * 0.02`
 
-## Flying Enemy (Per-Map Start Wave)
+## Flying Enemy (Wave 17+)
 
-Flying enemies begin appearing at wave 17 by default (`FLYING_START_WAVE`), but advanced maps can override via `MAP_DEFS[mapId].flyingStartWave` (Split Creek: wave 7, Gauntlet: wave 2). They scale from 1 to 20 over 13 waves. They spawn at the castle (exit), fly a curvy sine-wave path backward to a random midpoint (30-50% of path via `landingIndex`), then land and walk normally to the exit. While airborne they are **untargetable** — towers, hero, splash, chain lightning, scorch zones, and knockback all skip them. After landing they become normal ground enemies.
+Flying enemies begin appearing at wave 17 (`FLYING_START_WAVE`), scaling from 1 to 20 over 13 waves. They spawn at the castle (exit), fly a curvy sine-wave path backward to a random midpoint (30-50% of path via `landingIndex`), then land and walk normally to the exit. While airborne they are **untargetable** — towers, hero, splash, chain lightning, scorch zones, and knockback all skip them. After landing they become normal ground enemies.
 
 - **Stats in `ENEMY_TYPES.flying`:** HP 10, speed 97, reward 30, radius 11, purple color
 - Flight: 110 px/s, 2-3 sine oscillations with 60-100px amplitude, 40px altitude at midpoint
@@ -134,19 +133,18 @@ Flying enemies begin appearing at wave 17 by default (`FLYING_START_WAVE`), but 
 - Visual: wing shape (`drawWing()` in renderer.js), shadow at ground level while airborne
 - **Wave count scaling:** `Math.min(20, 1 + Math.round((waveNum - flyStart) * 19 / 13))` — scales 1→20 flying enemies over 13 waves
 
-## Dual Spawn Points (Wave 15+)
+## Dual Spawn Points (Per-Map)
 
-At `getEffectiveWave() >= DUAL_SPAWN_WAVE` (15), enemies can spawn from a second entry point. Each layout in `MAP_DEFS` has `secondaryWaypoints` entering from x=29 (right edge), converging at the same exit. Unlock triggers a full unlock screen (bold warning + Continue button). Secondary paths are always carved in `GameMap` (so they appear on previews). Split Creek primary enemies still fork upper/lower; secondary enemies use a single right-side path. **Disabled on maps with `noDualSpawn: true`** (e.g. Citadel) — unlock screen, secondary spawning, and reinforcement bursts are all skipped.
+Enemies can spawn from a second entry point on maps with a finite `dualSpawnWave`. Each layout in `MAP_DEFS` has `secondaryWaypoints` entering from x=29 (right edge), converging at the same exit. Unlock triggers a full unlock screen (bold warning + Continue button). Secondary paths are always carved in `GameMap` (so they appear on previews). The dual spawn unlock screen is only shown on maps where `dualSpawnWave` matches the global `DUAL_SPAWN_WAVE` constant (15). Maps with `dualSpawnWave: Infinity` (e.g. Citadel) never get dual spawning.
 
-**Secondary spawn ramp schedule:**
-- Wave 15: Build phase (0% secondary)
-- Waves 16-17: Max 1 "wobbler" enemy (10% chance, type forced to wobbler)
-- Waves 18-19: Max 2 wobblers (10% chance each)
-- Wave 20: Max 3 wobblers (15% chance)
-- Wave 21+: Percentage-based spawn: starts at 2% (`DUAL_SPAWN_START_PCT`), increases 1%/wave (`DUAL_SPAWN_RAMP_PCT`), caps at 20% (`DUAL_SPAWN_MAX_PCT`)
-  - Formula: `Math.min(0.20, 0.02 + (wavesIntoDual - 6) * 0.01)` where `wavesIntoDual = effectiveWave - 15`
-- Heavy enemies (tank/boss/megaboss) never spawn on secondary during wobbler waves (16-20)
-- **Enemy count easing:** During dual spawn intro (waves 15-20), procedural wave generation reduces enemy count by 45%→100% via `dualEase` multiplier
+**Secondary spawn ramp schedule** (relative to per-map `dualSpawnWave`):**
+- dualSpawnWave: Build phase (0% secondary)
+- +1 to +2 waves: Max 1 "wobbler" enemy (10% chance, type forced to wobbler)
+- +3 to +4 waves: Max 2 wobblers (10% chance each)
+- +5 waves: Max 3 wobblers (15% chance)
+- +6 waves onward: Percentage-based spawn: starts at 2.5% (`DUAL_SPAWN_START_PCT`), increases 1%/wave (`DUAL_SPAWN_RAMP_PCT`), caps at 20% (`DUAL_SPAWN_MAX_PCT`)
+- Heavy enemies (tank/boss/megaboss) never spawn on secondary during wobbler waves
+- **Enemy count easing:** During dual spawn intro (first 5 waves), procedural wave generation reduces enemy count by 45%→100% via `dualEase` multiplier
 
 ### Secondary Reinforcement Bursts
 
@@ -154,22 +152,22 @@ When the wave spawn phase completes (`!this.spawning`) and all secondary-path en
 
 This continues every 4 seconds for the entire duration until all primary enemies die. In late waves where slow tanks/bosses take 2+ minutes to clear after fast secondary enemies are eliminated, this can result in many bursts to maintain pressure on both lanes.
 
-Enemies are tagged with `isSecondary` on spawn for tracking. Logic lives in `WaveManager.update()` (`reinforceTimer`, `reinforceBursts`). Only active at effectiveWave >= 20 and after main wave spawning completes.
+Enemies are tagged with `isSecondary` on spawn for tracking. Logic lives in `WaveManager.update()` (`reinforceTimer`, `reinforceBursts`). Only active at `currentWave >= dualSpawnWave + 5` and after main wave spawning completes.
 
 ## Multi-Path Maps (The Citadel)
 
-The Citadel introduces a `multiPaths` layout system where enemies attack from all 4 edges (N/S/E/W), each trail winding toward one of 4 mini-castles clustered near the center. This replaces the single-path/split-path/secondary-path model used by other maps.
+The Citadel introduces a `multiPaths` layout system where enemies attack from all 4 edges (N/S/E/W), each trail winding toward a single big castle at the center (14,10). This replaces the single-path/split-path/secondary-path model used by other maps.
 
-- **Layout data:** `layout.multiPaths` is an array of 4 waypoint arrays (one per direction). Each array's first waypoint is on a map edge (entry), last waypoint is near center (castle exit)
+- **Layout data:** `layout.multiPaths` is an array of 4 waypoint arrays (one per direction). Each array's first waypoint is on a map edge (entry), last waypoint is the shared center exit (14,10)
 - **`map.multiPaths`:** Built in `GameMap.buildGrid()` — array of 4 world-coordinate path arrays. `map.path` defaults to `multiPaths[0]` for fallback/preview
-- **`getEnemyPath(useSecondary, pathIndex)`:** If `multiPaths`, returns `multiPaths[pathIndex]` (or random if no index). The `pathIndex` parameter is new — only used by multi-path maps
+- **`getEnemyPath(useSecondary, pathIndex)`:** If `multiPaths`, returns `multiPaths[pathIndex]` (or random if no index). The `pathIndex` parameter is only used by multi-path maps
 - **Round-robin spawning:** In `wave.js`, each spawn increments `spawnCounter`; `pathIndex = spawnCounter % multiPaths.length` distributes enemies evenly across all 4 paths
-- **`noDualSpawn: true`:** Skips wave 15 dual-spawn unlock screen, all secondary spawn logic, and reinforcement bursts. Checked in `game.onWaveThreshold()`, `wave.js` spawn section, and reinforcement burst logic
-- **Mini castles:** `drawMiniCastle(ctx, cx, cy)` in map.js — scaled-down castle (1.2x vs 2.2x) with single tower, wall, gate, flag. 3D version via `createMiniCastle(exitPt)` in meshes/terrain.js
+- **No dual spawn:** Uses `dualSpawnWave: Infinity` — dual-spawn unlock screen, secondary spawning, and reinforcement bursts are all skipped via `isFinite()` checks
+- **Castle:** Standard big 2D castle drawn at the shared exit point. 3D mode uses mini castles at each path exit
 - **Entry markers:** `drawEntryMarker(ctx, wp)` draws directional green arrows at each edge entry point
-- **Flying enemies:** Spawn from random castle (via random `pathIndex`), fly backward along their assigned path — works naturally with multiPaths
+- **Flying enemies:** Spawn from the castle, fly backward along a random path — works naturally with multiPaths
 - **Balance:** `worldHpMultiplier: 0.50` — enemies have half HP to compensate for defending 4 directions simultaneously
-- **3 layout variants** with different castle positions and path configurations. Shared kill zones in the center where paths cross/run parallel
+- **3 layout variants** with different path configurations. Shared kill zones in the center where paths cross/run parallel
 
 ## Ambient Map Effects
 

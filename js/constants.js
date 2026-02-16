@@ -30,7 +30,8 @@ export const MAP_DEFS = {
         themeColor: '#27ae60',
         worldHpMultiplier: 1.0,
         requiredRecord: 0,
-        startingUnlocks: 0,
+        startingGold: 300,
+        dualSpawnWave: 15,
         description: 'A long winding path gives you plenty of time to build defenses.',
         layouts: [
             // Layout 0: Stacked horizontal U-turns (kill zones: y=2,4 left, y=13,15 right)
@@ -143,12 +144,10 @@ export const MAP_DEFS = {
     splitcreek: {
         name: 'Split Creek',
         themeColor: '#d4a026',
-        worldHpMultiplier: 1.0,
-        requiredRecord: 30,
-        startingUnlocks: 30,
-        startingWaveHP: 5,
+        worldHpMultiplier: 1.1,
+        requiredRecord: 20,
         startingGold: 1000,
-        flyingStartWave: 7,
+        dualSpawnWave: 2,
         environment: 'desert',
         description: 'The path forks midway — enemies randomly pick a branch.',
         layouts: [
@@ -268,12 +267,10 @@ export const MAP_DEFS = {
     gauntlet: {
         name: 'The Gauntlet',
         themeColor: '#c0392b',
-        worldHpMultiplier: 1.0,
-        requiredRecord: 40,
-        startingUnlocks: 50,
-        startingWaveHP: 10,
+        worldHpMultiplier: 1.1,
+        requiredRecord: 30,
         startingGold: 1000,
-        flyingStartWave: 2,
+        dualSpawnWave: 2,
         environment: 'lava',
         description: 'A short direct path — enemies arrive fast, every tower counts.',
         layouts: [
@@ -374,9 +371,9 @@ export const MAP_DEFS = {
         themeColor: '#7f8c8d',
         worldHpMultiplier: 0.50,
         requiredRecord: 5,
-        startingUnlocks: 0,
+        startingGold: 400,
+        dualSpawnWave: Infinity,
         environment: 'ruins',
-        noDualSpawn: true,
         description: 'Defend the central citadel from all directions.',
         layouts: [
             // Layout 0: Winding 4-direction paths, all converge to center castle (14,10)

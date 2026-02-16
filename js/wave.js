@@ -207,8 +207,7 @@ export class WaveManager {
         }
 
         const mapMul = this.game.map.def.worldHpMultiplier || 1;
-        const hpWave = this.currentWave + (this.game.map.def.startingWaveHP || 0);
-        const hpScale = getWaveHPScale(hpWave) * mapMul * this.hpModifier;
+        const hpScale = getWaveHPScale(this.currentWave) * mapMul * this.hpModifier;
 
         if (this.spawning) {
             let allDone = true;
@@ -221,7 +220,7 @@ export class WaveManager {
                 this.groupTimers[g] -= dt;
 
                 if (this.groupTimers[g] <= 0) {
-                    const noDual = this.game.map?.def?.noDualSpawn;
+                    const mapDualWave = this.game.map?.def?.dualSpawnWave ?? DUAL_SPAWN_WAVE;
                     const isMultiPath = !!this.game.map?.multiPaths;
 
                     // Multi-path: round-robin pathIndex
@@ -230,12 +229,11 @@ export class WaveManager {
                         pathIndex = this.spawnCounter % this.game.map.multiPaths.length;
                     }
 
-                    // Dual-spawn: wave 15 = build phase, 16-20 = wobblers, 21+ = % ramp
+                    // Dual-spawn ramp from per-map dualSpawnWave
                     let useSecondary = false;
-                    if (!noDual && !isMultiPath) {
-                        const effectiveWave = this.game.getEffectiveWave();
-                        if (effectiveWave > DUAL_SPAWN_WAVE) {
-                            const wavesIntoDual = effectiveWave - DUAL_SPAWN_WAVE;
+                    if (isFinite(mapDualWave) && !isMultiPath) {
+                        if (this.currentWave > mapDualWave) {
+                            const wavesIntoDual = this.currentWave - mapDualWave;
                             if (wavesIntoDual <= 2) {
                                 // Waves 16-17: max 1 wobbler on secondary
                                 useSecondary = this.secondaryCount < 1 && Math.random() < 0.10;
@@ -258,8 +256,8 @@ export class WaveManager {
                         }
                     }
                     if (useSecondary) this.secondaryCount++;
-                    // Waves 16-20: send wobblers on secondary instead of normal enemies
-                    const wavesIntoDualForType = this.game.getEffectiveWave() - DUAL_SPAWN_WAVE;
+                    // Early dual spawn waves: send wobblers on secondary instead of normal enemies
+                    const wavesIntoDualForType = this.currentWave - mapDualWave;
                     const spawnType = (useSecondary && wavesIntoDualForType <= 5) ? 'wobbler' : group.type;
                     this.game.enemies.spawn(spawnType, hpScale, this.modifier, useSecondary, pathIndex);
                     this.spawnCounter++;
@@ -275,7 +273,8 @@ export class WaveManager {
 
         // Secondary reinforcement bursts: when secondary lane is cleared
         // but primary enemies remain, send reinforcements to keep pressure up
-        if (!this.spawning && !this.game.map?.def?.noDualSpawn && this.game.getEffectiveWave() >= 20) {
+        const mapDualWaveReinf = this.game.map?.def?.dualSpawnWave ?? DUAL_SPAWN_WAVE;
+        if (!this.spawning && isFinite(mapDualWaveReinf) && this.currentWave >= mapDualWaveReinf + 5) {
             const enemies = this.game.enemies.enemies;
             const hasPrimary = enemies.some(e => e.alive && !e.isSecondary && e.deathTimer < 0);
             const hasSecondary = enemies.some(e => e.alive && e.isSecondary && e.deathTimer < 0);

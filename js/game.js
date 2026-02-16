@@ -1,4 +1,4 @@
-import { STATE, CANVAS_W, CANVAS_H, HERO_STATS, MAP_DEFS, TOWER_TYPES, TOWER_LIGHT_DEFS, MAP_AMBIENT_DARKNESS, WAVE_UNLOCKS, SPEED_MULTIPLIERS, SPEED_MIN, SPEED_MAX, ATMOSPHERE_PRESETS } from './constants.js';
+import { STATE, CANVAS_W, CANVAS_H, HERO_STATS, MAP_DEFS, TOWER_TYPES, TOWER_LIGHT_DEFS, MAP_AMBIENT_DARKNESS, WAVE_UNLOCKS, SPEED_MULTIPLIERS, SPEED_MIN, SPEED_MAX, ATMOSPHERE_PRESETS, DUAL_SPAWN_WAVE } from './constants.js';
 import { hexToGL } from './utils.js';
 import { GameMap } from './map.js';
 import { TowerManager } from './tower.js';
@@ -161,8 +161,7 @@ export class Game {
     }
 
     getEffectiveWave() {
-        const startingUnlocks = MAP_DEFS[this.selectedMapId]?.startingUnlocks || 0;
-        return Math.max(this.waves.currentWave, startingUnlocks);
+        return this.waves.currentWave;
     }
 
     getLayoutIndex() {
@@ -177,34 +176,20 @@ export class Game {
 
         this.economy.startReset();
 
-        // Per-map starting gold bonus for advanced worlds
+        // Per-map starting gold
         const mapStartGold = MAP_DEFS[this.selectedMapId]?.startingGold;
         if (mapStartGold) {
             this.economy.gold = mapStartGold;
         }
 
-        // Pre-mark thresholds below starting unlocks so we don't announce pre-unlocked content
         this._triggeredThresholds = new Set();
-        const startingUnlocks = MAP_DEFS[this.selectedMapId]?.startingUnlocks || 0;
-        if (startingUnlocks > 0) {
-            for (const [thresholdStr] of Object.entries(WAVE_UNLOCKS)) {
-                if (parseInt(thresholdStr) <= startingUnlocks) {
-                    this._triggeredThresholds.add(parseInt(thresholdStr));
-                }
-            }
-        }
 
         // Pick random layout, always build secondary paths
         this.map = new GameMap(this.selectedMapId, this.getLayoutIndex());
         this.refreshTerrain();
 
         this.heroDeathsThisLevel = 0;
-        // Init hero if starting unlocks include hero wave
-        if (this.getEffectiveWave() >= HERO_STATS.unlockWave) {
-            this.hero.init(this.map);
-        } else {
-            this.hero.reset();
-        }
+        this.hero.reset();
 
         this.state = STATE.PLAYING;
         this._unlockScreenActive = false;
@@ -307,8 +292,8 @@ export class Game {
             const threshold = parseInt(thresholdStr);
             if (effectiveWave >= threshold && !this._triggeredThresholds.has(threshold)) {
                 this._triggeredThresholds.add(threshold);
-                // Skip dual spawn unlock on maps that disable it
-                if (unlock.dualSpawn && this.map?.def?.noDualSpawn) continue;
+                // Skip dual spawn unlock screen if map uses a different dualSpawnWave
+                if (unlock.dualSpawn && (this.map?.def?.dualSpawnWave ?? DUAL_SPAWN_WAVE) !== DUAL_SPAWN_WAVE) continue;
                 unlocksBatch.push(unlock);
 
                 // Auto-upgrade placed towers to their replacements

@@ -3430,8 +3430,7 @@ export class Renderer {
         const worldName = mapDef ? mapDef.name : '—';
         const worldHpMul = mapDef ? mapDef.worldHpMultiplier : 1;
         const wave = this.game.waves.currentWave;
-        const hpWave = wave + (mapDef ? mapDef.startingWaveHP || 0 : 0);
-        const waveHpScale = wave > 0 ? getWaveHPScale(hpWave) : 0;
+        const waveHpScale = wave > 0 ? getWaveHPScale(wave) : 0;
         const finalMul = worldHpMul * waveHpScale;
 
         const spawning = this.game.waves.spawning;
