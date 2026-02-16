@@ -145,7 +145,7 @@ export const MAP_DEFS = {
     splitcreek: {
         name: 'Split Creek',
         themeColor: '#d4a026',
-        worldHpMultiplier: 1.0,
+        worldHpMultiplier: 0.9,
         requiredRecord: 20,
         startingGold: 1000,
         dualSpawnWave: 2,
@@ -269,7 +269,7 @@ export const MAP_DEFS = {
     gauntlet: {
         name: 'The Gauntlet',
         themeColor: '#c0392b',
-        worldHpMultiplier: 1.0,
+        worldHpMultiplier: 0.9,
         requiredRecord: 30,
         startingGold: 1000,
         dualSpawnWave: 2,
@@ -739,7 +739,7 @@ export const ENEMY_TYPES = {
         name: 'Flying',
         baseHP: 10,
         speed: 97,
-        reward: 30,
+        reward: 28,
         livesCost: 1,
         color: '#9b59b6',
         radius: 11,

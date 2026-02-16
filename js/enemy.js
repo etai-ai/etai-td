@@ -358,6 +358,13 @@ export class EnemyManager {
         const enemy = new Enemy(typeName, hpScale, this.game.map.getEnemyPath(actualSecondary, pathIndex));
         enemy.isSecondary = actualSecondary;
         if (modifier) enemy.applyModifier(modifier);
+        // Late-game speed ramp: +1% per wave starting at wave 26
+        const wave = this.game.waves.currentWave;
+        if (wave >= 26) {
+            const speedMul = 1 + (wave - 25) * 0.01;
+            enemy.speed *= speedMul;
+            enemy.baseSpeed *= speedMul;
+        }
         // Armor break wave tag — halve armor
         if (this.game.waves.waveTag === 'armorbreak') {
             enemy.armor *= ARMOR_BREAK_FACTOR;
