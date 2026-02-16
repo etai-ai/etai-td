@@ -69,14 +69,14 @@ When a threshold is crossed, `onWaveThreshold()` in game.js:
 
 ### World Unlock & Map Parameters
 
-| World | Required Record | Starting Gold | HP Multiplier | Dual Spawn Wave | Environment |
-|-------|----------------|---------------|---------------|-----------------|-------------|
-| Serpentine | Always open | 300g | 1.0x | 15 | Forest |
-| The Citadel | Wave 5 on any map | 400g | 0.5x | Never | Ruins |
-| Split Creek | Wave 20 on any map | 1000g | 1.1x | 2 | Desert |
-| Gauntlet | Wave 30 on any map | 1000g | 1.1x | 2 | Lava |
+| World | Required Record | Starting Gold | HP Multiplier | Dual Spawn Wave | Flying Start Wave | Environment |
+|-------|----------------|---------------|---------------|-----------------|-------------------|-------------|
+| Serpentine | Always open | 300g | 1.0x | 15 | 17 | Forest |
+| The Citadel | Wave 5 on any map | 400g | 0.5x | Never | 10 | Ruins |
+| Split Creek | Wave 20 on any map | 1000g | 1.0x | 2 | 6 | Desert |
+| Gauntlet | Wave 30 on any map | 1000g | 1.0x | 2 | 6 | Lava |
 
-All maps use the same natural progression — towers, hero, and abilities unlock at the same wave thresholds regardless of map. `requiredRecord` is the sole entry gate (checked via `Economy.getMaxWaveRecord()`). Per-map `dualSpawnWave` controls when secondary spawning begins (`Infinity` = never). Per-map `startingGold` and `worldHpMultiplier` provide economic and difficulty tuning.
+All maps use the same natural progression — towers, hero, and abilities unlock at the same wave thresholds regardless of map. `requiredRecord` is the sole entry gate (checked via `Economy.getMaxWaveRecord()`). Per-map `dualSpawnWave` controls when secondary spawning begins (`Infinity` = never). Per-map `flyingStartWave` controls when flying enemies appear. Per-map `startingGold` and `worldHpMultiplier` provide economic and difficulty tuning.
 
 ## Damage Mechanics
 
@@ -121,9 +121,9 @@ WASD-controlled hero spawns when `getEffectiveWave() >= 14` (unlockWave in HERO_
 - Cooldown icon drawn as 3rd indicator (Z) below hero alongside Q and E
 - Hero level scaling: 2% per wave above unlock wave (HP, damage) — `levelScale = 1 + (currentWave - 14) * 0.02`
 
-## Flying Enemy (Wave 17+)
+## Flying Enemy (Per-Map Start Wave)
 
-Flying enemies begin appearing at wave 17 (`FLYING_START_WAVE`), scaling from 1 to 20 over 13 waves. They spawn at the castle (exit), fly a curvy sine-wave path backward to a random midpoint (30-50% of path via `landingIndex`), then land and walk normally to the exit. While airborne they are **untargetable** — towers, hero, splash, chain lightning, scorch zones, and knockback all skip them. After landing they become normal ground enemies.
+Flying enemies begin appearing at per-map `flyingStartWave` (Serpentine 17, Citadel 10, Creek/Gauntlet 6; default `FLYING_START_WAVE = 17`), scaling from 1 to 20 over 13 waves. They spawn at the castle (exit), fly a curvy sine-wave path backward to a random midpoint (30-50% of path via `landingIndex`), then land and walk normally to the exit. While airborne they are **untargetable** — towers, hero, splash, chain lightning, scorch zones, and knockback all skip them. After landing they become normal ground enemies.
 
 - **Stats in `ENEMY_TYPES.flying`:** HP 10, speed 97, reward 30, radius 11, purple color
 - Flight: 110 px/s, 2-3 sine oscillations with 60-100px amplitude, 40px altitude at midpoint
