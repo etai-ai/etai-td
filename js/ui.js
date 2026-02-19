@@ -350,7 +350,7 @@ export class UI {
             btn.dataset.type = key;
             btn.style.setProperty('--tower-color', def.color);
             btn.innerHTML = `
-                <img class="tower-icon" src="${this.towerIcons[key]}" width="52" height="52">
+                <img class="tower-icon" src="${this.towerIconsLg[key]}">
                 <div class="tower-label">
                     <span class="tower-name">${def.name}</span>
                     <span class="tower-cost">$${def.cost}</span>
@@ -423,10 +423,11 @@ export class UI {
 
         const def = TOWER_TYPES[key];
         const towerSize = def.size || 1;
-        const s = size / (towerSize * CELL);
+        const zoom = 1.8; // zoom in so turret fills the canvas
+        const s = size / (towerSize * CELL) * zoom;
         ctx.save();
+        ctx.translate(size / 2, size / 2);
         ctx.scale(s, s);
-        ctx.translate(towerSize * CELL / 2, towerSize * CELL / 2);
         ctx.rotate(Math.PI / 6);
 
         const fake = {
