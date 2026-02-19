@@ -878,7 +878,7 @@ export class UI {
         const towerSize = def.size || 1;
         const towerCx = (tower.gx + towerSize / 2) * CELL;
         const towerCy = tower.gy * CELL;
-        const cardW = 204;
+        const cardW = 280;
         const cardH = info.offsetHeight || 200;
         const gap = 10;
         // Prefer right side, fall back to left

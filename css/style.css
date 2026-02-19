@@ -517,11 +517,11 @@ body {
     position: absolute;
     background: rgba(13, 27, 42, 0.96);
     border: 2px solid #0f3460;
-    border-radius: 10px;
-    padding: 12px;
+    border-radius: 12px;
+    padding: 16px;
     z-index: 10;
-    min-width: 204px;
-    max-width: 204px;
+    min-width: 280px;
+    max-width: 280px;
     pointer-events: all;
     box-shadow: 0 8px 28px rgba(0,0,0,0.5);
 }
@@ -530,22 +530,22 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 6px;
-    padding-bottom: 6px;
+    margin-bottom: 10px;
+    padding-bottom: 8px;
     border-bottom: 1px solid #0f3460;
 }
 
 .tower-info-name {
     font-weight: 700;
-    font-size: 17px;
+    font-size: 22px;
 }
 
 .tower-info-level {
     color: #f1c40f;
     font-weight: 700;
-    font-size: 15px;
+    font-size: 18px;
     background: rgba(241, 196, 15, 0.12);
-    padding: 1px 8px;
+    padding: 2px 10px;
     border-radius: 4px;
 }
 
@@ -553,28 +553,28 @@ body {
     color: #fff;
     background: linear-gradient(135deg, #f1c40f, #e67e22);
     text-shadow: 0 1px 2px rgba(0,0,0,0.4);
-    font-size: 14px;
+    font-size: 17px;
     letter-spacing: 1px;
 }
 
 .tower-info-body {
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin-bottom: 8px;
+    gap: 12px;
+    margin-bottom: 12px;
 }
 
 .tower-info-stats {
-    font-size: 13px;
-    line-height: 1.7;
+    font-size: 16px;
+    line-height: 1.8;
     color: #bbb;
     flex: 1;
 }
 
 .tower-info-icon-wrap {
     flex-shrink: 0;
-    width: 64px;
-    height: 64px;
+    width: 88px;
+    height: 88px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -590,25 +590,25 @@ body {
 }
 
 .tower-info-icon {
-    width: 48px;
-    height: 48px;
+    width: 68px;
+    height: 68px;
     filter: drop-shadow(0 2px 8px rgba(0,0,0,0.7));
 }
 
 .tower-info-actions {
     display: flex;
     flex-direction: column;
-    gap: 4px;
+    gap: 6px;
 }
 
 .action-btn {
     background: #0f3460;
     color: #eee;
     border: 1px solid #1a4a8a;
-    padding: 4px 8px;
-    border-radius: 4px;
+    padding: 8px 12px;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 12px;
+    font-size: 15px;
     transition: background 0.15s;
     text-align: center;
 }
@@ -619,9 +619,9 @@ body {
     border-color: #27ae60;
     color: #fff;
     background: #1a7a3a;
-    font-size: 14px;
+    font-size: 18px;
     font-weight: 700;
-    padding: 6px 10px;
+    padding: 10px 14px;
     border-width: 2px;
 }
 .upgrade-btn:hover { background: #22994a; }
