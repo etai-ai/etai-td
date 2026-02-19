@@ -476,9 +476,9 @@ export const TOWER_TYPES = {
         burn: true,
         unlockWave: 10,
         levels: [
-            { damage: 18, range: 3.5, fireRate: 0.30, projSpeed: 320, burnDamage: 3, burnDuration: 3.0 },
-            { damage: 28, range: 4.0, fireRate: 0.25, projSpeed: 360, burnDamage: 6, burnDuration: 3.5, upgradeCost: 120 },
-            { damage: 40, range: 4.5, fireRate: 0.20, projSpeed: 400, burnDamage: 9, burnDuration: 4.0, upgradeCost: 200 },
+            { damage: 19, range: 3.5, fireRate: 0.30, projSpeed: 320, burnDamage: 3.15, burnDuration: 3.0 },
+            { damage: 29, range: 4.0, fireRate: 0.25, projSpeed: 360, burnDamage: 6.3, burnDuration: 3.5, upgradeCost: 120 },
+            { damage: 42, range: 4.5, fireRate: 0.20, projSpeed: 400, burnDamage: 9.45, burnDuration: 4.0, upgradeCost: 200 },
         ],
     },
     frost: {
