@@ -308,9 +308,9 @@ arrow: {
 The burn DoT is applied on hit and **bypasses armor entirely** — burn damage is subtracted directly from HP without going through `takeDamage()`. When a new burn is applied to an already-burning enemy, the stronger burn takes effect.
 
 Current burn stats:
-- Level 1: 3 DPS for 3.0s (9 total)
-- Level 2: 6 DPS for 3.5s (21 total)
-- Level 3: 9 DPS for 4.0s (36 total)
+- Level 1: 3.15 DPS for 3.0s (9.45 total)
+- Level 2: 6.3 DPS for 3.5s (22.05 total)
+- Level 3: 9.45 DPS for 4.0s (37.8 total)
 
 ---
 

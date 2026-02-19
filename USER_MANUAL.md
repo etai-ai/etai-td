@@ -24,7 +24,9 @@ When a threshold is crossed, the game pauses and shows an unlock screen with the
 
 **Flying enemies** also begin at wave 15 — purple winged enemies that spawn at the castle, fly a curvy path backward to the middle of the map, then land and walk to the exit. They are **untargetable while airborne** — towers, hero, and splash can't hit them until they land. Count scales from 1 at wave 15 to 10 by wave 30.
 
-**Goldrush** waves occur every 10 waves — all kills give double gold. **Bosses** appear every 5 waves from wave 10 onward.
+**Dragon Flyers** — larger, tougher red flying enemies — appear every wave from wave 25 onward (1→8 count).
+
+**Goldrush** waves occur every 10 waves — all kills give double gold. **Bosses** appear every 5 waves (waves 5-20). **Megabosses** replace them at waves 25-31 (every 2 waves). **Quantum Bosses** take over from wave 32+, appearing every wave with rapidly escalating counts.
 
 ## Maps
 
@@ -135,9 +137,9 @@ Premium arrow tower that sets enemies on fire. High damage with a burn damage-ov
 
 | Level | Damage | Range | Fire Rate | Burn DPS | Burn Duration | Upgrade Cost |
 |-------|--------|-------|-----------|----------|---------------|-------------|
-| 1 | 18 | 3.5 | 3.3/s | 3/s | 3.0s | — |
-| 2 | 28 | 4.0 | 4.0/s | 6/s | 3.5s | $120 |
-| 3 | 40 | 4.5 | 5.0/s | 9/s | 4.0s | $200 |
+| 1 | 19 | 3.5 | 3.3/s | 3.15/s | 3.0s | — |
+| 2 | 29 | 4.0 | 4.0/s | 6.3/s | 3.5s | $120 |
+| 3 | 42 | 4.5 | 5.0/s | 9.45/s | 4.0s | $200 |
 
 **Total investment:** $520 fully upgraded. Burn damage ignores armor — strong against tanks and bosses. If a stronger burn is applied while burning, the enemy takes the stronger one.
 
@@ -218,6 +220,9 @@ A teal energy cannon that fires shockwave pulses, dealing splash damage and knoc
 | **Boss** | Hexagon | 349 | Very slow (26) | 20% | Screen shake + shockwave on death | 5 |
 | **Swarm** | Triangle | 5 | Fast (105) | 0% | Comes in large numbers | 1 |
 | **Flying** | Wings | 10 | Medium (97) | 0% | Airborne until landing — untargetable while flying | 1 |
+| **Dragon Flyer** | Wings (large) | 30 | Medium (97) | 0% | Bigger flying enemy, wave 25+, 1→8 count | 2 |
+| **Megaboss** | Octagon | 392 | Medium (58) | 25% | Waves 25-31, knockback immune, enrages when last alive | 5 |
+| **Quantum Boss** | Star | 392 | Medium (64) | 30% | Wave 32+, count escalates fast, knockback immune | 5 |
 
 HP scales exponentially each wave. By wave 20, enemies have roughly 161x the HP of wave 1.
 
