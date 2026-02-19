@@ -3294,26 +3294,7 @@ export class Renderer {
         const ctx = this.uiCtx;
         ctx.clearRect(0, 0, CANVAS_W, CANVAS_H);
 
-        // Big wave level number — top-left corner of canvas
         const waves = this.game.waves;
-        if (waves.currentWave > 0) {
-            const waveText = `${waves.currentWave}`;
-            ctx.save();
-            ctx.font = 'bold 72px monospace';
-            ctx.textAlign = 'left';
-            ctx.textBaseline = 'top';
-            // Shadow
-            ctx.fillStyle = 'rgba(0,0,0,0.3)';
-            ctx.fillText(waveText, 22, 22);
-            // Main number
-            ctx.fillStyle = 'rgba(52,152,219,0.35)';
-            ctx.fillText(waveText, 20, 20);
-            // Label
-            ctx.font = 'bold 16px monospace';
-            ctx.fillStyle = 'rgba(52,152,219,0.3)';
-            ctx.fillText('WAVE', 20, 92);
-            ctx.restore();
-        }
 
         const input = this.game.input;
 
