@@ -22,7 +22,9 @@ body {
 #game-container {
     position: relative;
     width: 1680px;
-    /* Scale is set dynamically by fitGameToViewport() in main.js */
+    transform: scale(0.75);
+    transform-origin: top center;
+    margin-bottom: -280px; /* Adjust for scaled height */
 }
 
 /* ── Top Bar ───────────────────────────────────────────── */
@@ -1635,43 +1637,36 @@ body {
 }
 
 /* ── Responsive ────────────────────────────────────────── */
-/* Continuous scaling handled by fitGameToViewport() in main.js */
-
-/* Compact mode: bars overlay the canvas for maximum game area on small screens */
-#game-container.compact #top-bar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    background: rgba(22, 33, 62, 0.88);
-    border-radius: 0;
-    border: none;
-    border-bottom: 1px solid rgba(15, 52, 96, 0.6);
+@media (max-width: 1150px) {
+    #game-container {
+        transform: scale(0.65);
+        margin-bottom: -392px;
+    }
 }
 
-#game-container.compact #bottom-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    z-index: 10;
-    background: rgba(22, 33, 62, 0.88);
-    border-radius: 0;
-    border: none;
-    border-top: 1px solid rgba(15, 52, 96, 0.6);
+@media (max-width: 950px) {
+    #game-container {
+        transform: scale(0.55);
+        margin-bottom: -504px;
+    }
+    .tower-btn {
+        padding: 4px 6px;
+        gap: 4px;
+    }
+    .tower-icon {
+        width: 40px;
+        height: 40px;
+    }
+    .tower-name {
+        font-size: 12px;
+    }
+    .tower-cost {
+        font-size: 12px;
+    }
 }
 
 /* Show mobile controls only on touchscreen devices AND when hero is active */
 @media (hover: none) and (pointer: coarse) {
-    /* Pin game to top, remove padding, use dynamic viewport height for iOS */
-    body {
-        padding: 0;
-        justify-content: flex-start;
-        min-height: 100dvh;
-        overflow: hidden;
-    }
-
     #canvas-wrapper.hero-active .mobile-only {
         display: block !important;
     }
@@ -1681,92 +1676,15 @@ body {
         display: none;
     }
 
-    /* Top bar: allow wrapping, smaller text */
-    #top-bar {
-        flex-wrap: wrap;
-        padding: 4px 8px;
-        gap: 4px;
-    }
-
-    .wave-badge { font-size: 16px; padding: 4px 8px; }
-    .kills-badge { font-size: 15px; padding: 4px 6px; }
-    .gold-badge { font-size: 17px; padding: 4px 8px; }
-    .lives-gauge { min-width: 100px; height: 28px; }
-    .lives-gauge-text { font-size: 15px; }
-
-    /* Hide atmosphere badge on mobile (saves space) */
-    .atmo-badge { display: none; }
-
-    /* Tower panel: icon-only, hide text labels */
-    .tower-label { display: none; }
+    /* Make tower buttons easier to tap on mobile */
     .tower-btn {
         min-height: 50px;
         padding: 4px 8px;
-        justify-content: center;
-    }
-    .tower-icon {
-        width: 44px;
-        height: 44px;
     }
 
     /* Larger tap targets for badges */
     .speed-badge, .autowave-badge, .pause-badge, .mute-badge {
         min-height: 44px;
-        padding: 8px 12px;
-        font-size: 16px;
-    }
-
-    /* Tower info card action buttons: bigger touch targets */
-    .action-btn {
-        min-height: 44px;
-        font-size: 14px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
-    .upgrade-btn {
-        min-height: 48px;
-        font-size: 16px;
-    }
-
-    /* Next-wave button: larger tap target */
-    #next-wave-btn {
-        min-height: 48px;
-        padding: 12px 24px;
-        font-size: 16px;
-    }
-
-    /* Bottom bar: tighter on mobile */
-    #bottom-bar {
-        padding: 4px 6px;
-        gap: 4px;
-    }
-}
-
-/* ── Landscape Orientation Hint ──────────────────────── */
-@media (hover: none) and (pointer: coarse) and (orientation: portrait) {
-    body::after {
-        content: 'Rotate for best experience';
-        position: fixed;
-        bottom: 12px;
-        left: 50%;
-        transform: translateX(-50%);
-        background: rgba(13, 27, 42, 0.92);
-        color: #5dade2;
-        border: 1px solid #2980b9;
-        border-radius: 8px;
         padding: 10px 20px;
-        font-size: 14px;
-        font-weight: 600;
-        z-index: 9999;
-        pointer-events: none;
-        animation: orientHintFade 4s ease-in-out forwards;
     }
-}
-
-@keyframes orientHintFade {
-    0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-    15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    75% { opacity: 1; transform: translateX(-50%) translateY(0); }
-    100% { opacity: 0; transform: translateX(-50%) translateY(-10px); }
 }
