@@ -1639,6 +1639,14 @@ body {
 
 /* Show mobile controls only on touchscreen devices AND when hero is active */
 @media (hover: none) and (pointer: coarse) {
+    /* Pin game to top, remove padding, use dynamic viewport height for iOS */
+    body {
+        padding: 0;
+        justify-content: flex-start;
+        min-height: 100dvh;
+        overflow: hidden;
+    }
+
     #canvas-wrapper.hero-active .mobile-only {
         display: block !important;
     }
