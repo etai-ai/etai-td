@@ -56,7 +56,20 @@ export class Hero {
         // Spawn near the castle — use shared suffix for split maps (both forks converge there)
         const layout = map.layout;
         let spawnPt;
-        if (layout.paths && layout.paths.suffix.length >= 2) {
+        if (layout.multiPaths) {
+            // Check for shared entry (center spawn like Nexus)
+            const entries = layout.multiPaths.map(p => p[0]);
+            const sharedEntry = entries.every(e => e.x === entries[0].x && e.y === entries[0].y);
+            if (sharedEntry && layout.multiPaths[0].length >= 2) {
+                // Spawn one step from center (so hero isn't on top of spawn point)
+                const sp = layout.multiPaths[0][1];
+                spawnPt = { x: sp.x * CELL + CELL / 2, y: sp.y * CELL + CELL / 2 };
+            } else {
+                // Shared exit (e.g. Citadel) — spawn near the exit
+                const path = map.path;
+                spawnPt = path.length >= 2 ? path[path.length - 2] : path[path.length - 1];
+            }
+        } else if (layout.paths && layout.paths.suffix.length >= 2) {
             const sp = layout.paths.suffix[layout.paths.suffix.length - 2];
             spawnPt = { x: sp.x * CELL + CELL / 2, y: sp.y * CELL + CELL / 2 };
         } else {

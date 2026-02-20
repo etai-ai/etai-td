@@ -521,6 +521,82 @@ export const MAP_DEFS = {
             },
         ],
     },
+    nexus: {
+        name: 'The Nexus',
+        themeColor: '#6b3fa0',
+        worldHpMultiplier: 0.70,
+        requiredRecord: 30,
+        startingGold: 1200,
+        dualSpawnWave: Infinity,
+        flyingStartWave: 8,
+        environment: 'void',
+        description: 'Enemies pour from the center — defend four castles at the corners.',
+        layouts: [
+            // Layout 0: Straight-ish paths from center (14,10) to 4 corners
+            {
+                multiPaths: [
+                    // NW corner
+                    [{x:14,y:10},{x:8,y:10},{x:8,y:4},{x:2,y:4},{x:2,y:1},{x:1,y:1}],
+                    // NE corner
+                    [{x:14,y:10},{x:14,y:5},{x:22,y:5},{x:22,y:2},{x:28,y:2},{x:28,y:1}],
+                    // SW corner
+                    [{x:14,y:10},{x:14,y:15},{x:6,y:15},{x:6,y:18},{x:1,y:18}],
+                    // SE corner
+                    [{x:14,y:10},{x:20,y:10},{x:20,y:15},{x:26,y:15},{x:26,y:18},{x:28,y:18}],
+                ],
+                blocked: [
+                    {x:4,y:0},{x:5,y:0},{x:24,y:0},{x:25,y:0},
+                    {x:0,y:6},{x:1,y:6},{x:28,y:6},{x:29,y:6},
+                    {x:0,y:13},{x:1,y:13},{x:28,y:13},{x:29,y:13},
+                    {x:4,y:19},{x:5,y:19},{x:24,y:19},{x:25,y:19},
+                    {x:10,y:7},{x:11,y:7},{x:18,y:7},{x:19,y:7},
+                    {x:10,y:12},{x:11,y:12},{x:18,y:12},{x:19,y:12},
+                ],
+            },
+            // Layout 1: More winding, better kill zones
+            {
+                multiPaths: [
+                    // NW corner
+                    [{x:14,y:10},{x:10,y:10},{x:10,y:7},{x:4,y:7},{x:4,y:3},{x:1,y:3},{x:1,y:1}],
+                    // NE corner
+                    [{x:14,y:10},{x:14,y:7},{x:20,y:7},{x:20,y:3},{x:26,y:3},{x:26,y:1},{x:28,y:1}],
+                    // SW corner
+                    [{x:14,y:10},{x:14,y:13},{x:8,y:13},{x:8,y:16},{x:3,y:16},{x:3,y:18},{x:1,y:18}],
+                    // SE corner
+                    [{x:14,y:10},{x:18,y:10},{x:18,y:13},{x:24,y:13},{x:24,y:17},{x:28,y:17},{x:28,y:18}],
+                ],
+                blocked: [
+                    {x:4,y:0},{x:5,y:0},{x:24,y:0},{x:25,y:0},
+                    {x:0,y:5},{x:1,y:5},{x:28,y:5},{x:29,y:5},
+                    {x:0,y:14},{x:1,y:14},{x:28,y:14},{x:29,y:14},
+                    {x:4,y:19},{x:5,y:19},{x:24,y:19},{x:25,y:19},
+                    {x:7,y:9},{x:8,y:9},{x:21,y:9},{x:22,y:9},
+                    {x:7,y:11},{x:8,y:11},{x:21,y:11},{x:22,y:11},
+                ],
+            },
+            // Layout 2: Asymmetric bends
+            {
+                multiPaths: [
+                    // NW corner
+                    [{x:14,y:10},{x:8,y:10},{x:8,y:6},{x:3,y:6},{x:3,y:2},{x:1,y:2},{x:1,y:1}],
+                    // NE corner
+                    [{x:14,y:10},{x:14,y:6},{x:24,y:6},{x:24,y:3},{x:28,y:3},{x:28,y:1}],
+                    // SW corner
+                    [{x:14,y:10},{x:14,y:14},{x:6,y:14},{x:6,y:17},{x:1,y:17},{x:1,y:18}],
+                    // SE corner
+                    [{x:14,y:10},{x:20,y:10},{x:20,y:14},{x:27,y:14},{x:27,y:18},{x:28,y:18}],
+                ],
+                blocked: [
+                    {x:5,y:0},{x:6,y:0},{x:22,y:0},{x:23,y:0},
+                    {x:0,y:4},{x:1,y:4},{x:29,y:4},{x:29,y:5},
+                    {x:0,y:12},{x:1,y:12},{x:29,y:12},{x:29,y:13},
+                    {x:5,y:19},{x:6,y:19},{x:22,y:19},{x:23,y:19},
+                    {x:10,y:8},{x:11,y:8},{x:18,y:8},{x:19,y:8},
+                    {x:10,y:12},{x:11,y:12},{x:18,y:12},{x:19,y:12},
+                ],
+            },
+        ],
+    },
 };
 
 // ── Economy ────────────────────────────────────────────────
@@ -909,6 +985,7 @@ export const MAP_AMBIENT_DARKNESS = {
     gauntlet: 0.35,
     citadel: 0.20,
     skyislands: 0.15,
+    nexus: 0.35,
 };
 export const TOWER_LIGHT_DEFS = {
     arrow:          { radius: 0.04, intensity: 0.25 },

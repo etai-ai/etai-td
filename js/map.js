@@ -186,7 +186,7 @@ export class GameMap {
                 const py = y * CELL;
                 const type = this.grid[y][x];
 
-                const envPrefix = env === 'desert' ? 'Desert' : env === 'lava' ? 'Lava' : env === 'ruins' ? 'Ruins' : env === 'sky' ? 'Sky' : '';
+                const envPrefix = env === 'desert' ? 'Desert' : env === 'lava' ? 'Lava' : env === 'ruins' ? 'Ruins' : env === 'sky' ? 'Sky' : env === 'void' ? 'Void' : '';
                 if (colorOverride) {
                     if (type === CELL_TYPE.PATH) {
                         // Always use map-native path for contrast with enemies
@@ -200,7 +200,7 @@ export class GameMap {
                 } else if (type === CELL_TYPE.PATH) {
                     this[`draw${envPrefix}PathCell`](ctx, px, py, x, y);
                 } else {
-                    const groundPrefix = env === 'desert' ? 'Desert' : env === 'lava' ? 'Lava' : env === 'ruins' ? 'Ruins' : env === 'sky' ? 'Sky' : 'Grass';
+                    const groundPrefix = env === 'desert' ? 'Desert' : env === 'lava' ? 'Lava' : env === 'ruins' ? 'Ruins' : env === 'sky' ? 'Sky' : env === 'void' ? 'Void' : 'Grass';
                     this[`draw${groundPrefix}Cell`](ctx, px, py, x, y);
                     if (type === CELL_TYPE.BLOCKED) {
                         this[`draw${envPrefix}Obstacle`](ctx, px, py, x, y);
@@ -212,10 +212,18 @@ export class GameMap {
         // Draw castle at path exit
         this.drawCastle(ctx);
 
-        // Draw entry markers for multi-path maps
+        // Draw entry/exit markers for multi-path maps
         if (this.layout.multiPaths) {
-            for (const wpArr of this.layout.multiPaths) {
-                this.drawEntryMarker(ctx, wpArr[0]);
+            const entries = this.layout.multiPaths.map(p => p[0]);
+            const sharedEntry = entries.every(e => e.x === entries[0].x && e.y === entries[0].y);
+            if (sharedEntry) {
+                // Center spawn (e.g. Nexus) — draw spawn marker at shared entry
+                this.drawSpawnMarker(ctx, entries[0]);
+            } else {
+                // Edge entries (e.g. Citadel) — draw arrow at each entry
+                for (const wp of entries) {
+                    this.drawEntryMarker(ctx, wp);
+                }
             }
         }
 
@@ -243,16 +251,37 @@ export class GameMap {
 
     drawCastle(ctx) {
         const layout = this.layout;
-        let exitPt;
+
+        // Multi-path: detect shared vs divergent exits
         if (layout.multiPaths) {
-            exitPt = layout.multiPaths[0][layout.multiPaths[0].length - 1];
-        } else if (layout.paths) {
+            const exits = layout.multiPaths.map(p => p[p.length - 1]);
+            const sharedExit = exits.every(e => e.x === exits[0].x && e.y === exits[0].y);
+            if (sharedExit) {
+                // Single big castle (e.g. Citadel)
+                const cx = exits[0].x * CELL + CELL / 2;
+                const cy = exits[0].y * CELL + CELL / 2;
+                this._drawBigCastle(ctx, cx, cy);
+            } else {
+                // Mini castles at each exit (e.g. Nexus)
+                for (const ep of exits) {
+                    this.drawMiniCastle(ctx, ep.x * CELL + CELL / 2, ep.y * CELL + CELL / 2);
+                }
+            }
+            return;
+        }
+
+        let exitPt;
+        if (layout.paths) {
             exitPt = layout.paths.suffix[layout.paths.suffix.length - 1];
         } else {
             exitPt = layout.waypoints[layout.waypoints.length - 1];
         }
         const cx = exitPt.x * CELL + CELL / 2;
         const cy = exitPt.y * CELL + CELL / 2;
+        this._drawBigCastle(ctx, cx, cy);
+    }
+
+    _drawBigCastle(ctx, cx, cy) {
         const s = 2.2; // scale factor
 
         // --- Ground shadow ---
@@ -1268,6 +1297,171 @@ export class GameMap {
             ctx.beginPath();
             ctx.arc(cx, cy + 2 - pH, 5, Math.PI, 0);
             ctx.stroke();
+        }
+    }
+
+    // ── Spawn Marker (center spawn maps) ────────────────────
+
+    drawSpawnMarker(ctx, wp) {
+        const cx = wp.x * CELL + CELL / 2;
+        const cy = wp.y * CELL + CELL / 2;
+        const r = CELL * 0.7;
+
+        // Purple radial glow
+        const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, r);
+        grad.addColorStop(0, 'rgba(120,60,200,0.6)');
+        grad.addColorStop(0.5, 'rgba(100,40,180,0.25)');
+        grad.addColorStop(1, 'rgba(80,20,160,0)');
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(cx, cy, r, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Red center dot
+        ctx.fillStyle = '#e74c3c';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // 4 directional lines pointing outward
+        ctx.strokeStyle = 'rgba(180,100,255,0.5)';
+        ctx.lineWidth = 2;
+        const lineLen = CELL * 0.5;
+        for (const [dx, dy] of [[1,0],[-1,0],[0,1],[0,-1]]) {
+            ctx.beginPath();
+            ctx.moveTo(cx + dx * 8, cy + dy * 8);
+            ctx.lineTo(cx + dx * lineLen, cy + dy * lineLen);
+            ctx.stroke();
+        }
+    }
+
+    // ── Void environment cells ──────────────────────────────
+
+    drawVoidCell(ctx, px, py, gx, gy) {
+        // Dark purple ground with energy vein patterns
+        const shade = seedRand(gx, gy, 0);
+        const r = Math.floor(25 + shade * 12 - 6);
+        const g = Math.floor(15 + shade * 8 - 4);
+        const b = Math.floor(45 + shade * 15 - 7);
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(px, py, CELL, CELL);
+
+        // Faint energy veins
+        const veinCount = 1 + Math.floor(seedRand(gx, gy, 1) * 2);
+        for (let i = 0; i < veinCount; i++) {
+            const sx = px + seedRand(gx, gy, 10 + i) * CELL;
+            const sy = py + seedRand(gx, gy, 20 + i) * CELL;
+            const ex = sx + (seedRand(gx, gy, 30 + i) - 0.5) * 18;
+            const ey = sy + (seedRand(gx, gy, 40 + i) - 0.5) * 18;
+            ctx.strokeStyle = `rgba(140,80,220,${0.06 + seedRand(gx, gy, 50 + i) * 0.08})`;
+            ctx.lineWidth = 0.6;
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(ex, ey);
+            ctx.stroke();
+        }
+
+        // Occasional dim glow spot
+        if (seedRand(gx, gy, 60) > 0.8) {
+            const gx2 = px + seedRand(gx, gy, 61) * (CELL - 8) + 4;
+            const gy2 = py + seedRand(gx, gy, 62) * (CELL - 8) + 4;
+            ctx.fillStyle = 'rgba(100,50,180,0.08)';
+            ctx.beginPath();
+            ctx.arc(gx2, gy2, 3, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    drawVoidPathCell(ctx, px, py, gx, gy) {
+        // Dark slate with purple-glow edge borders
+        const shade = seedRand(gx, gy, 0);
+        const v = Math.floor(35 + shade * 10);
+        ctx.fillStyle = `rgb(${v + 7},${v},${v + 13})`;
+        ctx.fillRect(px, py, CELL, CELL);
+
+        // Subtle texture speckles
+        const count = 2 + Math.floor(seedRand(gx, gy, 1) * 3);
+        for (let i = 0; i < count; i++) {
+            const sx = px + seedRand(gx, gy, 10 + i) * (CELL - 4) + 2;
+            const sy = py + seedRand(gx, gy, 20 + i) * (CELL - 4) + 2;
+            ctx.fillStyle = seedRand(gx, gy, 30 + i) > 0.5
+                ? 'rgba(160,100,255,0.06)' : 'rgba(0,0,0,0.06)';
+            ctx.fillRect(sx, sy, 1.5, 1.5);
+        }
+
+        // Purple-glow edge borders
+        const edgeW = 3;
+        ctx.fillStyle = 'rgba(120,60,200,0.2)';
+        if (!this.isPath(gx, gy - 1)) ctx.fillRect(px, py, CELL, edgeW);
+        if (!this.isPath(gx, gy + 1)) ctx.fillRect(px, py + CELL - edgeW, CELL, edgeW);
+        if (!this.isPath(gx - 1, gy)) ctx.fillRect(px, py, edgeW, CELL);
+        if (!this.isPath(gx + 1, gy)) ctx.fillRect(px + CELL - edgeW, py, edgeW, CELL);
+    }
+
+    drawVoidObstacle(ctx, px, py, gx, gy) {
+        const cx = px + CELL / 2;
+        const cy = py + CELL / 2;
+        const seed = gx + gy;
+
+        if (seed % 2 === 0) {
+            // Dark crystal shard — tall angular spike
+            ctx.fillStyle = 'rgba(0,0,0,0.12)';
+            ctx.beginPath();
+            ctx.ellipse(cx + 1, cy + 10, 6, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#2a1a40';
+            ctx.beginPath();
+            ctx.moveTo(cx - 4, cy + 8);
+            ctx.lineTo(cx - 2, cy - 10);
+            ctx.lineTo(cx + 1, cy - 7);
+            ctx.lineTo(cx + 4, cy + 8);
+            ctx.closePath();
+            ctx.fill();
+
+            // Highlight edge
+            ctx.fillStyle = 'rgba(160,100,255,0.2)';
+            ctx.beginPath();
+            ctx.moveTo(cx - 2, cy - 10);
+            ctx.lineTo(cx + 1, cy - 7);
+            ctx.lineTo(cx + 2, cy + 4);
+            ctx.lineTo(cx - 1, cy + 4);
+            ctx.closePath();
+            ctx.fill();
+
+            // Glowing tip
+            ctx.fillStyle = 'rgba(180,120,255,0.4)';
+            ctx.beginPath();
+            ctx.arc(cx - 1, cy - 9, 2, 0, Math.PI * 2);
+            ctx.fill();
+        } else {
+            // Energy pylon — short pillar with glowing top
+            ctx.fillStyle = 'rgba(0,0,0,0.1)';
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + 9, 7, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Pillar body
+            ctx.fillStyle = '#1e1030';
+            ctx.fillRect(cx - 4, cy - 4, 8, 14);
+            ctx.fillStyle = '#2a1a42';
+            ctx.fillRect(cx - 3, cy - 3, 6, 12);
+
+            // Glowing top
+            const grad = ctx.createRadialGradient(cx, cy - 5, 0, cx, cy - 5, 5);
+            grad.addColorStop(0, 'rgba(180,120,255,0.5)');
+            grad.addColorStop(0.5, 'rgba(140,80,220,0.2)');
+            grad.addColorStop(1, 'rgba(100,40,180,0)');
+            ctx.fillStyle = grad;
+            ctx.beginPath();
+            ctx.arc(cx, cy - 5, 5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Core glow
+            ctx.fillStyle = '#c090ff';
+            ctx.beginPath();
+            ctx.arc(cx, cy - 5, 1.5, 0, Math.PI * 2);
+            ctx.fill();
         }
     }
 

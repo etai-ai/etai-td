@@ -136,7 +136,7 @@ export class UI {
             const g = atmo.ground;
             ctx.fillStyle = `rgb(${g.base[0]},${g.base[1]},${g.base[2]})`;
         } else {
-            ctx.fillStyle = env === 'desert' ? '#c8a878' : env === 'lava' ? '#c05020' : env === 'ruins' ? '#707568' : env === 'sky' ? '#c0d8ef' : '#2a3a2a';
+            ctx.fillStyle = env === 'desert' ? '#c8a878' : env === 'lava' ? '#c05020' : env === 'ruins' ? '#707568' : env === 'sky' ? '#c0d8ef' : env === 'void' ? '#1a0f2d' : '#2a3a2a';
         }
         ctx.fillRect(0, 0, w, h);
 
@@ -194,7 +194,7 @@ export class UI {
         }
 
         // Draw path cells — always map-native for enemy contrast
-        ctx.fillStyle = env === 'desert' ? '#e0b050' : env === 'lava' ? '#ff6a30' : env === 'ruins' ? '#b0a898' : env === 'sky' ? '#c4a44a' : '#d4a840';
+        ctx.fillStyle = env === 'desert' ? '#e0b050' : env === 'lava' ? '#ff6a30' : env === 'ruins' ? '#b0a898' : env === 'sky' ? '#c4a44a' : env === 'void' ? '#4a3060' : '#d4a840';
         for (let y = 0; y < ROWS; y++) {
             for (let x = 0; x < COLS; x++) {
                 if (grid[y][x] === CELL_TYPE.PATH) {
@@ -207,7 +207,7 @@ export class UI {
         if (atmo && atmo.obstacle) {
             ctx.fillStyle = atmo.obstacle.tint;
         } else {
-            ctx.fillStyle = env === 'desert' ? '#a08060' : env === 'lava' ? '#1a1a2a' : env === 'ruins' ? '#808080' : env === 'sky' ? '#b0c0d0' : '#4a5a4a';
+            ctx.fillStyle = env === 'desert' ? '#a08060' : env === 'lava' ? '#1a1a2a' : env === 'ruins' ? '#808080' : env === 'sky' ? '#b0c0d0' : env === 'void' ? '#2a1a3a' : '#4a5a4a';
         }
         for (const c of layout.blocked) {
             if (c.x >= 0 && c.x < COLS && c.y >= 0 && c.y < ROWS && grid[c.y][c.x] !== CELL_TYPE.PATH) {
@@ -217,14 +217,37 @@ export class UI {
 
         // Entry/exit markers
         if (layout.multiPaths) {
-            // Multi-path: 4 green entries + 1 red exit (all paths converge)
-            for (const wpArr of layout.multiPaths) {
+            const entries = layout.multiPaths.map(p => p[0]);
+            const exits = layout.multiPaths.map(p => p[p.length - 1]);
+            const sharedEntry = entries.every(e => e.x === entries[0].x && e.y === entries[0].y);
+            const sharedExit = exits.every(e => e.x === exits[0].x && e.y === exits[0].y);
+            if (sharedEntry) {
+                // Center spawn (Nexus): 1 green center, N red exits
                 ctx.fillStyle = '#2ecc71';
-                ctx.fillRect(wpArr[0].x * cellW, wpArr[0].y * cellH, cellW + 0.5, cellH + 0.5);
+                ctx.fillRect(entries[0].x * cellW, entries[0].y * cellH, cellW + 0.5, cellH + 0.5);
+                ctx.fillStyle = '#e74c3c';
+                for (const ep of exits) {
+                    ctx.fillRect(ep.x * cellW, ep.y * cellH, cellW + 0.5, cellH + 0.5);
+                }
+            } else if (sharedExit) {
+                // Edge entries (Citadel): N green entries, 1 red exit
+                for (const ep of entries) {
+                    ctx.fillStyle = '#2ecc71';
+                    ctx.fillRect(ep.x * cellW, ep.y * cellH, cellW + 0.5, cellH + 0.5);
+                }
+                ctx.fillStyle = '#e74c3c';
+                ctx.fillRect(exits[0].x * cellW, exits[0].y * cellH, cellW + 0.5, cellH + 0.5);
+            } else {
+                // Generic: green entries, red exits
+                for (const ep of entries) {
+                    ctx.fillStyle = '#2ecc71';
+                    ctx.fillRect(ep.x * cellW, ep.y * cellH, cellW + 0.5, cellH + 0.5);
+                }
+                ctx.fillStyle = '#e74c3c';
+                for (const ep of exits) {
+                    ctx.fillRect(ep.x * cellW, ep.y * cellH, cellW + 0.5, cellH + 0.5);
+                }
             }
-            const exit = layout.multiPaths[0][layout.multiPaths[0].length - 1];
-            ctx.fillStyle = '#e74c3c';
-            ctx.fillRect(exit.x * cellW, exit.y * cellH, cellW + 0.5, cellH + 0.5);
         } else {
             const entry = layout.waypoints[0];
             const exitPt = layout.paths ? layout.paths.suffix[layout.paths.suffix.length - 1] : layout.waypoints[layout.waypoints.length - 1];

@@ -2598,6 +2598,28 @@ export class Renderer {
                     color: colors[Math.random() * colors.length | 0], phase: Math.random() * Math.PI * 2, age: 0
                 };
             }
+        } else if (env === 'void') {
+            if (r < 0.7) {
+                // Purple energy wisp — slow horizontal drift
+                const life = 5 + Math.random() * 3;
+                const colors = ['#9b59b6', '#8e44ad', '#c39bd3', '#7d3c98'];
+                p = {
+                    type: 'sand', x: -10, y: Math.random() * CANVAS_H,
+                    vx: 30 + Math.random() * 30, vy: 0,
+                    life, maxLife: life, size: 3 + Math.random(),
+                    color: colors[Math.random() * colors.length | 0], phase: Math.random() * Math.PI * 2, age: 0
+                };
+            } else {
+                // White/cyan spark — rising upward
+                const life = 3 + Math.random() * 2;
+                const colors = ['#e0d0ff', '#c0e0ff', '#ffffff', '#d0c0ff'];
+                p = {
+                    type: 'ember', x: Math.random() * CANVAS_W, y: CANVAS_H + 5,
+                    vx: (Math.random() - 0.5) * 20, vy: -(20 + Math.random() * 25),
+                    life, maxLife: life, size: 2 + Math.random() * 1.5,
+                    color: colors[Math.random() * colors.length | 0], phase: Math.random() * Math.PI * 2, age: 0
+                };
+            }
         } else if (env === 'sky') {
             if (r < 0.7) {
                 // Cloud wisp — white/pale blue drifting right

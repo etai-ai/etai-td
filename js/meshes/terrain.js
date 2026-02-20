@@ -43,6 +43,7 @@ export function createPathWalls(map) {
     const wallColor = env === 'desert' ? 0xa89060
         : env === 'lava' ? 0x5a4040
         : env === 'ruins' ? 0x8a8a80
+        : env === 'void' ? 0x3a2050
         : 0x7a8a60; // forest: light mossy stone
 
     const boxes = [];

@@ -162,6 +162,7 @@ export class Game {
                 gauntlet: [1.05, 0.95, 0.9],
                 citadel: [0.92, 0.95, 1.0],
                 skyislands: [0.92, 0.97, 1.08],
+                nexus: [0.95, 0.90, 1.10],
             };
             if (this.postfx.enabled) {
                 const t = tints[mapId] || [1, 1, 1];
