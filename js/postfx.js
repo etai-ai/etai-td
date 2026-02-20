@@ -150,7 +150,7 @@ function compileShader(gl, type, src) {
     gl.shaderSource(s, src);
     gl.compileShader(s);
     if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) {
-        console.error('Shader compile error:', gl.getShaderInfoLog(s));
+        // Shader compile error — silent fallback
         gl.deleteShader(s);
         return null;
     }
@@ -166,7 +166,7 @@ function createProgram(gl, vSrc, fSrc) {
     gl.attachShader(prog, fs);
     gl.linkProgram(prog);
     if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-        console.error('Program link error:', gl.getProgramInfoLog(prog));
+        // Program link error — silent fallback
         gl.deleteProgram(prog);
         return null;
     }
@@ -225,7 +225,7 @@ export class PostFX {
 
         if (!this.enabled) {
             fxCanvas.style.display = 'none';
-            console.warn('PostFX: WebGL2 unavailable, falling back to Canvas 2D');
+            // PostFX: WebGL2 unavailable — falling back to Canvas 2D
             return;
         }
 
@@ -245,7 +245,7 @@ export class PostFX {
             fxCanvas.style.display = 'none';
             terrainCanvas.style.visibility = '';
             gameCanvas.style.visibility = '';
-            console.warn('PostFX: shader compilation failed, falling back');
+            // PostFX: shader compilation failed — falling back
             return;
         }
 

@@ -124,7 +124,7 @@ export class Game {
                 });
             }).catch(() => {}); // silent — procedural fallback is fine
         } catch (e) {
-            console.warn('Three.js 3D renderer unavailable:', e.message);
+            // Three.js 3D renderer unavailable — silent fallback
             this._fallback2D();
         }
     }
@@ -290,6 +290,8 @@ export class Game {
     }
 
     toggleAdmin() {
+        // Admin mode only available with ?admin=1 URL parameter
+        if (!new URLSearchParams(window.location.search).has('admin')) return;
         this.adminMode = !this.adminMode;
         if (this.adminMode) {
             this.achievements.check('adminToggle', { on: true });

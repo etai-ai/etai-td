@@ -15,7 +15,7 @@ export class Audio {
             this.masterGain.connect(this.ctx.destination);
             this.initialized = true;
         } catch (e) {
-            console.warn('Web Audio API not available:', e);
+            // Web Audio API not available — silent fallback
         }
     }
 
