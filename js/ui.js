@@ -985,7 +985,7 @@ export class UI {
                     else if (def.dualBarrel) special = `Dual barrel, armor shred ${(stats.armorShred * 100).toFixed(0)}%`;
                     else if (def.missile) special = `Homing missiles, splash + ${(stats.critChance * 100).toFixed(0)}% crit`;
                     else if (stats.knockbackDist) special = `Splash + knockback ${stats.knockbackDist} cells`;
-                    else if (key === 'titan') special = `Massive splash + freeze + slow`;
+                    else if (key === 'titan') special = `Massive splash + heavy slow`;
                     else if (stats.splashRadius) special = `Splash radius ${stats.splashRadius}`;
                     else if (stats.chainCount) special = `Chains to ${stats.chainCount} enemies`;
 
