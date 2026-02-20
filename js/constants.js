@@ -1131,8 +1131,8 @@ export const MUSIC = {
         [2, 4, 6, 8, 6, 4],
         [0, 4, 2, 5, 3, 1],
     ],
-    // Rhythm gate pattern (1=hit, 0=rest) — 8th notes per bar
-    rhythmPattern: [1, 0, 1, 1, 0, 1, 0, 1],
+    // Rhythm gate pattern (1=hit, 0=rest) — 8th notes per bar (sparse)
+    rhythmPattern: [1, 0, 0, 1, 0, 0, 1, 0],
     // Tempo
     baseBPM: 72,
     maxBPM: 108,
