@@ -745,10 +745,10 @@ export const TOWER_TYPES = {
         armorPiercing: true,
         unlockWave: 30,
         levels: [
-            { damage: 100, range: 6.0, fireRate: 1.8, projSpeed: 160, splashRadius: 2.5 },
-            { damage: 160, range: 7.0, fireRate: 1.4, projSpeed: 180, splashRadius: 3.0,
+            { damage: 105, range: 6.0, fireRate: 1.44, projSpeed: 160, splashRadius: 2.5 },
+            { damage: 168, range: 7.0, fireRate: 1.12, projSpeed: 180, splashRadius: 3.0,
               upgradeCost: 400 },
-            { damage: 240, range: 8.0, fireRate: 1.0, projSpeed: 200, splashRadius: 3.5,
+            { damage: 252, range: 8.0, fireRate: 0.8, projSpeed: 200, splashRadius: 3.5,
               upgradeCost: 600 },
         ],
     },

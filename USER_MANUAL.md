@@ -199,15 +199,15 @@ A dual-barreled cannon that fires twice as fast as a regular cannon. Every 3-4 s
 
 #### Titan ($800)
 
-The ultimate crowd control weapon — a massive golden cannon that fires devastating splash projectiles, slowing and freezing everything in the blast radius. Perfect for locking down the endgame.
+The ultimate siege weapon — a massive golden cannon that fires armor-piercing splash projectiles, dealing full damage regardless of enemy armor. Perfect for shredding armored waves in the endgame.
 
-| Level | Damage | Range | Fire Rate | Splash Radius | Slow | Freeze Chance | Upgrade Cost |
-|-------|--------|-------|-----------|---------------|------|---------------|-------------|
-| 1 | 100 | 6.0 | 0.40/s | 2.5 | 60% for 2s | 20% for 1s | — |
-| 2 | 160 | 7.0 | 0.50/s | 3.0 | 65% for 2.5s | 30% for 1.3s | $400 |
-| 3 | 240 | 8.0 | 0.67/s | 3.5 | 70% for 3s | 40% for 1.5s | $600 |
+| Level | Damage | Range | Fire Rate | Splash Radius | Upgrade Cost |
+|-------|--------|-------|-----------|---------------|-------------|
+| 1 | 100 | 6.0 | 0.56/s | 2.5 | — |
+| 2 | 160 | 7.0 | 0.71/s | 3.0 | $400 |
+| 3 | 240 | 8.0 | 1.00/s | 3.5 | $600 |
 
-**Total investment:** $1800 fully upgraded. Every projectile slows and has a chance to freeze all enemies in the splash area. Combine with Fire Arrow burn for devastating armor-bypassing damage on frozen targets.
+**Total investment:** $1800 fully upgraded. All splash damage pierces armor — devastating against tanks, bosses, and quantum bosses. Combine with Deep Frost slow to keep enemies in the blast zone longer.
 
 ## Enemies
 
@@ -312,8 +312,8 @@ Bosses appear every 5 waves. At wave 14, the hero unlocks — position it at cho
 - **Deep Frost + Lightning/Super Lightning:** Frozen enemies can't move, giving chain attacks more time to bounce between targets.
 - **Missile Sniper + Deep Frost:** Freeze groups together, then splash them all with a crit missile for devastating AoE.
 - **Sniper (Strongest) + Lightning (First):** Sniper focuses the boss while lightning clears the escort wave.
-- **Titan + Fire Arrow:** Titan freezes and slows groups, keeping them in burn range longer. Frozen enemies take full burn ticks while unable to move.
-- **Titan + Deep Frost:** Double freeze chance — Titan's splash freeze stacks with Deep Frost's aura freeze for near-permanent crowd control.
+- **Titan + Deep Frost:** Freeze enemies in place while Titan's armor-piercing splash shreds them. The longer they're frozen, the more Titan volleys land.
+- **Titan + Fire Arrow:** Double armor bypass — Titan splash ignores armor, Fire Arrow burn ignores armor. Together they melt even 30% armor quantum bosses.
 
 ### Tower Placement Tips
 

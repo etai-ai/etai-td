@@ -93,8 +93,8 @@ Heavy rounds from Bi-Cannon create persistent ground AoE zones (orange glow). Da
 ### Armor Shred (Bi-Cannon Heavy Rounds)
 Stacking debuff (max 3 stacks). Each stack reduces enemy armor by `shredAmount` (10%-15%). Only shreds with amount ≥ current shred amount add stacks — weaker shreds are ignored. Applied via `enemy.applyArmorShred(amount, duration)`. Formula: `armor = baseArmor - shredAmount * stacks` (max 3 stacks).
 
-### Titan Splash Freeze/Slow
-Titan tower fires splash projectiles that apply slow and freeze to all enemies in the splash radius. Slow and freeze stats are copied from the tower to the projectile via `freezeChance`/`freezeDuration`/`slowFactor`/`slowDuration`. Applied in `projectile.js` after `doSplash()` — gets all enemies near impact, applies slow, and rolls freeze chance per enemy. Freeze sparks spawn on successful freeze.
+### Armor Piercing (Titan)
+Titan tower splash damage bypasses armor entirely — applied directly to HP in `doSplash()` when `this.armorPiercing` is true, same pattern as burn/scorch. The `armorPiercing` flag is set on the tower definition in constants.js and copied to projectiles in the constructor.
 
 ## Admin/Debug Mode
 
@@ -206,7 +206,7 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 - Hero WASD keys conflict with admin hotkeys (W=wave, D=download) when admin mode is active
 - PostFX canvas textures need `UNPACK_FLIP_Y_WEBGL = true` or the image renders upside-down
 - Screen flash in `renderer.js` is gated behind `!postfx.enabled` — the PostFX shader handles flash when active
-- Titan splash freeze/slow is applied in projectile.js after doSplash() — copies freezeChance/freezeDuration from tower to projectile in constructor
+- Titan armor piercing bypasses `takeDamage()` in `doSplash()` — applies damage directly to HP like burn/scorch
 - Flying enemies (`e.flying`) must be skipped in ALL targeting/damage loops — `findTarget`, `getEnemiesInRange`, `doSplash`, `findChainTarget`, `doForkChain`, `updateScorchZones`, `checkContactDamage`. Check pattern: `if (!e.alive || e.flying) continue;`
 - `_nextWaveCache` in wave.js must be cleared before `startNextWave()` when jumping waves (e.g. `adminSetWave`)
 - Tower icon cache (`towerIconsLg`) is pre-generated for ALL tower types on first `setupTowerPanel()` call — needed for unlock screen
@@ -223,7 +223,7 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 - **Next-wave preview:** Between waves, `wave.getNextWavePreview()` returns enemy counts (cached via `_nextWaveCache` for stability); rendered on UI canvas with actual enemy shapes via `drawEnemyShape()`. Cache ensures preview matches actual spawn even if RNG would differ.
 - **Low lives warning:** When `economy.lives <= 5`, pulsing red border on game canvas + CSS animation on lives badge + alert sound on each life lost
 - **Wave modifier badge:** Active modifier name shown inline in wave counter during the wave (armored/swift/regen/horde)
-- **Tower info card:** Shows all tower stats with upgrade preview arrows — damage, range, fire rate, burn, splash, slow %, freeze %, chain count, fork count, shock %, heavy round interval, armor shred %, crit %, knockback. Displayed when hovering/clicking towers.
+- **Tower info card:** Shows all tower stats with upgrade preview arrows — damage, range, fire rate, burn, splash, armor piercing, slow %, freeze %, chain count, fork count, shock %, heavy round interval, armor shred %, crit %, knockback. Displayed when hovering/clicking towers.
 - **Unlock screen:** HTML overlay shown when wave thresholds are crossed. Displays tower icons, stats, replacement info, hero/dual spawn extras. Pauses game (STATE.PAUSED + `_unlockScreenActive = true`) until Continue is clicked. Hides top/bottom bars during display. When continued, `_beginWave()` is called if pending.
 - **Kill counter badge:** Real-time kill count (`game.runKills`) displayed in top bar's info-items section. Reset per run. Incremented in enemy.js on kill.
 - **Wave milestone banners:** Every 10 waves (10, 20, 30...) shows a milestone-style congratulations screen with stats (kills, towers, lives, gold, time, record) and featured tower icon. Pauses game via `_unlockScreenActive`. Fires in `onWaveComplete()` after wave rewards.
