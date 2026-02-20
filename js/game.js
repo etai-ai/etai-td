@@ -11,6 +11,7 @@ import { Renderer } from './renderer.js';
 import { InputHandler } from './input.js';
 import { UI } from './ui.js';
 import { Audio } from './audio.js';
+import { Music } from './music.js';
 import { WaveDebugger } from './debug.js';
 import { PostFX } from './postfx.js';
 import { Hero } from './hero.js';
@@ -91,6 +92,7 @@ export class Game {
         this.input = new InputHandler(canvases.ui, this);
         this.ui = new UI(this);
         this.audio = new Audio();
+        this.music = null;
         this.debug = new WaveDebugger();
         this.postfx = new PostFX(canvases.fx, canvases.terrain, canvases.game);
         this.achievements = new Achievements();
@@ -241,6 +243,13 @@ export class Game {
         this.ui.setupTowerPanel();
         this.ui.hideAllScreens();
 
+        // Start procedural music
+        if (this.music) this.music.stop();
+        if (this.audio.ctx) {
+            this.music = new Music(this.audio.ctx, this.audio.masterGain);
+            this.music.start();
+        }
+
         this.waves.startNextWave();
         this.ui.update();
         poki.gameplayStart();
@@ -307,9 +316,11 @@ export class Game {
         if (this.state === STATE.PLAYING) {
             this.state = STATE.PAUSED;
             this.hero.clearMovement();
+            if (this.music) this.music.pause();
             poki.gameplayStop();
         } else if (this.state === STATE.PAUSED) {
             this.state = STATE.PLAYING;
+            if (this.music) this.music.resume();
             poki.gameplayStart();
         }
         this.ui.update();
@@ -336,6 +347,7 @@ export class Game {
         if (this.isMultiplayer && this.net?.isHost) {
             this.net.sendGameOver();
         }
+        if (this.music) this.music.stop();
         this.audio.playGameOver();
         this.ui.update();
         this.ui.showScreen('game-over');
@@ -402,6 +414,7 @@ export class Game {
             this.ui.showUnlockScreen(unlocksBatch);
             this.state = STATE.PAUSED;
             this._unlockScreenActive = true;
+            if (this.music) this.music.pause();
             this.triggerShake(5, 0.3);
             if (this.postfx.enabled) {
                 this.postfx.flash(0.2, 0.3);
@@ -437,6 +450,7 @@ export class Game {
     }
 
     _doRestart() {
+        if (this.music) { this.music.stop(); this.music = null; }
         this.state = STATE.MENU;
         this._unlockScreenActive = false;
         this._victoryShown = false;
@@ -478,6 +492,7 @@ export class Game {
                 this.update(FIXED_DT);
                 this.accumulator -= FIXED_DT;
             }
+            if (this.music) this.music.update(frameDelta);
         }
 
         if (this.use3D && this.renderer3d) {
@@ -682,6 +697,7 @@ export class Game {
         };
         this.state = STATE.PAUSED;
         this._unlockScreenActive = true;
+        if (this.music) this.music.pause();
         this.ui.showMilestoneScreen(wave, stats);
     }
 
@@ -689,6 +705,7 @@ export class Game {
         this._victoryShown = true;
         this.state = STATE.PAUSED;
         this._unlockScreenActive = true;
+        if (this.music) this.music.pause();
 
         // Celebration effects
         this.triggerShake(15, 0.5);

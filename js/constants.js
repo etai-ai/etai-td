@@ -1094,3 +1094,49 @@ export const ATMOSPHERE_PRESETS = {
         lighting: { ambient: { color: 0x4444aa, intensity: 1.8 }, dir: { color: 0x6666cc, intensity: 1.2 }, fill: { color: 0x4444aa, intensity: 0.8 }, background: 0x080818, fog: { color: 0x080818, near: 800, far: 3500 } },
     },
 };
+
+// ── Procedural Music ──────────────────────────────────────
+export const MUSIC = {
+    masterGain: 0.45,
+    // Layer definitions: [waveThreshold, maxGain]
+    layers: [
+        [1,  0.12],   // 0: Bass Drone
+        [3,  0.09],   // 1: Sub Pulse
+        [6,  0.08],   // 2: Pad Chord
+        [10, 0.10],   // 3: Rhythm
+        [15, 0.06],   // 4: Arpeggio
+        [25, 0.06],   // 5: Tension
+    ],
+    // D minor pentatonic scale frequencies (octave 2-4)
+    scale: [73.42, 87.31, 98.00, 110.00, 130.81, 146.83, 174.61, 196.00, 220.00, 261.63, 293.66, 349.23, 392.00, 440.00],
+    // Chord progressions (Dm, Am, Gm, F) as frequency arrays
+    chords: {
+        minor: [
+            [146.83, 174.61, 220.00],  // Dm (D3, F3, A3)
+            [110.00, 130.81, 164.81],  // Am (A2, C3, E3)
+            [98.00,  116.54, 146.83],  // Gm (G2, Bb2, D3)
+            [87.31,  110.00, 130.81],  // F  (F2, A2, C3)
+        ],
+        major: [
+            [146.83, 185.00, 220.00],  // D  (D3, F#3, A3)
+            [110.00, 138.59, 164.81],  // A  (A2, C#3, E3)
+            [98.00,  123.47, 146.83],  // G  (G2, B2, D3)
+            [87.31,  110.00, 130.81],  // F  (F2, A2, C3)
+        ],
+    },
+    // Arpeggio note indices into scale array (D minor pentatonic patterns)
+    arpPatterns: [
+        [0, 2, 4, 5, 4, 2],
+        [1, 3, 5, 7, 5, 3],
+        [2, 4, 6, 8, 6, 4],
+        [0, 4, 2, 5, 3, 1],
+    ],
+    // Rhythm gate pattern (1=hit, 0=rest) — 8th notes per bar
+    rhythmPattern: [1, 0, 1, 1, 0, 1, 0, 1],
+    // Tempo
+    baseBPM: 72,
+    maxBPM: 108,
+    betweenWaveGain: 0.6,  // multiply gain by this between waves
+    fadeTime: 2.0,         // crossfade duration for layer changes
+    pauseFade: 0.15,       // time constant for pause/resume fade
+};

@@ -122,6 +122,13 @@ export class WaveManager {
         this.game.debug.onWaveStart(this.game);
         this.game.audio.playWaveStart();
 
+        // Update music intensity for this wave
+        if (this.game.music) {
+            this.game.music.setIntensity(this.currentWave);
+            this.game.music.setBetweenWaves(false);
+            this.game.music.setGoldrush(this.waveTag === 'goldrush');
+        }
+
         // Multiplayer: host sends wave definition to client
         if (this.game.isMultiplayer && this.game.net?.isHost) {
             this.game.net.sendWaveDef(this.spawnGroups, this.modifier, this.modifierDef, this.waveTag, this.hpModifier);
@@ -409,6 +416,12 @@ export class WaveManager {
     onWaveComplete() {
         this.waveComplete = true;
         this.betweenWaves = true;
+
+        // Ease music between waves
+        if (this.game.music) {
+            this.game.music.setBetweenWaves(true);
+            this.game.music.setGoldrush(false);
+        }
 
         // Pre-generate next wave so preview is stable and matches actual spawn
         this._nextWaveCache = this.getWaveDefinition(this.currentWave + 1);

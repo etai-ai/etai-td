@@ -1040,6 +1040,7 @@ export class UI {
             this.game._unlockScreenActive = false;
             if (this.game.state === STATE.PAUSED) {
                 this.game.state = STATE.PLAYING;
+                if (this.game.music) this.game.music.resume();
             }
             // Resume deferred wave setup if unlock screen interrupted startNextWave
             if (this.game.waves._pendingWaveSetup) {
@@ -1130,6 +1131,7 @@ export class UI {
             this.game._unlockScreenActive = false;
             if (this.game.state === STATE.PAUSED) {
                 this.game.state = STATE.PLAYING;
+                if (this.game.music) this.game.music.resume();
             }
             this.game.audio.ensureContext();
         }, { once: true });
@@ -1310,6 +1312,7 @@ export class UI {
             this.game._unlockScreenActive = false;
             if (this.game.state === STATE.PAUSED) {
                 this.game.state = STATE.PLAYING;
+                if (this.game.music) this.game.music.resume();
             }
             this.game.audio.ensureContext();
         }, { once: true });
