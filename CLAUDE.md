@@ -71,16 +71,18 @@ When a threshold is crossed, `onWaveThreshold()` in game.js:
 
 ### World Unlock & Map Parameters
 
-| World | Required Record | Starting Gold | HP Multiplier | Dual Spawn Wave | Flying Start Wave | Environment |
-|-------|----------------|---------------|---------------|-----------------|-------------------|-------------|
-| Serpentine | Always open | 300g | 1.0x | 15 | 17 | Forest |
-| The Citadel | Wave 5 on any map | 800g | 0.42x | Never | 10 | Ruins |
-| Sky Citadel | Wave 15 on any map | 600g | 0.80x | 10 | 12 | Sky |
-| Split Creek | Wave 20 on any map | 1000g | 1.0x | 2 | 6 | Desert |
-| Gauntlet | Wave 30 on any map | 1000g | 1.0x | 2 | 6 | Lava |
-| The Nexus | Wave 30 on any map | 1200g | 0.70x | Never | 8 | Void |
+Worlds unlock sequentially — beat the previous world (reach Victory at wave 35) to unlock the next. Campaign order defined in `WORLD_ORDER` array in constants.js. Unlock check in `ui.js buildMapSelect()`: previous world's wave record >= `VICTORY_WAVE` (35).
 
-All maps use the same natural progression — towers, hero, and abilities unlock at the same wave thresholds regardless of map. `requiredRecord` is the sole entry gate (checked via `Economy.getMaxWaveRecord()`). Per-map `dualSpawnWave` controls when secondary spawning begins (`Infinity` = never). Per-map `flyingStartWave` controls when flying enemies appear. Per-map `startingGold` and `worldHpMultiplier` provide economic and difficulty tuning.
+| # | World | Unlock | Starting Gold | HP Multiplier | Dual Spawn Wave | Flying Start Wave | Environment |
+|---|-------|--------|---------------|---------------|-----------------|-------------------|-------------|
+| 1 | Serpentine | Always open | 300g | 1.0x | 15 | 17 | Forest |
+| 2 | Sky Citadel | Beat Serpentine | 600g | 0.80x | 10 | 12 | Sky |
+| 3 | Split Creek | Beat Sky Citadel | 1000g | 0.9x | 2 | 6 | Desert |
+| 4 | The Gauntlet | Beat Split Creek | 1000g | 0.9x | 2 | 6 | Lava |
+| 5 | The Citadel | Beat The Gauntlet | 1000g | 0.42x | Never | 10 | Ruins |
+| 6 | The Nexus | Beat The Citadel | 1200g | 0.70x | Never | 8 | Void |
+
+All maps use the same natural progression — towers, hero, and abilities unlock at the same wave thresholds regardless of map. Per-map `dualSpawnWave` controls when secondary spawning begins (`Infinity` = never). Per-map `flyingStartWave` controls when flying enemies appear. Per-map `startingGold` and `worldHpMultiplier` provide economic and difficulty tuning.
 
 ## Damage Mechanics
 

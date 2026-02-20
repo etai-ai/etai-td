@@ -19,6 +19,9 @@ export const STATE = {
 
 export const VICTORY_WAVE = 35;
 
+// Campaign unlock order — each world unlocks after beating (wave 35) the previous one
+export const WORLD_ORDER = ['serpentine', 'skyislands', 'splitcreek', 'gauntlet', 'citadel', 'nexus'];
+
 // ── Cell Types ─────────────────────────────────────────────
 export const CELL_TYPE = {
     BUILDABLE: 0,
@@ -32,7 +35,6 @@ export const MAP_DEFS = {
         name: 'Serpentine Valley',
         themeColor: '#27ae60',
         worldHpMultiplier: 1.0,
-        requiredRecord: 0,
         startingGold: 300,
         dualSpawnWave: 15,
         flyingStartWave: 17,
@@ -149,7 +151,6 @@ export const MAP_DEFS = {
         name: 'Split Creek',
         themeColor: '#d4a026',
         worldHpMultiplier: 0.9,
-        requiredRecord: 20,
         startingGold: 1000,
         dualSpawnWave: 2,
         flyingStartWave: 6,
@@ -273,7 +274,6 @@ export const MAP_DEFS = {
         name: 'The Gauntlet',
         themeColor: '#c0392b',
         worldHpMultiplier: 0.9,
-        requiredRecord: 30,
         startingGold: 1000,
         dualSpawnWave: 2,
         flyingStartWave: 6,
@@ -376,8 +376,7 @@ export const MAP_DEFS = {
         name: 'The Citadel',
         themeColor: '#7f8c8d',
         worldHpMultiplier: 0.42,
-        requiredRecord: 5,
-        startingGold: 800,
+        startingGold: 1000,
         dualSpawnWave: Infinity,
         flyingStartWave: 10,
         environment: 'ruins',
@@ -452,7 +451,6 @@ export const MAP_DEFS = {
         name: 'Sky Citadel',
         themeColor: '#5ba3d9',
         worldHpMultiplier: 0.80,
-        requiredRecord: 15,
         startingGold: 600,
         dualSpawnWave: 10,
         flyingStartWave: 12,
@@ -528,7 +526,6 @@ export const MAP_DEFS = {
         name: 'The Nexus',
         themeColor: '#6b3fa0',
         worldHpMultiplier: 0.70,
-        requiredRecord: 30,
         startingGold: 1200,
         dualSpawnWave: Infinity,
         flyingStartWave: 8,
@@ -643,9 +640,9 @@ export const TOWER_TYPES = {
         slow: true,
         maxWave: 9,
         levels: [
-            { damage: 5, range: 3.0, fireRate: 0.8, projSpeed: 250, slowFactor: 0.575, slowDuration: 2.0 },
-            { damage: 8, range: 3.5, fireRate: 0.7, projSpeed: 270, slowFactor: 0.49, slowDuration: 2.5, upgradeCost: 55 },
-            { damage: 13, range: 4.0, fireRate: 0.6, projSpeed: 290, slowFactor: 0.405, slowDuration: 3.0, upgradeCost: 100 },
+            { damage: 5, range: 3.0, fireRate: 0.8, projSpeed: 250, slowFactor: 0.65, slowDuration: 1.5 },
+            { damage: 8, range: 3.5, fireRate: 0.7, projSpeed: 270, slowFactor: 0.575, slowDuration: 1.8, upgradeCost: 55 },
+            { damage: 13, range: 4.0, fireRate: 0.6, projSpeed: 290, slowFactor: 0.50, slowDuration: 2.2, upgradeCost: 100 },
         ],
     },
     deepfrost: {
@@ -655,9 +652,9 @@ export const TOWER_TYPES = {
         aura: true,
         unlockWave: 10,
         levels: [
-            { damage: 15, range: 3.0, fireRate: 1.2, slowFactor: 0.66, slowDuration: 1.5, freezeChance: 0.10, freezeDuration: 0.8 },
-            { damage: 24, range: 3.5, fireRate: 0.85, slowFactor: 0.575, slowDuration: 2.0, freezeChance: 0.15, freezeDuration: 1.0, upgradeCost: 100 },
-            { damage: 33, range: 4.0, fireRate: 0.7, slowFactor: 0.49, slowDuration: 2.5, freezeChance: 0.20, freezeDuration: 1.2, upgradeCost: 175 },
+            { damage: 15, range: 3.0, fireRate: 1.2, slowFactor: 0.72, slowDuration: 1.2, freezeChance: 0.07, freezeDuration: 0.6 },
+            { damage: 24, range: 3.5, fireRate: 0.85, slowFactor: 0.65, slowDuration: 1.5, freezeChance: 0.10, freezeDuration: 0.8, upgradeCost: 100 },
+            { damage: 33, range: 4.0, fireRate: 0.7, slowFactor: 0.575, slowDuration: 1.8, freezeChance: 0.14, freezeDuration: 1.0, upgradeCost: 175 },
         ],
     },
     lightning: {

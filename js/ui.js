@@ -1,4 +1,4 @@
-import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, CANVAS_W, CANVAS_H, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, VERSION, SPEED_MAX, ATMOSPHERE_PRESETS, VICTORY_WAVE } from './constants.js';
+import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, CANVAS_W, CANVAS_H, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, VERSION, SPEED_MAX, ATMOSPHERE_PRESETS, VICTORY_WAVE, WORLD_ORDER } from './constants.js';
 import { Economy } from './economy.js';
 import { safeStorage } from './utils.js';
 
@@ -40,15 +40,18 @@ export class UI {
         if (!container) return;
         container.innerHTML = '';
 
-        const bestRecord = Economy.getBestRecord();
         const allRecords = Economy.getWaveRecord();
+        const bestRecord = Economy.getBestRecord();
 
         const resetBtn = document.getElementById('reset-btn');
         if (resetBtn) resetBtn.style.display = bestRecord > 0 ? '' : 'none';
 
-        for (const [id, def] of Object.entries(MAP_DEFS)) {
-            const reqRecord = def.requiredRecord || 0;
-            const mapLocked = reqRecord > 0 && bestRecord < reqRecord;
+        for (const id of WORLD_ORDER) {
+            const def = MAP_DEFS[id];
+            if (!def) continue;
+            const worldIdx = WORLD_ORDER.indexOf(id);
+            const prevWorld = worldIdx > 0 ? WORLD_ORDER[worldIdx - 1] : null;
+            const mapLocked = prevWorld !== null && (allRecords[prevWorld] || 0) < VICTORY_WAVE;
 
             const card = document.createElement('div');
             card.className = 'map-card' + (mapLocked ? ' map-locked' : '');
@@ -60,7 +63,7 @@ export class UI {
             preview.width = 240;
             preview.height = 160;
             this.drawMapPreview(preview, def);
-            if (mapLocked) this.drawLockOverlay(preview, reqRecord);
+            if (mapLocked) this.drawLockOverlay(preview, `Beat ${MAP_DEFS[prevWorld].name}`);
 
             // Info section
             const info = document.createElement('div');
@@ -74,7 +77,7 @@ export class UI {
             const desc = document.createElement('div');
             desc.className = 'map-card-desc';
             if (mapLocked) {
-                desc.textContent = `Reach Wave ${reqRecord} on any map to unlock`;
+                desc.textContent = `Beat ${MAP_DEFS[prevWorld].name} to unlock`;
             } else {
                 desc.textContent = def.description;
             }
@@ -296,7 +299,7 @@ export class UI {
         this.elAtmoBtn.style.borderColor = preset ? preset.themeColor : '#555';
     }
 
-    drawLockOverlay(canvas, reqRecord) {
+    drawLockOverlay(canvas, message) {
         const ctx = canvas.getContext('2d');
         const w = canvas.width;
         const h = canvas.height;
@@ -333,7 +336,7 @@ export class UI {
         ctx.fillStyle = '#ffd700';
         ctx.font = 'bold 16px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(`Wave ${reqRecord}`, cx, cy + 48);
+        ctx.fillText(message, cx, cy + 48);
     }
 
     refreshMapRecords() {

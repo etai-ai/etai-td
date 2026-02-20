@@ -32,14 +32,16 @@ When a threshold is crossed, the game pauses and shows an unlock screen with the
 
 Six worlds with unique environments and strategic challenges. Enemy HP is adjusted per world — multi-path maps get lower HP to compensate for defending multiple directions.
 
-| Map | Environment | HP Multi | Starting Gold | Unlock Requirement | Description |
-|-----|-------------|----------|---------------|-------------------|-------------|
-| **Serpentine Valley** | Forest | 1.0x | 300g | Always open | Long winding path with 10+ turns. Lots of build space. |
-| **The Citadel** | Ruins | 0.42x | 800g | Wave 5 on any map | 4 entry points from all edges, single castle at center. |
-| **Sky Citadel** | Sky | 0.80x | 600g | Wave 15 on any map | Floating golden pathways with cloud pillars. |
-| **Split Creek** | Desert | 1.0x | 1000g | Wave 20 on any map | Dual spawn from wave 2 — enemies attack from both sides early. |
-| **The Gauntlet** | Lava | 1.0x | 1000g | Wave 30 on any map | Dual spawn from wave 2, lava environment with rising embers. |
-| **The Nexus** | Void | 0.70x | 1200g | Wave 30 on any map | Enemies spawn from center, walk to 4 corner castles. |
+Worlds unlock sequentially — beat a world (reach Victory at wave 35) to unlock the next one in the campaign chain.
+
+| # | Map | Environment | HP Multi | Starting Gold | Unlock | Description |
+|---|-----|-------------|----------|---------------|--------|-------------|
+| 1 | **Serpentine Valley** | Forest | 1.0x | 300g | Always open | Long winding path with 10+ turns. Lots of build space. |
+| 2 | **Sky Citadel** | Sky | 0.80x | 600g | Beat Serpentine | Floating golden pathways with cloud pillars. |
+| 3 | **Split Creek** | Desert | 0.9x | 1000g | Beat Sky Citadel | Dual spawn from wave 2 — enemies attack from both sides early. |
+| 4 | **The Gauntlet** | Lava | 0.9x | 1000g | Beat Split Creek | Dual spawn from wave 2, lava environment with rising embers. |
+| 5 | **The Citadel** | Ruins | 0.42x | 1000g | Beat The Gauntlet | 4 entry points from all edges, single castle at center. |
+| 6 | **The Nexus** | Void | 0.70x | 1200g | Beat The Citadel | Enemies spawn from center, walk to 4 corner castles. |
 
 Each map has multiple layout variants randomly selected each run. Each environment has unique ambient effects — falling leaves and fireflies in forests, sand wisps in the desert, rising embers over lava, dust motes in ruins, cloud wisps in sky, and purple energy wisps in the void.
 
@@ -89,9 +91,9 @@ Low damage but slows enemies, making them spend more time in range of your other
 
 | Level | Damage | Range | Fire Rate | Slow | Duration | Upgrade Cost |
 |-------|--------|-------|-----------|------|----------|-------------|
-| 1 | 5 | 3.0 | 1.3/s | 43% | 2.0s | — |
-| 2 | 8 | 3.5 | 1.4/s | 51% | 2.5s | $55 |
-| 3 | 13 | 4.0 | 1.7/s | 60% | 3.0s | $100 |
+| 1 | 5 | 3.0 | 1.3/s | 35% | 1.5s | — |
+| 2 | 8 | 3.5 | 1.4/s | 43% | 1.8s | $55 |
+| 3 | 13 | 4.0 | 1.7/s | 50% | 2.2s | $100 |
 
 **Total investment:** $230 fully upgraded. Place before your damage towers so enemies are slowed when they enter the killzone.
 
@@ -153,9 +155,9 @@ An aura-based tower that pulses cold damage to ALL enemies in range simultaneous
 
 | Level | Damage | Range | Slow | Freeze Chance | Freeze Duration | Upgrade Cost |
 |-------|--------|-------|------|---------------|-----------------|-------------|
-| 1 | 15 | 3.0 | 34% | 10% | 0.8s | — |
-| 2 | 24 | 3.5 | 43% | 15% | 1.0s | $100 |
-| 3 | 33 | 4.0 | 51% | 20% | 1.2s | $175 |
+| 1 | 15 | 3.0 | 28% | 7% | 0.6s | — |
+| 2 | 24 | 3.5 | 35% | 10% | 0.8s | $100 |
+| 3 | 33 | 4.0 | 43% | 14% | 1.0s | $175 |
 
 **Total investment:** $425 fully upgraded. The aura pulse hits all enemies in range — no projectiles to miss. Frozen enemies stop completely (speed = 0). Place at chokepoints for maximum crowd control.
 

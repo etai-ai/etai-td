@@ -126,7 +126,6 @@ serpentine: {
     worldHpMultiplier: 1.0,   // ← difficulty knob
     environment: 'forest',     // forest | desert | lava (affects visuals only)
     themeColor: '#27ae60',
-    requiredRecord: 0,         // best wave record needed to unlock (0 = always open)
     startingUnlocks: 0,        // effective wave for tower visibility at start
     description: '...',
     layouts: [ ... ],
@@ -137,8 +136,7 @@ serpentine: {
 
 | Field | Purpose | Tuning notes |
 |-------|---------|--------------|
-| `worldHpMultiplier` | Scales ALL enemy HP for this world | Compensates for path length — shorter paths get lower values. Current: Serpentine 1.0, Split Creek 0.60, Gauntlet 0.65 |
-| `requiredRecord` | Best wave record on any map needed to unlock | Serpentine: 0 (always open), Split Creek: 30, Gauntlet: 40 |
+| `worldHpMultiplier` | Scales ALL enemy HP for this world | Compensates for path length — shorter paths get lower values. Current: Serpentine 1.0, Split Creek 0.9, Gauntlet 0.9 |
 | `startingUnlocks` | Effective wave for initial tower visibility | Higher = more towers available from wave 1 |
 | `environment` | Visual theme (`forest`/`desert`/`lava`) | No gameplay effect |
 | `layouts` | Array of path variants, randomly selected (3-5 per map) | See "Map Layouts" below |
@@ -496,7 +494,7 @@ Uses `safeStorage` wrapper (try/catch for incognito/restricted environments) wit
 | Buff/nerf a tower | Edit its `levels` array in `TOWER_TYPES` |
 | Buff/nerf an enemy type | Edit its stats in `ENEMY_TYPES` |
 | Change tower unlock timing | Set `unlockWave` / `maxWave` in `TOWER_TYPES` |
-| Change map unlock requirements | Set `requiredRecord` in `MAP_DEFS` |
+| Change map unlock order | Edit `WORLD_ORDER` array in `constants.js` |
 | Change when towers appear/hide | Adjust wave thresholds in `WAVE_UNLOCKS` |
 | Reset player data after rebalance | Clear `td_*` keys from localStorage |
 | Analyze difficulty | Enable admin mode, review wave reports |
