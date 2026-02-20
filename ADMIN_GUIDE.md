@@ -301,7 +301,7 @@ arrow: {
 | Bi-Cannon | `heavyEvery`, `shredPercent`, `scorchDPS` | Dual barrel, armor shred, scorch zones |
 | Sniper | `critChance`, `critMulti` | Random crit hits for bonus damage |
 | Missile Sniper | `splashRadius`, `critChance`, `critMulti` | Homing missiles, splash + crit |
-| Titan | `splashRadius`, `armorPiercing` | Massive splash that bypasses armor entirely |
+| Titan | `splashRadius`, `heavyEvery`, `armorShred`, `scorchDPS` | Massive splash + heavy rounds with armor shred + scorch zones |
 
 ### Burn Mechanic (Fire Arrow)
 

@@ -197,17 +197,17 @@ A dual-barreled cannon that fires twice as fast as a regular cannon. Every 3-4 s
 
 ### Wave 30 Unlock
 
-#### Titan ($800)
+#### The Titan ($800)
 
-The ultimate siege weapon — a massive golden cannon that fires armor-piercing splash projectiles, dealing full damage regardless of enemy armor. Perfect for shredding armored waves in the endgame.
+The ultimate siege weapon — a massive golden cannon with devastating splash damage. Every 3rd shot is a heavy round that shreds enemy armor and leaves burning scorch zones on the ground.
 
-| Level | Damage | Range | Fire Rate | Splash Radius | Upgrade Cost |
-|-------|--------|-------|-----------|---------------|-------------|
-| 1 | 100 | 6.0 | 0.56/s | 2.5 | — |
-| 2 | 160 | 7.0 | 0.71/s | 3.0 | $400 |
-| 3 | 240 | 8.0 | 1.00/s | 3.5 | $600 |
+| Level | Damage | Range | Fire Rate | Splash | Shred | Scorch DPS | Upgrade Cost |
+|-------|--------|-------|-----------|--------|-------|-----------|-------------|
+| 1 | 105 | 6.0 | 0.69/s | 2.5 | 12% | 8/s (2.5s) | — |
+| 2 | 168 | 7.0 | 0.89/s | 3.0 | 15% | 12/s (3.0s) | $400 |
+| 3 | 252 | 8.0 | 1.25/s | 3.5 | 18% | 16/s (3.5s) | $600 |
 
-**Total investment:** $1800 fully upgraded. All splash damage pierces armor — devastating against tanks, bosses, and quantum bosses. Combine with Deep Frost slow to keep enemies in the blast zone longer.
+**Total investment:** $1800 fully upgraded. Heavy rounds every 3 shots apply armor shred (max 3 stacks) and leave scorch zones that bypass armor. Combine with other damage towers to exploit the shredded armor.
 
 ## Enemies
 
@@ -312,8 +312,8 @@ Bosses appear every 5 waves. At wave 14, the hero unlocks — position it at cho
 - **Deep Frost + Lightning/Super Lightning:** Frozen enemies can't move, giving chain attacks more time to bounce between targets.
 - **Missile Sniper + Deep Frost:** Freeze groups together, then splash them all with a crit missile for devastating AoE.
 - **Sniper (Strongest) + Lightning (First):** Sniper focuses the boss while lightning clears the escort wave.
-- **Titan + Deep Frost:** Freeze enemies in place while Titan's armor-piercing splash shreds them. The longer they're frozen, the more Titan volleys land.
-- **Titan + Fire Arrow:** Double armor bypass — Titan splash ignores armor, Fire Arrow burn ignores armor. Together they melt even 30% armor quantum bosses.
+- **Titan + Deep Frost:** Freeze enemies in place while Titan's heavy rounds shred their armor and scorch zones burn them. The longer they're frozen, the more Titan volleys land.
+- **Titan + Fire Arrow:** Titan shreds armor, Fire Arrow burn bypasses it. Together they melt even 30% armor quantum bosses — shred makes normal hits hurt more, burn ignores armor entirely.
 
 ### Tower Placement Tips
 

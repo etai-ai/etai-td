@@ -173,11 +173,13 @@ export class Tower {
     shoot(target, game) {
         this.recoilTimer = 0.12;
 
-        // Bi-cannon: track shots and determine if heavy round
+        // Track shots and determine if heavy round
         let isHeavy = false;
+        this.shotCount++;
         if (this.dualBarrel) {
-            this.shotCount++;
             this.activeBarrel = this.shotCount % 2;
+        }
+        if (this.heavyEvery > 0) {
             isHeavy = (this.shotCount % this.heavyEvery) === 0;
         }
 
@@ -205,8 +207,8 @@ export class Tower {
         } else if (this.type === 'superlightning') {
             game.particles.spawnMuzzleFlash(muzzleX, muzzleY, '#b388ff', 5);
         } else if (this.type === 'titan') {
-            game.particles.spawnMuzzleFlash(muzzleX, muzzleY, '#ffd700', 8);
-            game.triggerShake(5, 0.25);
+            game.particles.spawnMuzzleFlash(muzzleX, muzzleY, isHeavy ? '#ff4400' : '#ffd700', isHeavy ? 10 : 8);
+            game.triggerShake(isHeavy ? 7 : 5, isHeavy ? 0.3 : 0.25);
         }
     }
 

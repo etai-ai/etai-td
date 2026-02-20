@@ -738,17 +738,19 @@ export const TOWER_TYPES = {
         ],
     },
     titan: {
-        name: 'Titan',
+        name: 'The Titan',
         cost: 800,
         color: '#d4af37',
         splash: true,
-        armorPiercing: true,
         unlockWave: 30,
         levels: [
-            { damage: 105, range: 6.0, fireRate: 1.44, projSpeed: 160, splashRadius: 2.5 },
+            { damage: 105, range: 6.0, fireRate: 1.44, projSpeed: 160, splashRadius: 2.5,
+              heavyEvery: 3, armorShred: 0.12, shredDuration: 3.0, scorchDPS: 8, scorchDuration: 2.5 },
             { damage: 168, range: 7.0, fireRate: 1.12, projSpeed: 180, splashRadius: 3.0,
+              heavyEvery: 3, armorShred: 0.15, shredDuration: 3.5, scorchDPS: 12, scorchDuration: 3.0,
               upgradeCost: 400 },
             { damage: 252, range: 8.0, fireRate: 0.8, projSpeed: 200, splashRadius: 3.5,
+              heavyEvery: 3, armorShred: 0.18, shredDuration: 4.0, scorchDPS: 16, scorchDuration: 3.5,
               upgradeCost: 600 },
         ],
     },
@@ -761,7 +763,7 @@ export const WAVE_UNLOCKS = {
     15: { dualSpawn: true, color: '#e74c3c' },
     20: { towers: ['Missile Sniper'], keys: ['missilesniper'], replacesKeys: ['sniper'], color: '#6b8e23' },
     25: { towers: ['Super Lightning', 'Bi-Cannon'], keys: ['superlightning', 'bicannon'], replacesKeys: ['lightning', 'cannon'], color: '#7b3fff' },
-    30: { towers: ['Titan'], keys: ['titan'], replacesKeys: null, color: '#d4af37' },
+    30: { towers: ['The Titan'], keys: ['titan'], replacesKeys: null, color: '#d4af37' },
 };
 
 // ── Hero Definitions ──────────────────────────────────────
