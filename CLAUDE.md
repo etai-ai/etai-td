@@ -41,10 +41,10 @@ Open `http://localhost:8000` in a modern browser. There are no tests or linters 
 Every world is an **endless wave-based survival run**. No levels — you play until you die.
 
 - **Wave-based unlocks:** Towers, hero, and dual spawn unlock at wave thresholds mid-run via `WAVE_UNLOCKS` in constants.js
-- **HP scaling:** `getWaveHPScale(currentWave) * worldHpMultiplier * hpModifier` where `getWaveHPScale(w) = w * 1.11^w`. All maps use the same natural HP curve; `worldHpMultiplier` adjusts per-map (Citadel 0.5x, Creek/Gauntlet 1.1x).
+- **HP scaling:** `getWaveHPScale(currentWave) * worldHpMultiplier * hpModifier` where `getWaveHPScale(w) = w * 1.11^w`. All maps use the same natural HP curve; `worldHpMultiplier` adjusts per-map (Citadel 0.42x, Nexus 0.70x, Creek/Gauntlet 1.0x).
 - Waves 1-5: hand-crafted intro waves. Wave 6+: procedural via `generateWave()`
 - **Special wave events:** Goldrush every 10 waves (2x kill gold). Boss every 5 waves (waves 5-20), replaced by Megaboss every 2 waves at waves 25-31 (count: 1→1→2→3), replaced by Quantum Boss every wave from wave 32+ (count: wave-31, scaled by 1.5x). Dragon Flyers from wave 25+ (1→8 count, +1 every 3 waves)
-- **Starting gold:** Per-map via `startingGold` in MAP_DEFS (Serpentine 300g, Citadel 400g, Creek/Gauntlet 1000g)
+- **Starting gold:** Per-map via `startingGold` in MAP_DEFS (Serpentine 300g, Citadel 800g, Creek/Gauntlet 1000g, Nexus 1200g)
 - **Auto-wave:** Enabled by default (`game.autoWave`), auto-starts next wave after 5s. Early-send bonus: max +30g, decays by 5g/sec waited
 - Wave record saved per map in `td_wave_record` localStorage key (JSON object `{mapId: wave}`)
 
@@ -73,9 +73,11 @@ When a threshold is crossed, `onWaveThreshold()` in game.js:
 | World | Required Record | Starting Gold | HP Multiplier | Dual Spawn Wave | Flying Start Wave | Environment |
 |-------|----------------|---------------|---------------|-----------------|-------------------|-------------|
 | Serpentine | Always open | 300g | 1.0x | 15 | 17 | Forest |
-| The Citadel | Wave 5 on any map | 400g | 0.5x | Never | 10 | Ruins |
+| The Citadel | Wave 5 on any map | 800g | 0.42x | Never | 10 | Ruins |
+| Sky Citadel | Wave 15 on any map | 600g | 0.80x | 10 | 12 | Sky |
 | Split Creek | Wave 20 on any map | 1000g | 1.0x | 2 | 6 | Desert |
 | Gauntlet | Wave 30 on any map | 1000g | 1.0x | 2 | 6 | Lava |
+| The Nexus | Wave 30 on any map | 1200g | 0.70x | Never | 8 | Void |
 
 All maps use the same natural progression — towers, hero, and abilities unlock at the same wave thresholds regardless of map. `requiredRecord` is the sole entry gate (checked via `Economy.getMaxWaveRecord()`). Per-map `dualSpawnWave` controls when secondary spawning begins (`Infinity` = never). Per-map `flyingStartWave` controls when flying enemies appear. Per-map `startingGold` and `worldHpMultiplier` provide economic and difficulty tuning.
 
@@ -104,8 +106,8 @@ Press backtick (`` ` ``) to toggle the admin panel with real-time DPS/efficiency
 - `postfx.setTerrainDirty()` must be called after any terrain redraw (tower place/sell/upgrade) — this is done automatically in `renderer.drawTerrain()`
 - `UNPACK_FLIP_Y_WEBGL` is set to `true` to prevent Y-inversion when uploading canvas textures
 - Effect triggers: `flash(intensity, duration)`, `shockwave(nx, ny, intensity)`, `aberration(intensity, duration)`
-- Per-map tints set in `game.selectMap()`: Serpentine warm green, Split Creek cool blue, Gauntlet hot red, Citadel cool gray
-- **Point lighting:** Up to 32 dynamic lights computed in the composite pass (pass 1). Towers emit colored glow (scales with upgrade level), projectiles carry moving lights, hero has cyan aura, scorch zones glow orange-red. Per-map ambient darkness dims the scene (Serpentine 0.25, Creek 0.10, Gauntlet 0.35, Citadel 0.20); lights restore/amplify brightness. Quartic attenuation `(1-t²)²` with aspect ratio correction. Flash lights (`addFlashLight`) decay over time for explosions, boss deaths, and hero abilities. All light methods bail with `if (!this.enabled) return` — zero cost when PostFX off. Light registration happens in `game.registerLights()` called before `postfx.render()` in `tick()`.
+- Per-map tints set in `game.selectMap()`: Serpentine warm green, Split Creek cool blue, Gauntlet hot red, Citadel cool gray, Sky Citadel sky blue, Nexus purple shift
+- **Point lighting:** Up to 32 dynamic lights computed in the composite pass (pass 1). Towers emit colored glow (scales with upgrade level), projectiles carry moving lights, hero has cyan aura, scorch zones glow orange-red. Per-map ambient darkness dims the scene (Serpentine 0.25, Creek 0.10, Gauntlet 0.35, Citadel 0.20, Sky Citadel 0.15, Nexus 0.35); lights restore/amplify brightness. Quartic attenuation `(1-t²)²` with aspect ratio correction. Flash lights (`addFlashLight`) decay over time for explosions, boss deaths, and hero abilities. All light methods bail with `if (!this.enabled) return` — zero cost when PostFX off. Light registration happens in `game.registerLights()` called before `postfx.render()` in `tick()`.
 
 ## Hero Unit (Wave 14+)
 
@@ -124,7 +126,7 @@ WASD-controlled hero spawns when `getEffectiveWave() >= 14` (unlockWave in HERO_
 
 ## Flying Enemy (Per-Map Start Wave)
 
-Flying enemies begin appearing at per-map `flyingStartWave` (Serpentine 17, Citadel 10, Creek/Gauntlet 6; default `FLYING_START_WAVE = 17`), scaling from 1 to 20 over 13 waves. They spawn at the castle (exit), fly a curvy sine-wave path backward to a random midpoint (30-50% of path via `landingIndex`), then land and walk normally to the exit. While airborne they are **untargetable** — towers, hero, splash, chain lightning, scorch zones, and knockback all skip them. After landing they become normal ground enemies.
+Flying enemies begin appearing at per-map `flyingStartWave` (Serpentine 17, Citadel 10, Nexus 8, Creek/Gauntlet 6; default `FLYING_START_WAVE = 17`), scaling from 1 to 20 over 13 waves. They spawn at the castle (exit), fly a curvy sine-wave path backward to a random midpoint (30-50% of path via `landingIndex`), then land and walk normally to the exit. While airborne they are **untargetable** — towers, hero, splash, chain lightning, scorch zones, and knockback all skip them. After landing they become normal ground enemies.
 
 - **Stats in `ENEMY_TYPES.flying`:** HP 10, speed 97, reward 30, radius 11, purple color
 - Flight: 110 px/s, 2-3 sine oscillations with 60-100px amplitude, 40px altitude at midpoint
@@ -167,24 +169,29 @@ This continues every 4 seconds for the entire duration until all primary enemies
 
 Enemies are tagged with `isSecondary` on spawn for tracking. Logic lives in `WaveManager.update()` (`reinforceTimer`, `reinforceBursts`). Only active at `currentWave >= dualSpawnWave + 5` and after main wave spawning completes.
 
-## Multi-Path Maps (The Citadel)
+## Multi-Path Maps (Citadel & Nexus)
 
-The Citadel introduces a `multiPaths` layout system where enemies attack from all 4 edges (N/S/E/W), each trail winding toward a single big castle at the center (14,10). This replaces the single-path/split-path/secondary-path model used by other maps.
+Two maps use the `multiPaths` layout system with 4 waypoint arrays instead of single/split paths. Auto-detection in `drawCastle()` and entry marker logic distinguishes the two patterns:
 
-- **Layout data:** `layout.multiPaths` is an array of 4 waypoint arrays (one per direction). Each array's first waypoint is on a map edge (entry), last waypoint is the shared center exit (14,10)
+**Shared-exit (Citadel):** Enemies attack from all 4 edges (N/S/E/W), each trail winding toward a single big castle at the center (14,10). `exits.every(e => e.x === exits[0].x)` → true → one big castle, green entry arrows at edges.
+
+**Shared-entry (Nexus):** Enemies spawn from the center (14,10) and walk outward to 4 mini castles at the corners. `entries.every(e => e.x === entries[0].x)` → true → mini castles at each exit, purple spawn marker at center.
+
+- **Layout data:** `layout.multiPaths` is an array of 4 waypoint arrays. Each array's first waypoint is the entry, last is the exit
 - **`map.multiPaths`:** Built in `GameMap.buildGrid()` — array of 4 world-coordinate path arrays. `map.path` defaults to `multiPaths[0]` for fallback/preview
 - **`getEnemyPath(useSecondary, pathIndex)`:** If `multiPaths`, returns `multiPaths[pathIndex]` (or random if no index). The `pathIndex` parameter is only used by multi-path maps
 - **Round-robin spawning:** In `wave.js`, each spawn increments `spawnCounter`; `pathIndex = spawnCounter % multiPaths.length` distributes enemies evenly across all 4 paths
-- **No dual spawn:** Uses `dualSpawnWave: Infinity` — dual-spawn unlock screen, secondary spawning, and reinforcement bursts are all skipped via `isFinite()` checks
-- **Castle:** Standard big 2D castle drawn at the shared exit point. 3D mode uses mini castles at each path exit
-- **Entry markers:** `drawEntryMarker(ctx, wp)` draws directional green arrows at each edge entry point
-- **Flying enemies:** Spawn from the castle, fly backward along a random path — works naturally with multiPaths
-- **Balance:** `worldHpMultiplier: 0.50` — enemies have half HP to compensate for defending 4 directions simultaneously
-- **3 layout variants** with different path configurations. Shared kill zones in the center where paths cross/run parallel
+- **No dual spawn:** Both use `dualSpawnWave: Infinity` — dual-spawn unlock screen, secondary spawning, and reinforcement bursts are all skipped via `isFinite()` checks
+- **Castle auto-detect:** `drawCastle()` checks if all multiPath exits are the same point. Shared → `_drawBigCastle()`, divergent → `drawMiniCastle()` at each exit
+- **Entry marker auto-detect:** Shared entry → `drawSpawnMarker()` (purple glow + red dot + directional lines), shared exit → `drawEntryMarker()` arrows at edges
+- **Flying enemies:** Spawn from castle exit(s), fly backward along a random path — works naturally with multiPaths
+- **Hero spawn:** Shared-entry maps spawn hero at `multiPaths[0][1]` (one step from center), shared-exit maps spawn near the exit
+- **Balance:** Citadel `worldHpMultiplier: 0.42`, Nexus `worldHpMultiplier: 0.70` — reduced HP to compensate for defending 4 directions
+- **3 layout variants each** with different path configurations
 
 ## Ambient Map Effects
 
-Per-environment animated particles drawn on the game canvas (ground layer, before scorch zones). Forest: falling leaves + fireflies. Desert: sand wisps + dust puffs. Lava: rising embers + bubbles. Ruins: dust motes + spirit wisps. Pool capped at 40, spawned at ~6-7/sec. Fixed dt (1/60) — not affected by game speed. Pool cleared on `drawTerrain()`. Self-contained in `renderer.js` (`updateAmbients`, `spawnAmbient`, `drawAmbients`).
+Per-environment animated particles drawn on the game canvas (ground layer, before scorch zones). Forest: falling leaves + fireflies. Desert: sand wisps + dust puffs. Lava: rising embers + bubbles. Ruins: dust motes + spirit wisps. Sky: cloud wisps + golden sparkles. Void: purple energy wisps + white/cyan sparks. Pool capped at 40, spawned at ~6-7/sec. Fixed dt (1/60) — not affected by game speed. Pool cleared on `drawTerrain()`. Self-contained in `renderer.js` (`updateAmbients`, `spawnAmbient`, `drawAmbients`).
 
 ## Atmosphere Presets
 
@@ -262,7 +269,7 @@ Horde modifier applies to wave definition **after generation**, multiplying grou
 
 ## Map Environments
 
-Four visual themes with different ground/path/obstacle rendering:
+Six visual themes with different ground/path/obstacle rendering:
 
 **Forest** (Serpentine):
 - Grass cells with procedural blade patterns
@@ -288,7 +295,19 @@ Four visual themes with different ground/path/obstacle rendering:
 - Obstacles: crumbled stone pillars / ruined wall fragments with ivy
 - Ambient: dust motes + spirit wisps (blue-green)
 
-Per-map lighting darkness: Serpentine 0.25, Split Creek 0.10, Citadel 0.20, Gauntlet 0.35. All four use procedural `seedRand(gx, gy, i)` for deterministic decoration placement.
+**Sky** (Sky Citadel):
+- Light blue-white ground with cloud wisps
+- Golden/amber stone pathways with ornamental lines
+- Obstacles: cloud pillars / floating stone arches
+- Ambient: cloud wisps + golden sparkles
+
+**Void** (The Nexus):
+- Dark purple ground (25,15,45 RGB) with faint energy veins
+- Dark slate paths (#2a2030) with purple-glow edge borders
+- Obstacles: dark crystal shards with glowing tips / energy pylons with radiant tops
+- Ambient: purple energy wisps + white/cyan rising sparks
+
+Per-map lighting darkness: Serpentine 0.25, Split Creek 0.10, Citadel 0.20, Sky Citadel 0.15, Gauntlet 0.35, Nexus 0.35. All six use procedural `seedRand(gx, gy, i)` for deterministic decoration placement.
 
 ## Poki SDK Integration
 
