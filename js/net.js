@@ -1,7 +1,7 @@
 // Multiplayer networking module — client-side WebSocket
 // Wraps connection to relay server and provides send/receive helpers
 
-const ENEMY_TYPE_IDX = { grunt: 0, runner: 1, tank: 2, healer: 3, boss: 4, swarm: 5, wobbler: 6, flying: 7, megaboss: 8, quantumboss: 9 };
+const ENEMY_TYPE_IDX = { grunt: 0, runner: 1, tank: 2, healer: 3, boss: 4, swarm: 5, wobbler: 6, flying: 7, megaboss: 8, quantumboss: 9, dragonflyer: 10, foreststalker: 11, stormherald: 12, sandtitan: 13, magmabrute: 14, magmafragment: 15, siegegolem: 16, voidsovereign: 17 };
 const IDX_ENEMY_TYPE = Object.fromEntries(Object.entries(ENEMY_TYPE_IDX).map(([k, v]) => [v, k]));
 
 export class Net {

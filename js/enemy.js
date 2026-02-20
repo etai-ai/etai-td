@@ -1,4 +1,4 @@
-import { ENEMY_TYPES, CELL, COLS, ROWS, CANVAS_W, CANVAS_H, WAVE_MODIFIERS, GOLD_RUSH_MULTIPLIER, MIDBOSS_BOUNTY, KILL_GOLD_BONUS, ARMOR_BREAK_FACTOR } from './constants.js';
+import { ENEMY_TYPES, CELL, COLS, ROWS, CANVAS_W, CANVAS_H, WAVE_MODIFIERS, GOLD_RUSH_MULTIPLIER, MIDBOSS_BOUNTY, KILL_GOLD_BONUS, ARMOR_BREAK_FACTOR, getWaveHPScale } from './constants.js';
 
 let nextEnemyId = 0;
 
@@ -68,6 +68,42 @@ export class Enemy {
         // Boss enrage (when last enemy alive)
         this.enraged = false;
 
+        // World enemy mechanics
+        // Forest Stalker — dodge first hit
+        this.dodgeCharges = def.dodgeCharges || 0;
+        this.dodgeFlashTimer = 0;
+        this._dodged = false;
+
+        // Storm Herald — shield aura
+        this.shieldRadius = def.shieldRadius || 0;
+        this.shieldAmount = def.shieldAmount || 0;
+        this.shieldCooldown = def.shieldCooldown || 0;
+        this.shieldTimer = 0;
+        this.shieldHP = 0;
+        this.maxShieldHP = 0;
+
+        // Sand Titan — burrow
+        this.burrowInterval = def.burrowInterval || 0;
+        this.burrowDuration = def.burrowDuration || 0;
+        this.burrowTimer = 0;
+        this.burrowed = false;
+        this.burrowRemaining = 0;
+
+        // Magma Brute — death split
+        this.splitOnDeath = def.splitOnDeath || 0;
+        this.splitType = def.splitType || null;
+
+        // Siege Golem — absorb invulnerability
+        this.absorbEvery = def.absorbEvery || 0;
+        this.hitCounter = 0;
+        this.absorbTimer = 0;
+
+        // Void Sovereign — half-HP clone
+        this.splitAtHalf = def.splitAtHalf || false;
+        this.splitHPFraction = def.splitHPFraction || 0;
+        this.hasSplit = false;
+        this._pendingSplit = false;
+
         // Flying state (spawns at exit, flies backward to midpoint, then walks)
         this.flying = false;
         this.flyTarget = null;
@@ -109,9 +145,48 @@ export class Enemy {
     }
 
     takeDamage(amount) {
-        const effective = amount * (1 - this.armor);
+        // Siege Golem absorb invulnerability
+        if (this.absorbTimer > 0) return 0;
+
+        // Forest Stalker dodge
+        if (this.dodgeCharges > 0) {
+            this.dodgeCharges--;
+            this._dodged = true;
+            this.dodgeFlashTimer = 0.3;
+            return 0;
+        }
+
+        let effective = amount * (1 - this.armor);
+
+        // Storm Herald shield absorption
+        if (this.shieldHP > 0) {
+            if (effective <= this.shieldHP) {
+                this.shieldHP -= effective;
+                this.damageFlashTimer = 0.1;
+                return effective;
+            }
+            effective -= this.shieldHP;
+            this.shieldHP = 0;
+        }
+
         this.hp -= effective;
         this.damageFlashTimer = 0.1;
+
+        // Siege Golem hit counter
+        if (this.absorbEvery > 0) {
+            this.hitCounter++;
+            if (this.hitCounter >= this.absorbEvery) {
+                this.hitCounter = 0;
+                this.absorbTimer = 2.0;
+            }
+        }
+
+        // Void Sovereign half-HP split
+        if (this.splitAtHalf && !this.hasSplit && this.hp <= this.maxHP * 0.5 && this.hp > 0) {
+            this.hasSplit = true;
+            this._pendingSplit = true;
+        }
+
         if (this.hp <= 0) {
             this.hp = 0;
             this.alive = false;
@@ -290,6 +365,30 @@ export class Enemy {
             this.hp = Math.min(this.maxHP, this.hp + this.regenRate * dt);
         }
 
+        // Dodge flash decay
+        if (this.dodgeFlashTimer > 0) this.dodgeFlashTimer -= dt;
+
+        // Absorb timer decay (Siege Golem invulnerability)
+        if (this.absorbTimer > 0) this.absorbTimer -= dt;
+
+        // Burrow timer (Sand Titan)
+        if (this.burrowInterval > 0) {
+            if (this.burrowed) {
+                this.burrowRemaining -= dt;
+                if (this.burrowRemaining <= 0) {
+                    this.burrowed = false;
+                    this.burrowRemaining = 0;
+                }
+            } else {
+                this.burrowTimer += dt;
+                if (this.burrowTimer >= this.burrowInterval) {
+                    this.burrowTimer = 0;
+                    this.burrowed = true;
+                    this.burrowRemaining = this.burrowDuration;
+                }
+            }
+        }
+
         // Flying movement: curvy sine path toward landing target
         if (this.flying) {
             const prevX = this.x, prevY = this.y;
@@ -418,7 +517,7 @@ export class EnemyManager {
                 for (let i = 0; i < cell.length; i++) {
                     const e = cell[i];
                     if (!e.alive) continue;
-                    if (!includeFlying && e.flying) continue;
+                    if (!includeFlying && (e.flying || e.burrowed)) continue;
                     if (!includeDying && e.deathTimer >= 0) continue;
                     if (excludeIds && excludeIds.has(e.id)) continue;
                     const dx = e.x - x;
@@ -569,11 +668,53 @@ export class EnemyManager {
                     this.game.postfx?.shockwave(e.x / CANVAS_W, e.y / CANVAS_H, isMega ? 0.8 : 0.5);
                     this.game.postfx?.addFlashLight(e.x, e.y, 1.0, isMega ? 0.1 : 0.84, 0, isMega ? 0.30 : 0.20, 2.0, isMega ? 0.7 : 0.5);
                 }
+
+                // Magma Brute death split — spawn fragments at parent position
+                if (e.splitOnDeath > 0 && e.splitType && !isNetClient) {
+                    const mapMul = this.game.map.def.worldHpMultiplier || 1;
+                    const splitHpScale = getWaveHPScale(this.game.waves.currentWave) * mapMul * (this.game.waves.hpModifier || 1);
+                    for (let f = 0; f < e.splitOnDeath; f++) {
+                        const frag = this.spawn(e.splitType, splitHpScale, this.game.waves.modifier, e.isSecondary);
+                        // Place at parent position on same path
+                        frag.path = e.path;
+                        frag.x = e.x + (Math.random() - 0.5) * 20;
+                        frag.y = e.y + (Math.random() - 0.5) * 20;
+                        frag.waypointIndex = e.waypointIndex;
+                        frag.progress = e.progress;
+                    }
+                }
                 continue;
             }
 
-            // Dust particles while walking (not while flying)
-            if (e.alive && !e.flying && e.dustTimer >= 0.2) {
+            // Dodge floating text
+            if (e._dodged) {
+                e._dodged = false;
+                this.game.particles.spawnFloatingText(e.x, e.y - 15, 'DODGE!', '#2d6b2d');
+            }
+
+            // Void Sovereign half-HP clone
+            if (e._pendingSplit && e.alive) {
+                e._pendingSplit = false;
+                const isNetClient = this.game.isMultiplayer && !this.game.net?.isHost;
+                if (!isNetClient) {
+                    const mapMul = this.game.map.def.worldHpMultiplier || 1;
+                    const cloneHpScale = getWaveHPScale(this.game.waves.currentWave) * mapMul * (this.game.waves.hpModifier || 1);
+                    const clone = this.spawn('voidsovereign', cloneHpScale, this.game.waves.modifier, e.isSecondary);
+                    clone.path = e.path;
+                    clone.x = e.x + (Math.random() - 0.5) * 15;
+                    clone.y = e.y + (Math.random() - 0.5) * 15;
+                    clone.waypointIndex = e.waypointIndex;
+                    clone.progress = e.progress;
+                    // Clone gets reduced HP
+                    clone.hp = clone.maxHP * e.splitHPFraction;
+                    clone.displayHP = clone.hp;
+                    clone.hasSplit = true; // Prevent recursive splitting
+                    this.game.particles.spawnBigFloatingText(e.x, e.y - 20, 'SPLIT!', '#4a1a6a');
+                }
+            }
+
+            // Dust particles while walking (not while flying or burrowed)
+            if (e.alive && !e.flying && !e.burrowed && e.dustTimer >= 0.2) {
                 e.dustTimer = 0;
                 this.game.particles.spawnDust(e.x, e.y + e.radius * 0.5, 1);
             }
@@ -588,6 +729,24 @@ export class EnemyManager {
                     for (const other of nearby) {
                         if (other === e) continue;
                         other.heal(e.healRate * 0.1);
+                    }
+                }
+            }
+
+            // Storm Herald shield aura — grants shields to nearest un-shielded ally
+            if (e.alive && e.shieldRadius > 0 && e.shieldAmount > 0) {
+                e.shieldTimer -= dt;
+                if (e.shieldTimer <= 0) {
+                    e.shieldTimer = e.shieldCooldown;
+                    const shieldRangePx = e.shieldRadius * CELL;
+                    const nearby = this.getEnemiesNear(e.x, e.y, shieldRangePx);
+                    for (const other of nearby) {
+                        if (other === e || other.shieldHP > 0) continue;
+                        const hpScale = other.maxHP / (ENEMY_TYPES[other.type]?.baseHP || 1);
+                        const scaledShield = e.shieldAmount * Math.sqrt(hpScale);
+                        other.shieldHP = scaledShield;
+                        other.maxShieldHP = scaledShield;
+                        break; // One ally per cooldown
                     }
                 }
             }

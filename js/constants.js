@@ -38,6 +38,8 @@ export const MAP_DEFS = {
         startingGold: 300,
         dualSpawnWave: 15,
         flyingStartWave: 17,
+        worldEnemy: 'foreststalker',
+        worldEnemyStartWave: 6,
         description: 'A long winding path gives you plenty of time to build defenses.',
         layouts: [
             // Layout 0: Stacked horizontal U-turns (kill zones: y=2,4 left, y=13,15 right)
@@ -154,6 +156,8 @@ export const MAP_DEFS = {
         startingGold: 1000,
         dualSpawnWave: 2,
         flyingStartWave: 6,
+        worldEnemy: 'sandtitan',
+        worldEnemyStartWave: 6,
         environment: 'desert',
         description: 'The path forks midway — enemies randomly pick a branch.',
         layouts: [
@@ -277,6 +281,8 @@ export const MAP_DEFS = {
         startingGold: 1000,
         dualSpawnWave: 2,
         flyingStartWave: 6,
+        worldEnemy: 'magmabrute',
+        worldEnemyStartWave: 6,
         environment: 'lava',
         description: 'A short direct path — enemies arrive fast, every tower counts.',
         layouts: [
@@ -379,6 +385,8 @@ export const MAP_DEFS = {
         startingGold: 1000,
         dualSpawnWave: Infinity,
         flyingStartWave: 10,
+        worldEnemy: 'siegegolem',
+        worldEnemyStartWave: 6,
         environment: 'ruins',
         description: 'Defend the central citadel from all directions.',
         layouts: [
@@ -454,6 +462,8 @@ export const MAP_DEFS = {
         startingGold: 600,
         dualSpawnWave: 10,
         flyingStartWave: 12,
+        worldEnemy: 'stormherald',
+        worldEnemyStartWave: 6,
         environment: 'sky',
         description: 'A spiraling path through floating islands — long exposure, tight kill zones.',
         layouts: [
@@ -529,6 +539,8 @@ export const MAP_DEFS = {
         startingGold: 1200,
         dualSpawnWave: Infinity,
         flyingStartWave: 8,
+        worldEnemy: 'voidsovereign',
+        worldEnemyStartWave: 6,
         environment: 'void',
         description: 'Enemies pour from the center — defend four castles at the corners.',
         layouts: [
@@ -774,7 +786,7 @@ export const HERO_STATS = {
     damage: 15,  range: 3.5,  fireRate: 0.5,  projSpeed: 350,
     // Contact damage (DPS tick every 0.5s)
     contactTick: 0.5,  contactBase: 10,
-    contactMultipliers: { grunt: 1, runner: 0.8, tank: 2, healer: 0.6, boss: 3, swarm: 0.5, wobbler: 0.3, megaboss: 4, quantumboss: 5 },
+    contactMultipliers: { grunt: 1, runner: 0.8, tank: 2, healer: 0.6, boss: 3, swarm: 0.5, wobbler: 0.3, megaboss: 4, quantumboss: 5, foreststalker: 0.8, stormherald: 0.6, sandtitan: 2, magmabrute: 1, magmafragment: 0.3, siegegolem: 2.5, voidsovereign: 1.5 },
     // Respawn
     respawnDelay: 5.0,
     // Q: AoE Stun
@@ -804,7 +816,7 @@ export const WAVE_GEN = {
     INTERVAL_BASE: 0.8,        // base spawn interval (seconds)
     INTERVAL_DECAY: 0.01,      // interval shrinks per wave
     INTERVAL_MIN: 0.22,        // floor for spawn interval
-    INTERVAL_MULTI: { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3, wobbler: 1.0, flying: 1.0, megaboss: 0.7 },
+    INTERVAL_MULTI: { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3, wobbler: 1.0, flying: 1.0, megaboss: 0.7, foreststalker: 1.2, stormherald: 0.9, sandtitan: 0.7, magmabrute: 1.0, magmafragment: 1.3, siegegolem: 0.6, voidsovereign: 0.7 },
     GROUP_OVERLAP: 0.5,        // next group starts at this fraction of previous
     GROUP_GAP_MIN: 0.7,        // min gap between groups (seconds)
     GROUP_GAP_RANDOM: 1.0,     // random extra gap
@@ -930,6 +942,88 @@ export const ENEMY_TYPES = {
         color: '#0a0a0a',
         radius: 36,
         armor: 0.30,
+    },
+    // ── World-Specific Enemies ──
+    foreststalker: {
+        name: 'Forest Stalker',
+        baseHP: 8,
+        speed: 110,
+        reward: 7,
+        livesCost: 1,
+        color: '#2d6b2d',
+        radius: 11,
+        armor: 0,
+        dodgeCharges: 1,
+    },
+    stormherald: {
+        name: 'Storm Herald',
+        baseHP: 28,
+        speed: 60,
+        reward: 14,
+        livesCost: 1,
+        color: '#4a90d9',
+        radius: 13,
+        armor: 0.10,
+        shieldRadius: 1.5,
+        shieldAmount: 10,
+        shieldCooldown: 3.0,
+    },
+    sandtitan: {
+        name: 'Sand Titan',
+        baseHP: 71,
+        speed: 35,
+        reward: 16,
+        livesCost: 2,
+        color: '#c4a84a',
+        radius: 17,
+        armor: 0.25,
+        burrowInterval: 8,
+        burrowDuration: 1.5,
+    },
+    magmabrute: {
+        name: 'Magma Brute',
+        baseHP: 50,
+        speed: 55,
+        reward: 8,
+        livesCost: 1,
+        color: '#d4451a',
+        radius: 18,
+        armor: 0.15,
+        splitOnDeath: 3,
+        splitType: 'magmafragment',
+    },
+    magmafragment: {
+        name: 'Magma Fragment',
+        baseHP: 6,
+        speed: 100,
+        reward: 3,
+        livesCost: 1,
+        color: '#ff6633',
+        radius: 6,
+        armor: 0,
+    },
+    siegegolem: {
+        name: 'Siege Golem',
+        baseHP: 90,
+        speed: 28,
+        reward: 18,
+        livesCost: 2,
+        color: '#6a6a72',
+        radius: 22,
+        armor: 0.30,
+        absorbEvery: 8,
+    },
+    voidsovereign: {
+        name: 'Void Sovereign',
+        baseHP: 80,
+        speed: 32,
+        reward: 10,
+        livesCost: 1,
+        color: '#4a1a6a',
+        radius: 24,
+        armor: 0.20,
+        splitAtHalf: true,
+        splitHPFraction: 0.4,
     },
 };
 

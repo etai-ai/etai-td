@@ -503,6 +503,154 @@ function megabossBody(color, r) {
     return body;
 }
 
+// ── World-Specific Enemy Body Factories ──────────────────────
+
+function forestStalkerBody(color, r) {
+    const g = getGeo();
+    const body = new THREE.Group();
+    // Sleek chevron body — angular predator
+    body.add(m(g.cone, mat(color, { emissiveIntensity: 0.2 }), {
+        sx: r * 0.8, sy: H * 0.6, sz: r * 1.2, py: H * 0.2,
+    }));
+    // Angular side fins
+    const finMat = mat(color, { roughness: 0.6, emissiveIntensity: 0.15 });
+    body.add(m(g.box, finMat, {
+        sx: r * 0.8, sy: H * 0.08, sz: r * 0.4,
+        px: r * 0.5, py: H * 0.25, rz: 0.3,
+    }));
+    body.add(m(g.box, finMat.clone(), {
+        sx: r * 0.8, sy: H * 0.08, sz: r * 0.4,
+        px: -r * 0.5, py: H * 0.25, rz: -0.3,
+    }));
+    return body;
+}
+
+function stormHeraldBody(color, r) {
+    const g = getGeo();
+    const body = new THREE.Group();
+    const c = new THREE.Color(color);
+    // Crown-shaped main body
+    body.add(m(g.cyl, mat(color, { emissive: c, emissiveIntensity: 0.25 }), {
+        sx: r * 0.6, sy: H * 0.4, sz: r * 0.6, py: H * 0.15,
+    }));
+    // Crown spikes (3 prongs)
+    const spikeMat = mat(0x6ab0ff, { emissive: 0x4a90d9, emissiveIntensity: 0.4 });
+    for (let i = 0; i < 3; i++) {
+        const a = (Math.PI * 2 / 3) * i;
+        body.add(m(g.cone, spikeMat.clone(), {
+            sx: 3, sy: 10, sz: 3,
+            px: Math.cos(a) * r * 0.3, py: H * 0.55, pz: Math.sin(a) * r * 0.3,
+        }));
+    }
+    // Electric orb on top
+    body.add(m(g.sphere, mat(0xaaddff, {
+        emissive: 0x4a90d9, emissiveIntensity: 0.6, roughness: 0.1,
+    }), {
+        sx: r * 0.25, sy: r * 0.25, sz: r * 0.25, py: H * 0.6,
+    }));
+    return body;
+}
+
+function sandTitanBody(color, r) {
+    const g = getGeo();
+    const body = new THREE.Group();
+    // Wide beetle/scarab body
+    body.add(m(g.sphere, mat(color, { roughness: 0.7, metalness: 0.2 }), {
+        sx: r * 1.0, sy: H * 0.3, sz: r * 0.8, py: H * 0.15,
+    }));
+    // Carapace ridge on top
+    body.add(m(g.box, mat(color, { roughness: 0.8, emissiveIntensity: 0.1 }), {
+        sx: 2, sy: H * 0.12, sz: r * 0.7, py: H * 0.28,
+    }));
+    // Mandibles
+    const mandMat = mat(0x8a7830, { emissiveIntensity: 0.15 });
+    body.add(m(g.cone, mandMat, {
+        sx: 2, sy: r * 0.3, sz: 2,
+        px: r * 0.25, py: H * 0.12, pz: -r * 0.7, rx: -0.6,
+    }));
+    body.add(m(g.cone, mandMat.clone(), {
+        sx: 2, sy: r * 0.3, sz: 2,
+        px: -r * 0.25, py: H * 0.12, pz: -r * 0.7, rx: -0.6,
+    }));
+    return body;
+}
+
+function magmaBruteBody(color, r) {
+    const g = getGeo();
+    const body = new THREE.Group();
+    const c = new THREE.Color(color);
+    // Cracked hexagonal body
+    body.add(m(g.cyl, mat(color, { roughness: 0.8, metalness: 0.1 }), {
+        sx: r * 0.7, sy: H * 0.5, sz: r * 0.7, py: H * 0.15,
+    }));
+    // Inner magma glow
+    body.add(m(g.sphere, mat(0xff6600, {
+        emissive: 0xff4400, emissiveIntensity: 0.5, roughness: 0.1,
+    }), {
+        sx: r * 0.35, sy: H * 0.25, sz: r * 0.35, py: H * 0.25,
+    }));
+    return body;
+}
+
+function magmaFragmentBody(color, r) {
+    const g = getGeo();
+    const body = new THREE.Group();
+    // Small jagged shard
+    body.add(m(g.oct, mat(color, {
+        emissive: 0xff4400, emissiveIntensity: 0.4,
+    }), {
+        sx: r * 0.8, sy: H * 0.4, sz: r * 0.6, py: H * 0.2,
+    }));
+    return body;
+}
+
+function siegeGolemBody(color, r) {
+    const g = getGeo();
+    const body = new THREE.Group();
+    const stoneMat = mat(color, { roughness: 0.9, metalness: 0.1 });
+    // Fortress base
+    body.add(m(g.box, stoneMat, {
+        sx: r * 0.9, sy: H * 0.5, sz: r * 0.7, py: H * 0.2,
+    }));
+    // Three battlements on top
+    const battMat = mat(color, { roughness: 0.85, emissiveIntensity: 0.1 });
+    for (let i = -1; i <= 1; i++) {
+        body.add(m(g.box, battMat.clone(), {
+            sx: r * 0.2, sy: H * 0.18, sz: r * 0.2,
+            px: i * r * 0.35, py: H * 0.55,
+        }));
+    }
+    return body;
+}
+
+function voidSovereignBody(color, r) {
+    const g = getGeo();
+    const body = new THREE.Group();
+    const c = new THREE.Color(color);
+    // Main sphere body
+    body.add(m(g.sphere, mat(color, { emissive: c, emissiveIntensity: 0.3 }), {
+        sx: r * 0.7, sy: H * 0.5, sz: r * 0.7, py: H * 0.25,
+    }));
+    // Void aura ring
+    const auraMat = mat(0x6a2aaa, {
+        emissive: 0x8844cc, emissiveIntensity: 0.5,
+        transparent: true, opacity: 0.35,
+    });
+    auraMat.userData.persistTransparent = true;
+    auraMat.userData.baseOpacity = 0.35;
+    body.add(m(g.torus, auraMat, {
+        sx: r * 0.8, sy: r * 0.8, sz: r * 0.8,
+        py: H * 0.25, rx: Math.PI / 2,
+    }));
+    // Inner eye
+    body.add(m(g.sphere, mat(0xaa44ff, {
+        emissive: 0xaa44ff, emissiveIntensity: 0.7, roughness: 0.05,
+    }), {
+        sx: r * 0.2, sy: r * 0.2, sz: r * 0.2, py: H * 0.3,
+    }));
+    return body;
+}
+
 // ── Factory dispatch ──────────────────────────────────────────
 const BODY_FACTORY = {
     grunt: gruntBody,
@@ -515,6 +663,13 @@ const BODY_FACTORY = {
     flying: flyingBody,
     dragonflyer: flyingBody,
     megaboss: megabossBody,
+    foreststalker: forestStalkerBody,
+    stormherald: stormHeraldBody,
+    sandtitan: sandTitanBody,
+    magmabrute: magmaBruteBody,
+    magmafragment: magmaFragmentBody,
+    siegegolem: siegeGolemBody,
+    voidsovereign: voidSovereignBody,
 };
 
 /**

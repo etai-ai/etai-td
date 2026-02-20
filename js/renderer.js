@@ -648,6 +648,108 @@ export class Renderer {
         ctx.closePath();
     }
 
+    // ── World-Specific Enemy Shapes ──
+
+    drawChevron(ctx, x, y, r) {
+        // Angular fang/chevron — Forest Stalker
+        ctx.beginPath();
+        ctx.moveTo(x, y - r);             // top point
+        ctx.lineTo(x + r * 0.7, y - r * 0.2);
+        ctx.lineTo(x + r, y + r * 0.4);   // right wing
+        ctx.lineTo(x + r * 0.3, y + r * 0.1);
+        ctx.lineTo(x, y + r);             // bottom point
+        ctx.lineTo(x - r * 0.3, y + r * 0.1);
+        ctx.lineTo(x - r, y + r * 0.4);   // left wing
+        ctx.lineTo(x - r * 0.7, y - r * 0.2);
+        ctx.closePath();
+    }
+
+    drawCrown(ctx, x, y, r) {
+        // Winged crown — Storm Herald
+        ctx.beginPath();
+        ctx.moveTo(x - r, y + r * 0.5);        // bottom-left
+        ctx.lineTo(x - r, y - r * 0.2);         // left wall
+        ctx.lineTo(x - r * 0.6, y - r);         // left peak
+        ctx.lineTo(x - r * 0.3, y - r * 0.3);   // left valley
+        ctx.lineTo(x, y - r * 0.9);             // center peak
+        ctx.lineTo(x + r * 0.3, y - r * 0.3);   // right valley
+        ctx.lineTo(x + r * 0.6, y - r);         // right peak
+        ctx.lineTo(x + r, y - r * 0.2);         // right wall
+        ctx.lineTo(x + r, y + r * 0.5);         // bottom-right
+        ctx.closePath();
+    }
+
+    drawScarab(ctx, x, y, r) {
+        // Wide beetle/scarab — Sand Titan
+        ctx.beginPath();
+        // Top
+        ctx.moveTo(x, y - r * 0.7);
+        ctx.quadraticCurveTo(x + r * 0.6, y - r * 0.8, x + r, y - r * 0.2);
+        ctx.quadraticCurveTo(x + r * 1.1, y + r * 0.2, x + r * 0.7, y + r * 0.6);
+        ctx.lineTo(x + r * 0.3, y + r);
+        ctx.lineTo(x, y + r * 0.8);
+        ctx.lineTo(x - r * 0.3, y + r);
+        ctx.lineTo(x - r * 0.7, y + r * 0.6);
+        ctx.quadraticCurveTo(x - r * 1.1, y + r * 0.2, x - r, y - r * 0.2);
+        ctx.quadraticCurveTo(x - r * 0.6, y - r * 0.8, x, y - r * 0.7);
+        ctx.closePath();
+    }
+
+    drawCrackedHexagon(ctx, x, y, r) {
+        // Cracked hexagon — Magma Brute (reuses hexagon base)
+        this.drawHexagon(ctx, x, y, r);
+    }
+
+    drawShard(ctx, x, y, r) {
+        // Jagged angular shard — Magma Fragment
+        ctx.beginPath();
+        ctx.moveTo(x, y - r);
+        ctx.lineTo(x + r * 0.6, y - r * 0.3);
+        ctx.lineTo(x + r * 0.8, y + r * 0.2);
+        ctx.lineTo(x + r * 0.3, y + r);
+        ctx.lineTo(x - r * 0.2, y + r * 0.6);
+        ctx.lineTo(x - r * 0.7, y + r * 0.1);
+        ctx.lineTo(x - r * 0.5, y - r * 0.5);
+        ctx.closePath();
+    }
+
+    drawFortress(ctx, x, y, r) {
+        // Rectangle with battlements — Siege Golem
+        const w = r * 0.8, h = r;
+        const bw = r * 0.22, bh = r * 0.25;
+        ctx.beginPath();
+        // Base rectangle
+        ctx.moveTo(x - w, y + h * 0.6);
+        ctx.lineTo(x - w, y - h * 0.4);
+        // Left battlement
+        ctx.lineTo(x - w, y - h * 0.4);
+        ctx.lineTo(x - w, y - h * 0.7);
+        ctx.lineTo(x - w + bw, y - h * 0.7);
+        ctx.lineTo(x - w + bw, y - h * 0.4);
+        // Gap
+        ctx.lineTo(x - bw * 0.5, y - h * 0.4);
+        // Center battlement
+        ctx.lineTo(x - bw * 0.5, y - h);
+        ctx.lineTo(x + bw * 0.5, y - h);
+        ctx.lineTo(x + bw * 0.5, y - h * 0.4);
+        // Gap
+        ctx.lineTo(x + w - bw, y - h * 0.4);
+        // Right battlement
+        ctx.lineTo(x + w - bw, y - h * 0.7);
+        ctx.lineTo(x + w, y - h * 0.7);
+        ctx.lineTo(x + w, y - h * 0.4);
+        // Right side and bottom
+        ctx.lineTo(x + w, y + h * 0.6);
+        ctx.closePath();
+    }
+
+    drawVoidCircle(ctx, x, y, r) {
+        // Circle with arc cutouts — Void Sovereign
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.closePath();
+    }
+
     drawEnemyShape(ctx, e, x, y, r) {
         switch (e.type) {
             case 'grunt':
@@ -682,6 +784,27 @@ export class Renderer {
                 break;
             case 'quantumboss':
                 this.drawStar(ctx, x, y, r);
+                break;
+            case 'foreststalker':
+                this.drawChevron(ctx, x, y, r);
+                break;
+            case 'stormherald':
+                this.drawCrown(ctx, x, y, r);
+                break;
+            case 'sandtitan':
+                this.drawScarab(ctx, x, y, r);
+                break;
+            case 'magmabrute':
+                this.drawCrackedHexagon(ctx, x, y, r);
+                break;
+            case 'magmafragment':
+                this.drawShard(ctx, x, y, r);
+                break;
+            case 'siegegolem':
+                this.drawFortress(ctx, x, y, r);
+                break;
+            case 'voidsovereign':
+                this.drawVoidCircle(ctx, x, y, r);
                 break;
             default:
                 ctx.beginPath();
@@ -728,6 +851,9 @@ export class Renderer {
             const r = e.radius * scale;
 
             ctx.globalAlpha = alpha;
+
+            // Burrowed enemies are semi-transparent
+            if (e.burrowed) ctx.globalAlpha = alpha * 0.35;
 
             // ── 2D-only body rendering (skipped in 3D mode) ──
             if (!use3D) {
@@ -968,6 +1094,158 @@ export class Renderer {
                     );
                     ctx.fill();
                 }
+            } else if (e.type === 'foreststalker' && !isDying) {
+                // Green camo dapples
+                ctx.fillStyle = 'rgba(20, 80, 20, 0.4)';
+                for (let i = 0; i < 4; i++) {
+                    const da = (Math.PI * 2 * i) / 4 + e.walkPhase * 0.3;
+                    const dr = r * (0.2 + 0.3 * ((i % 3) * 0.3));
+                    ctx.beginPath();
+                    ctx.arc(drawX + Math.cos(da) * dr, drawY + Math.sin(da) * dr, r * 0.15, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                // Dodge charge indicator — bright eye dot when charges remain
+                if (e.dodgeCharges > 0) {
+                    ctx.fillStyle = '#7fff7f';
+                    ctx.beginPath();
+                    ctx.arc(drawX, drawY - r * 0.3, r * 0.12, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                // Dodge flash effect
+                if (e.dodgeFlashTimer > 0) {
+                    ctx.globalAlpha = e.dodgeFlashTimer / 0.3 * 0.5;
+                    ctx.fillStyle = '#7fff7f';
+                    this.drawChevron(ctx, drawX, drawY, r * 1.2);
+                    ctx.fill();
+                    ctx.globalAlpha = alpha;
+                }
+            } else if (e.type === 'stormherald' && !isDying) {
+                // Electric crackling arcs
+                ctx.strokeStyle = 'rgba(100, 180, 255, 0.6)';
+                ctx.lineWidth = 1;
+                for (let i = 0; i < 3; i++) {
+                    const a = Math.random() * Math.PI * 2;
+                    const sr = r * 0.4;
+                    ctx.beginPath();
+                    ctx.moveTo(drawX + Math.cos(a) * sr * 0.2, drawY + Math.sin(a) * sr * 0.2);
+                    const midX = drawX + Math.cos(a) * sr * 0.6 + (Math.random() - 0.5) * 4;
+                    const midY = drawY + Math.sin(a) * sr * 0.6 + (Math.random() - 0.5) * 4;
+                    ctx.lineTo(midX, midY);
+                    ctx.lineTo(drawX + Math.cos(a) * sr, drawY + Math.sin(a) * sr);
+                    ctx.stroke();
+                }
+                // Shield aura radius indicator
+                ctx.strokeStyle = 'rgba(74, 144, 217, 0.2)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([4, 4]);
+                ctx.beginPath();
+                ctx.arc(drawX, drawY, e.shieldRadius * CELL, 0, Math.PI * 2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+            } else if (e.type === 'sandtitan' && !isDying) {
+                // Carapace center line
+                ctx.strokeStyle = 'rgba(100, 80, 30, 0.5)';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath();
+                ctx.moveTo(drawX, drawY - r * 0.5);
+                ctx.lineTo(drawX, drawY + r * 0.5);
+                ctx.stroke();
+                // Lateral lines
+                ctx.beginPath();
+                ctx.moveTo(drawX - r * 0.4, drawY);
+                ctx.lineTo(drawX + r * 0.4, drawY);
+                ctx.stroke();
+            } else if (e.type === 'magmabrute' && !isDying) {
+                // Glowing orange cracks
+                ctx.strokeStyle = 'rgba(255, 140, 40, 0.7)';
+                ctx.lineWidth = 1.2;
+                for (let i = 0; i < 5; i++) {
+                    const a = (Math.PI * 2 * i) / 5 + 0.3;
+                    const cr = r * (0.3 + Math.random() * 0.4);
+                    ctx.beginPath();
+                    ctx.moveTo(drawX, drawY);
+                    ctx.lineTo(drawX + Math.cos(a) * cr, drawY + Math.sin(a) * cr);
+                    ctx.stroke();
+                }
+                // Inner glow core
+                ctx.fillStyle = 'rgba(255, 100, 20, 0.3)';
+                ctx.beginPath();
+                ctx.arc(drawX, drawY, r * 0.35, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (e.type === 'magmafragment' && !isDying) {
+                // Hot inner glow
+                ctx.fillStyle = 'rgba(255, 200, 50, 0.4)';
+                ctx.beginPath();
+                ctx.arc(drawX, drawY, r * 0.4, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (e.type === 'siegegolem' && !isDying) {
+                // Stone texture lines
+                ctx.strokeStyle = 'rgba(120, 120, 130, 0.4)';
+                ctx.lineWidth = 0.7;
+                const hw = r * 0.7;
+                ctx.beginPath();
+                ctx.moveTo(drawX - hw, drawY);
+                ctx.lineTo(drawX + hw, drawY);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(drawX - hw, drawY + r * 0.3);
+                ctx.lineTo(drawX + hw, drawY + r * 0.3);
+                ctx.stroke();
+                // Absorb ring when invulnerable
+                if (e.absorbTimer > 0) {
+                    const pulse = 0.4 + 0.3 * Math.sin(this.game.elapsedTime * 10);
+                    ctx.strokeStyle = `rgba(200, 200, 255, ${pulse})`;
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.arc(drawX, drawY, r + 6, 0, Math.PI * 2);
+                    ctx.stroke();
+                    // "ABSORB" indicator
+                    ctx.fillStyle = `rgba(200, 200, 255, ${pulse})`;
+                    ctx.font = 'bold 7px monospace';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('ABSORB', drawX, drawY - r - 14);
+                }
+            } else if (e.type === 'voidsovereign' && !isDying) {
+                // Purple void aura
+                const pulse = 0.15 + 0.1 * Math.sin(this.game.elapsedTime * 4);
+                ctx.fillStyle = `rgba(74, 26, 106, ${pulse})`;
+                ctx.beginPath();
+                ctx.arc(drawX, drawY, r + 8, 0, Math.PI * 2);
+                ctx.fill();
+                // 6 rotating tentacle spikes
+                const rot = this.game.elapsedTime * 1.2;
+                ctx.fillStyle = 'rgba(100, 30, 140, 0.5)';
+                for (let i = 0; i < 6; i++) {
+                    const a = (Math.PI * 2 * i) / 6 + rot;
+                    const sx = drawX + Math.cos(a) * r * 0.5;
+                    const sy = drawY + Math.sin(a) * r * 0.5;
+                    const tx = drawX + Math.cos(a) * r * 1.3;
+                    const ty = drawY + Math.sin(a) * r * 1.3;
+                    const perpX = -Math.sin(a) * r * 0.08;
+                    const perpY = Math.cos(a) * r * 0.08;
+                    ctx.beginPath();
+                    ctx.moveTo(sx + perpX, sy + perpY);
+                    ctx.lineTo(tx, ty);
+                    ctx.lineTo(sx - perpX, sy - perpY);
+                    ctx.closePath();
+                    ctx.fill();
+                }
+                // Inner core eye
+                ctx.fillStyle = `rgba(180, 50, 255, ${0.5 + 0.3 * Math.sin(this.game.elapsedTime * 5)})`;
+                ctx.beginPath();
+                ctx.arc(drawX, drawY, r * 0.2, 0, Math.PI * 2);
+                ctx.fill();
+            }
+
+            // Burrowed Sand Titan visual — fade body when underground
+            if (e.burrowed && !isDying) {
+                // Already drawn at full alpha above; draw a "burrowing" dust ring
+                ctx.strokeStyle = 'rgba(180, 160, 80, 0.5)';
+                ctx.lineWidth = 2;
+                const burstR = r * (1.5 - e.burrowRemaining / e.burrowDuration * 0.5);
+                ctx.beginPath();
+                ctx.arc(drawX, drawY, burstR, 0, Math.PI * 2);
+                ctx.stroke();
             }
 
             // Damage flash overlay
@@ -1149,6 +1427,19 @@ export class Renderer {
                 ctx.strokeStyle = 'rgba(0,0,0,0.4)';
                 ctx.lineWidth = 0.5;
                 ctx.strokeRect(barX, barY, barW, barH);
+
+                // Shield HP bar (blue, above HP bar)
+                if (e.shieldHP > 0 && e.maxShieldHP > 0) {
+                    const shieldBarY = barY - 4;
+                    const shieldPct = e.shieldHP / e.maxShieldHP;
+                    ctx.fillStyle = '#333';
+                    ctx.fillRect(barX, shieldBarY, barW, barH);
+                    ctx.fillStyle = '#4a90d9';
+                    ctx.fillRect(barX, shieldBarY, barW * shieldPct, barH);
+                    ctx.strokeStyle = 'rgba(0,0,0,0.4)';
+                    ctx.lineWidth = 0.5;
+                    ctx.strokeRect(barX, shieldBarY, barW, barH);
+                }
             }
 
             // Restore death spin transform
@@ -3467,10 +3758,15 @@ export class Renderer {
             ctx.setLineDash([]);
         }
 
-        // Next-wave preview (shown between waves)
-        if (this.game.waves.betweenWaves && this.game.state === 'PLAYING') {
+        // Next-wave preview (shown between waves + 1s into the wave)
+        const showPreview = this.game.waves.betweenWaves || (this.game.waves.spawning && this.game.waveElapsed < 1.0);
+        if (showPreview && this.game.state === 'PLAYING') {
             const preview = this.game.waves.getNextWavePreview();
             if (preview) {
+                // Fade out during the overlap second
+                const previewAlpha = this.game.waves.betweenWaves ? 1.0 : Math.max(0, 1.0 - this.game.waveElapsed);
+                ctx.globalAlpha = previewAlpha;
+
                 const entries = Object.entries(preview);
                 const colW = 140;
                 const totalW = entries.length * colW;
@@ -3539,6 +3835,7 @@ export class Renderer {
                     ctx.fillText(def.name, cx - 12, cy + 16);
                     ctx.restore();
                 }
+                ctx.globalAlpha = 1;
             }
         }
 

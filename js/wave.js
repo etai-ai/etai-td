@@ -223,6 +223,13 @@ export class WaveManager {
         const W = WAVE_GEN;
         const types = ['grunt', 'runner', 'tank', 'healer', 'swarm'];
 
+        // Add world-specific enemy to the pool if available
+        const worldEnemy = this.game?.map?.def?.worldEnemy;
+        const worldEnemyStart = this.game?.map?.def?.worldEnemyStartWave ?? Infinity;
+        if (worldEnemy && waveNum >= worldEnemyStart) {
+            types.push(worldEnemy);
+        }
+
         const groups = [];
         const groupCount = Math.min(W.GROUP_MAX, W.GROUP_BASE + Math.floor(waveNum / W.GROUP_PER_WAVES));
         let runningDelay = 0;
@@ -400,12 +407,14 @@ export class WaveManager {
     }
 
     getNextWavePreview() {
+        if (!this.betweenWaves) return this._lastPreview || null;
         const waveDef = this._nextWaveCache || this.getWaveDefinition(this.currentWave + 1);
         // Aggregate by type
         const counts = {};
         for (const g of waveDef) {
             counts[g.type] = (counts[g.type] || 0) + g.count;
         }
+        this._lastPreview = counts;
         return counts;
     }
 
@@ -508,6 +517,7 @@ export class WaveManager {
         this.groupIndices = [];
         this.spawnCounter = 0;
         this._nextWaveCache = null;
+        this._lastPreview = null;
         this._pendingNetWaveDef = null;
         this.reinforceTimer = 0;
         this.reinforceBursts = 0;
