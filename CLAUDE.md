@@ -61,7 +61,7 @@ Every world is an **endless wave-based survival run**. No levels — you play un
 | 15 | Dual Spawn + Flying enemies (start wave 17, scale 1→20 over 13 waves) | — |
 | 20 | Missile Sniper | Sniper (auto-upgraded) |
 | 25 | Super Lightning, Bi-Cannon | Lightning, Cannon (auto-upgraded) |
-| 30 | Titan | — |
+| 30 | The Titan | — |
 
 When a threshold is crossed, `onWaveThreshold()` in game.js:
 1. Collects all unlocks in a batch

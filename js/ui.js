@@ -1164,6 +1164,8 @@ export class UI {
         for (const [k, d] of Object.entries(TOWER_TYPES)) towerNames[k] = d.name;
         towerNames['hero'] = 'Hero';
 
+        const formatDmg = (n) => n >= 1000 ? (n / 1000).toFixed(1) + 'k' : Math.round(n).toString();
+
         let dmgBars = '';
         if (dmgEntries.length > 0) {
             dmgBars = `<div style="margin-top:20px;text-align:left">
@@ -1172,16 +1174,77 @@ export class UI {
                 const pct = (dmg / maxDmg) * 100;
                 const color = towerColors[type] || '#888';
                 const name = towerNames[type] || type;
-                const dmgStr = dmg >= 1000 ? `${(dmg / 1000).toFixed(1)}k` : dmg;
                 dmgBars += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
                     <div style="width:90px;font-size:12px;color:${color};text-align:right;flex-shrink:0">${name}</div>
                     <div style="flex:1;height:14px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden">
                         <div style="width:${pct}%;height:100%;background:${color};border-radius:3px"></div>
                     </div>
-                    <div style="width:50px;font-size:11px;color:#999;text-align:right">${dmgStr}</div>
+                    <div style="width:50px;font-size:11px;color:#999;text-align:right">${formatDmg(dmg)}</div>
                 </div>`;
             }
             dmgBars += '</div>';
+        }
+
+        // Top towers (individual tower damage, top 5)
+        const damageByTower = this.game.damageByTower || {};
+        const towerEntries = Object.entries(damageByTower)
+            .filter(([, v]) => v.damage > 0)
+            .sort((a, b) => b[1].damage - a[1].damage)
+            .slice(0, 5);
+        const maxTowerDmg = towerEntries.length > 0 ? towerEntries[0][1].damage : 1;
+
+        const typeCounts = {};
+        const towerLabels = {};
+        for (const [id, info] of towerEntries) {
+            typeCounts[info.type] = (typeCounts[info.type] || 0) + 1;
+        }
+        const typeSeq = {};
+        for (const [id, info] of towerEntries) {
+            const name = towerNames[info.type] || info.type;
+            if (typeCounts[info.type] > 1) {
+                typeSeq[info.type] = (typeSeq[info.type] || 0) + 1;
+                towerLabels[id] = `${name} #${typeSeq[info.type]}`;
+            } else {
+                towerLabels[id] = name;
+            }
+        }
+
+        let topTowersHtml = '';
+        if (towerEntries.length > 0) {
+            topTowersHtml = `<div style="margin-top:16px;text-align:left">
+                <div style="color:#bbb;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Top Towers</div>
+                ${towerEntries.map(([id, info]) => {
+                    const color = towerColors[info.type] || '#888';
+                    const label = towerLabels[id];
+                    const pct = (info.damage / maxTowerDmg) * 100;
+                    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                        <div style="width:90px;font-size:11px;color:${color};font-weight:600;text-align:right;flex-shrink:0">${label}</div>
+                        <div style="flex:1;height:14px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden">
+                            <div style="width:${pct}%;height:100%;background:${color};opacity:0.8;border-radius:3px"></div>
+                        </div>
+                        <div style="width:50px;font-size:11px;color:#999;font-weight:600;flex-shrink:0">${formatDmg(info.damage)}</div>
+                    </div>`;
+                }).join('')}
+            </div>`;
+        }
+
+        // Flashing tower icons — all unlocked towers
+        const effectiveWave = this.game.getEffectiveWave ? this.game.getEffectiveWave() : 0;
+        const unlockedKeys = Object.entries(TOWER_TYPES)
+            .filter(([, d]) => !d.maxWave || effectiveWave <= d.maxWave)
+            .filter(([, d]) => !d.unlockWave || effectiveWave >= d.unlockWave)
+            .map(([k]) => k);
+        const iconsHtml = unlockedKeys.map((key, i) => {
+            const src = this.towerIconsLg?.[key] || '';
+            return `<img src="${src}" style="width:48px;height:48px;border-radius:8px;border:2px solid ${TOWER_TYPES[key].color};animation:victoryIconPulse 1.5s ease-in-out ${i * 0.15}s infinite;filter:drop-shadow(0 0 6px ${TOWER_TYPES[key].color})">`;
+        }).join('');
+
+        // Inject keyframe animation if not already present
+        if (!document.getElementById('victory-icon-style')) {
+            const style = document.createElement('style');
+            style.id = 'victory-icon-style';
+            style.textContent = `@keyframes victoryIconPulse { 0%,100% { transform: scale(1); opacity: 0.8; } 50% { transform: scale(1.2); opacity: 1; } }`;
+            document.head.appendChild(style);
         }
 
         container.innerHTML = `
@@ -1191,7 +1254,10 @@ export class UI {
             <div style="font-size:22px;font-weight:600;color:#fff;margin-bottom:6px;text-shadow:0 0 15px rgba(255,255,255,0.3)">
                 ${mapName}
             </div>
-            <div style="font-size:16px;color:#bbb;margin-bottom:24px">You conquered Wave ${VICTORY_WAVE}!</div>
+            <div style="font-size:16px;color:#bbb;margin-bottom:16px">You conquered Wave ${VICTORY_WAVE}!</div>
+            <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:24px">
+                ${iconsHtml}
+            </div>
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px 28px;margin:0 auto 24px;max-width:460px;text-align:center">
                 <div>
                     <div style="color:#ff6b6b;font-size:28px;font-weight:800">${stats.kills}</div>
@@ -1219,6 +1285,7 @@ export class UI {
                 </div>
             </div>
             ${dmgBars}
+            ${topTowersHtml}
             <div style="display:flex;gap:16px;justify-content:center;margin-top:24px">
                 <button class="unlock-btn" id="victory-continue-btn" style="background:#2ecc71;padding:16px 36px;font-size:18px">Continue (Endless)</button>
                 <button class="unlock-btn" id="victory-menu-btn" style="background:#e74c3c;padding:16px 36px;font-size:18px">Return to Menu</button>

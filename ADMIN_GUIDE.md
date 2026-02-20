@@ -286,7 +286,7 @@ arrow: {
 | Missile Sniper | Wave 20 | $300 | — |
 | Super Lightning | Wave 25 | $250 | — |
 | Bi-Cannon | Wave 25 | $200 | — |
-| Titan | Wave 30 | $800 | — |
+| The Titan | Wave 30 | $750 | — |
 
 **Special tower mechanics:**
 
@@ -301,7 +301,7 @@ arrow: {
 | Bi-Cannon | `heavyEvery`, `shredPercent`, `scorchDPS` | Dual barrel, armor shred, scorch zones |
 | Sniper | `critChance`, `critMulti` | Random crit hits for bonus damage |
 | Missile Sniper | `splashRadius`, `critChance`, `critMulti` | Homing missiles, splash + crit |
-| Titan | `splashRadius`, `heavyEvery`, `armorShred`, `scorchDPS` | Massive splash + heavy rounds with armor shred + scorch zones |
+| The Titan | `splashRadius`, `heavyEvery`, `armorShred`, `scorchDPS` | Massive splash + heavy rounds with armor shred + scorch zones |
 
 ### Burn Mechanic (Fire Arrow)
 

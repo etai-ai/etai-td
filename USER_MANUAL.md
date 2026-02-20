@@ -16,7 +16,7 @@ Every world is an **endless survival run** — you play until you lose all 20 li
 | 15 | Dual Spawn + Flying enemies | — |
 | 20 | Missile Sniper | Sniper (auto-upgraded) |
 | 25 | Super Lightning, Bi-Cannon | Lightning, Cannon (auto-upgraded) |
-| 30 | Titan | — |
+| 30 | The Titan | — |
 
 When a threshold is crossed, the game pauses and shows an unlock screen with the new tower stats. Click **Continue** to resume. Replaced towers on the field are auto-upgraded for free.
 
@@ -26,7 +26,7 @@ When a threshold is crossed, the game pauses and shows an unlock screen with the
 
 **Dragon Flyers** — larger, tougher red flying enemies — appear every wave from wave 25 onward (1→8 count).
 
-**Goldrush** waves occur every 10 waves — all kills give double gold. **Bosses** appear every 5 waves (waves 5-20). **Megabosses** replace them at waves 25-31 (every 2 waves). **Quantum Bosses** take over from wave 32+, appearing every wave (count capped at 6). **Victory screen** appears at wave 35 — you can continue into endless mode or return to menu.
+**Goldrush** waves occur every 10 waves — all kills give double gold. **Bosses** appear every 5 waves (waves 5-20). **Megabosses** replace them at waves 25-31 (every 2 waves). **Quantum Bosses** take over from wave 32+, appearing every wave (count capped at 6). **Victory screen** appears at wave 35 — shows your tower arsenal with flashing icons, stats (kills, towers, score, lives, time, gold), damage breakdown by type, and your top 5 highest-damage towers. You can continue into endless mode or return to menu.
 
 ## Maps
 
@@ -178,10 +178,10 @@ An upgraded lightning tower with forking chain attacks. Hits branch out in a tre
 | Level | Damage | Range | Forks | Fork Depth | Shock Chance | Upgrade Cost |
 |-------|--------|-------|-------|------------|--------------|-------------|
 | 1 | 21 | 4.0 | 4 | 2 | 15% | — |
-| 2 | 33 | 4.5 | 6 | 2 | 20% | $150 |
-| 3 | 48 | 5.0 | 8 | 3 | 25% | $250 |
+| 2 | 33 | 4.5 | 6 | 2 | 20% | $120 |
+| 3 | 48 | 5.0 | 8 | 3 | 25% | $200 |
 
-**Total investment:** $650 fully upgraded. Forking chains spread damage across many enemies. Overcharge builds 10-12% bonus damage over time. Shock briefly stuns enemies (0.3-0.4s).
+**Total investment:** $570 fully upgraded. Forking chains spread damage across many enemies. Overcharge builds 10-12% bonus damage over time. Shock briefly stuns enemies (0.3-0.4s).
 
 #### Bi-Cannon ($200)
 
@@ -190,10 +190,10 @@ A dual-barreled cannon that fires twice as fast as a regular cannon. Every 3-4 s
 | Level | Damage | Range | Fire Rate | Armor Shred | Scorch DPS | Upgrade Cost |
 |-------|--------|-------|-----------|-------------|------------|-------------|
 | 1 | 38 | 3.5 | 1.7/s | 10% for 3s | 6/s for 2s | — |
-| 2 | 60 | 4.0 | 2.0/s | 12% for 3.5s | 9/s for 2.5s | $120 |
-| 3 | 93 | 4.5 | 2.5/s | 15% for 4s | 14/s for 3s | $200 |
+| 2 | 60 | 4.0 | 2.0/s | 12% for 3.5s | 9/s for 2.5s | $110 |
+| 3 | 93 | 4.5 | 2.5/s | 15% for 4s | 14/s for 3s | $175 |
 
-**Total investment:** $520 fully upgraded. Armor shred reduces enemy armor temporarily — devastating when paired with other damage towers. Scorch zones bypass armor like burn damage.
+**Total investment:** $485 fully upgraded. Armor shred reduces enemy armor temporarily — devastating when paired with other damage towers. Scorch zones bypass armor like burn damage.
 
 ### Wave 30 Unlock
 
@@ -308,12 +308,13 @@ Bosses appear every 5 waves. At wave 14, the hero unlocks — position it at cho
 ### Tower Synergies
 
 - **Fire Arrow + Frost/Deep Frost:** Slow enemies to maximize burn uptime. Each tick of burn damage while slowed is free armor-bypassing damage.
-- **Bi-Cannon + Damage Towers:** Armor shred from heavy rounds makes ALL your other towers deal more damage to the affected enemy.
+- **Bi-Cannon + Damage Towers:** Armor shred from heavy rounds makes ALL your other towers de
+al more damage to the affected enemy.
 - **Deep Frost + Lightning/Super Lightning:** Frozen enemies can't move, giving chain attacks more time to bounce between targets.
 - **Missile Sniper + Deep Frost:** Freeze groups together, then splash them all with a crit missile for devastating AoE.
 - **Sniper (Strongest) + Lightning (First):** Sniper focuses the boss while lightning clears the escort wave.
-- **Titan + Deep Frost:** Freeze enemies in place while Titan's heavy rounds shred their armor and scorch zones burn them. The longer they're frozen, the more Titan volleys land.
-- **Titan + Fire Arrow:** Titan shreds armor, Fire Arrow burn bypasses it. Together they melt even 30% armor quantum bosses — shred makes normal hits hurt more, burn ignores armor entirely.
+- **The Titan + Deep Frost:** Freeze enemies in place while The Titan's heavy rounds shred their armor and scorch zones burn them. The longer they're frozen, the more volleys land.
+- **The Titan + Fire Arrow:** The Titan shreds armor, Fire Arrow burn bypasses it. Together they melt even 30% armor quantum bosses — shred makes normal hits hurt more, burn ignores armor entirely.
 
 ### Tower Placement Tips
 
