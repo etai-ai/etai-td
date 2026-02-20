@@ -138,7 +138,7 @@ Flying enemies begin appearing at per-map `flyingStartWave` (Serpentine 17, Cita
 
 Larger, tougher flying enemies that appear every wave from wave 25 onward. Same flight mechanics as regular flying enemies (spawn at castle, sine-wave flight, land at midpoint, walk to exit). Untargetable while airborne.
 
-- **Stats in `ENEMY_TYPES.dragonflyer`:** HP 30 (3x flying), speed 97 (same as flying), reward 60g, radius 22 (2x flying), 2 lives cost, red color (#c0392b)
+- **Stats in `ENEMY_TYPES.dragonflyer`:** HP 30 (3x flying), speed 97 (same as flying), reward 100g, radius 22 (2x flying), 2 lives cost, red color (#c0392b)
 - Flight: same sine-wave path as flying, but 60px peak altitude (vs 40px for regular flyers)
 - Visual: same wing shape as flying (`drawWing()`) but bigger and red, with orange wing/body outlines for definition
 - 3D: uses same `flyingBody()` mesh factory as flying enemy
@@ -242,7 +242,7 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 | Swarm | 5 | 105 | 0% | 5g | 1 | Tiny, fast |
 | Wobbler | 8 | 29 | 0% | 30g | 1 | Secondary-path intro enemy (waves 16-20) |
 | Flying | 10 | 97 | 0% | 30g | 1 | Untargetable while airborne (110 px/s flight), scales 1→20 count over 13 waves |
-| Dragon Flyer | 30 | 97 | 0% | 60g | 2 | Wave 25+, bigger flying enemy (radius 22), 1→8 count over waves |
+| Dragon Flyer | 30 | 97 | 0% | 100g | 2 | Wave 25+, bigger flying enemy (radius 22), 1→8 count over waves |
 | Megaboss | 392 | 58 | 25% | 400g | 5 | Waves 25-31 only (every 2 waves, count 1→3) |
 | Quantum Boss | 392 | 72 | 30% | 500g | 5 | Wave 32+, every wave, count capped at 6 |
 

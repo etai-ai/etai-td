@@ -197,17 +197,17 @@ A dual-barreled cannon that fires twice as fast as a regular cannon. Every 3-4 s
 
 ### Wave 30 Unlock
 
-#### The Titan ($800)
+#### The Titan ($750)
 
 The ultimate siege weapon — a massive golden cannon with devastating splash damage. Every 3rd shot is a heavy round that shreds enemy armor and leaves burning scorch zones on the ground.
 
 | Level | Damage | Range | Fire Rate | Splash | Shred | Scorch DPS | Upgrade Cost |
 |-------|--------|-------|-----------|--------|-------|-----------|-------------|
-| 1 | 105 | 6.0 | 0.69/s | 2.5 | 12% | 8/s (2.5s) | — |
-| 2 | 168 | 7.0 | 0.89/s | 3.0 | 15% | 12/s (3.0s) | $400 |
-| 3 | 252 | 8.0 | 1.25/s | 3.5 | 18% | 16/s (3.5s) | $600 |
+| 1 | 105 | 6.0 | 0.73/s | 2.5 | 12% | 8/s (2.5s) | — |
+| 2 | 168 | 7.0 | 0.94/s | 3.0 | 15% | 12/s (3.0s) | $400 |
+| 3 | 252 | 8.0 | 1.32/s | 3.5 | 18% | 16/s (3.5s) | $500 |
 
-**Total investment:** $1800 fully upgraded. Heavy rounds every 3 shots apply armor shred (max 3 stacks) and leave scorch zones that bypass armor. Combine with other damage towers to exploit the shredded armor.
+**Total investment:** $1650 fully upgraded. Heavy rounds every 3 shots apply armor shred (max 3 stacks) and leave scorch zones that bypass armor. Combine with other damage towers to exploit the shredded armor.
 
 ## Enemies
 
