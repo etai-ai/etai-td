@@ -26,8 +26,6 @@ export class Projectile {
         this.critMulti = tower.critMulti;
         this.burnDamage = tower.burnDamage;
         this.burnDuration = tower.burnDuration;
-        this.freezeChance = tower.freezeChance || 0;
-        this.freezeDuration = tower.freezeDuration || 0;
 
         // Fork chain (super lightning)
         this.forkCount = tower.forkCount;
@@ -48,6 +46,9 @@ export class Projectile {
 
         // Knockback (pulse cannon)
         this.knockbackDist = tower.knockbackDist || 0;
+
+        // Armor piercing (titan) — splash bypasses armor
+        this.armorPiercing = tower.armorPiercing || false;
 
         // Visual
         this.angle = angle(this, target);
@@ -134,18 +135,6 @@ export class Projectile {
             // Explosion flash light
             game.postfx?.addFlashLight(this.x, this.y, 1.0, 0.4, 0, 0.12, 1.5, 0.3);
 
-            // Titan-style splash slow + freeze
-            if (this.slowFactor > 0 && this.splashRadius > 0) {
-                const sfxPx = (this.isHeavy ? splashRad : this.splashRadius) * CELL;
-                const slowTargets = game.enemies.getEnemiesNear(this.x, this.y, sfxPx);
-                for (const e of slowTargets) {
-                    e.applySlow(this.slowFactor, this.slowDuration);
-                    if (this.freezeChance > 0 && Math.random() < this.freezeChance) {
-                        e.applyFreeze(this.freezeDuration);
-                        game.particles.spawnSpark(e.x, e.y, '#00ffff', 4);
-                    }
-                }
-            }
 
             // Heavy round: armor shred + scorch zone
             if (this.isHeavy && this.armorShred > 0) {
@@ -211,7 +200,17 @@ export class Projectile {
             const dist = Math.sqrt(dx * dx + dy * dy);
             // Falloff: 100% at center, 50% at edge
             const falloff = 1 - 0.5 * (dist / splashPx);
-            const dealt = e.takeDamage(dmg * falloff);
+            const raw = dmg * falloff;
+            let dealt;
+            if (this.armorPiercing) {
+                // Bypass armor — apply directly to HP
+                e.hp -= raw;
+                e.damageFlashTimer = 0.1;
+                if (e.hp <= 0) { e.hp = 0; e.alive = false; e.deathTimer = 0; }
+                dealt = raw;
+            } else {
+                dealt = e.takeDamage(raw);
+            }
             game.debug.onDamageDealt(dealt);
             game.trackDamage(this.towerType, dealt, this.towerId);
         }

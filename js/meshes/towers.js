@@ -435,14 +435,14 @@ function titanTurret(color) {
     turret.add(mesh(g.cyl, mat(0xd4af37, { metalness: 0.4, emissive: 0x8b7328, emissiveIntensity: 0.25 }), {
         sx: 5, sy: 20, sz: 5, py: H * 0.45, rx: Math.PI / 2, pz: 10,
     }));
-    // Torus ring emitter at barrel tip — icy blue
-    turret.add(mesh(g.torus, mat(0x00ccff, { emissive: 0x00aaff, emissiveIntensity: 0.6 }), {
+    // Torus ring emitter at barrel tip — golden
+    turret.add(mesh(g.torus, mat(0xffd700, { emissive: 0xcc9900, emissiveIntensity: 0.6 }), {
         sx: 7, sy: 7, sz: 7, pz: 20, py: H * 0.45,
     }));
-    // 3 orbiting crystal ornaments (icy blue octahedra)
+    // 3 orbiting crystal ornaments (golden octahedra)
     for (let i = 0; i < 3; i++) {
         const angle = (Math.PI * 2 * i) / 3;
-        turret.add(mesh(g.oct, mat(0x66ddff, { emissive: 0x44bbff, emissiveIntensity: 0.5 }), {
+        turret.add(mesh(g.oct, mat(0xffcc33, { emissive: 0xcc9900, emissiveIntensity: 0.5 }), {
             sx: 2.5, sy: 2.5, sz: 2.5,
             px: Math.cos(angle) * 10, py: H * 0.7, pz: Math.sin(angle) * 10,
         }));

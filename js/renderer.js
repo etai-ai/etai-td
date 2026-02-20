@@ -1553,14 +1553,13 @@ export class Renderer {
             ctx.arc(cx, cy, 24, 0, Math.PI * 2);
             ctx.fill();
 
-            // 4 orbiting frost-gold crystals (diamond shapes)
+            // 4 orbiting golden crystals (diamond shapes)
             for (let i = 0; i < 4; i++) {
                 const a = sp * 0.7 + (Math.PI * 2 * i) / 4;
                 const r = 17 + Math.sin(gp + i * 1.5) * 2;
                 const px = cx + Math.cos(a) * r;
                 const py = cy + Math.sin(a) * r;
-                // Alternate gold and icy-blue crystals
-                ctx.fillStyle = i % 2 === 0 ? 'rgba(255,215,0,0.5)' : 'rgba(0,220,255,0.5)';
+                ctx.fillStyle = i % 2 === 0 ? 'rgba(255,215,0,0.5)' : 'rgba(255,180,50,0.5)';
                 ctx.save();
                 ctx.translate(px, py);
                 ctx.rotate(sp * 2 + i);
@@ -1574,11 +1573,11 @@ export class Renderer {
                 ctx.restore();
             }
 
-            // Faint ice particle shimmer
+            // Faint golden particle shimmer
             if (Math.random() < 0.3) {
                 const shimA = Math.random() * Math.PI * 2;
                 const shimR = 8 + Math.random() * 12;
-                ctx.fillStyle = 'rgba(200,230,255,0.3)';
+                ctx.fillStyle = 'rgba(255,220,100,0.3)';
                 ctx.beginPath();
                 ctx.arc(cx + Math.cos(shimA) * shimR, cy + Math.sin(shimA) * shimR, 1, 0, Math.PI * 2);
                 ctx.fill();
@@ -2459,20 +2458,20 @@ export class Renderer {
         // Wide armored body — trapezoidal gold/amber
         ctx.fillStyle = '#8b7328';
         ctx.beginPath();
-        ctx.moveTo(-10, -8);
-        ctx.lineTo(6, -10);
-        ctx.lineTo(6, 10);
-        ctx.lineTo(-10, 8);
+        ctx.moveTo(-9, -7);
+        ctx.lineTo(4, -9);
+        ctx.lineTo(4, 9);
+        ctx.lineTo(-9, 7);
         ctx.closePath();
         ctx.fill();
 
         // Inner body highlight
         ctx.fillStyle = '#d4af37';
         ctx.beginPath();
-        ctx.moveTo(-8, -6);
-        ctx.lineTo(4, -8);
-        ctx.lineTo(4, 8);
-        ctx.lineTo(-8, 6);
+        ctx.moveTo(-7, -5);
+        ctx.lineTo(2, -7);
+        ctx.lineTo(2, 7);
+        ctx.lineTo(-7, 5);
         ctx.closePath();
         ctx.fill();
 
@@ -2480,51 +2479,51 @@ export class Renderer {
         ctx.fillStyle = '#a08020';
         for (let i = 0; i < 3; i++) {
             ctx.beginPath();
-            ctx.arc(-6 + i * 5, -7 + i * 0.5, 1, 0, Math.PI * 2);
+            ctx.arc(-5 + i * 4, -6 + i * 0.5, 1, 0, Math.PI * 2);
             ctx.fill();
             ctx.beginPath();
-            ctx.arc(-6 + i * 5, 7 - i * 0.5, 1, 0, Math.PI * 2);
+            ctx.arc(-5 + i * 4, 6 - i * 0.5, 1, 0, Math.PI * 2);
             ctx.fill();
         }
 
-        // Thick barrel with frost vein accents
+        // Thick barrel
         ctx.fillStyle = '#8b7328';
-        ctx.fillRect(2 + recoil, -6, 16, 12);
+        ctx.fillRect(1 + recoil, -5, 13, 10);
         ctx.fillStyle = '#d4af37';
-        ctx.fillRect(4 + recoil, -4, 12, 8);
+        ctx.fillRect(3 + recoil, -3, 9, 6);
 
-        // Frost veins on barrel
-        ctx.strokeStyle = 'rgba(100,200,255,0.4)';
+        // Gold energy veins on barrel
+        ctx.strokeStyle = 'rgba(255,215,0,0.4)';
         ctx.lineWidth = 0.8;
         ctx.beginPath();
-        ctx.moveTo(5 + recoil, -2);
-        ctx.lineTo(14 + recoil, -3);
+        ctx.moveTo(4 + recoil, -1.5);
+        ctx.lineTo(11 + recoil, -2);
         ctx.stroke();
         ctx.beginPath();
-        ctx.moveTo(5 + recoil, 2);
-        ctx.lineTo(14 + recoil, 3);
+        ctx.moveTo(4 + recoil, 1.5);
+        ctx.lineTo(11 + recoil, 2);
         ctx.stroke();
 
-        // Crystal ring near muzzle (icy accent)
-        ctx.strokeStyle = '#00ccff';
+        // Energy ring near muzzle
+        ctx.strokeStyle = '#ffd700';
         ctx.lineWidth = 2;
         ctx.beginPath();
-        ctx.arc(16 + recoil, 0, 6, -Math.PI * 0.6, Math.PI * 0.6);
+        ctx.arc(13 + recoil, 0, 5, -Math.PI * 0.6, Math.PI * 0.6);
         ctx.stroke();
 
         // Inner ring glow
         const ringGlow = 0.5 + Math.sin(tower.glowPhase * 2) * 0.3;
-        ctx.strokeStyle = `rgba(0,200,255,${ringGlow})`;
+        ctx.strokeStyle = `rgba(255,200,50,${ringGlow})`;
         ctx.lineWidth = 1;
         ctx.beginPath();
-        ctx.arc(16 + recoil, 0, 4, -Math.PI * 0.5, Math.PI * 0.5);
+        ctx.arc(13 + recoil, 0, 3.5, -Math.PI * 0.5, Math.PI * 0.5);
         ctx.stroke();
 
-        // Muzzle glow (gold-ice)
+        // Muzzle glow
         const muzzleGlow = 0.4 + Math.sin(tower.glowPhase * 3) * 0.2;
         ctx.fillStyle = `rgba(255,215,0,${muzzleGlow})`;
         ctx.beginPath();
-        ctx.arc(18 + recoil, 0, 3, 0, Math.PI * 2);
+        ctx.arc(15 + recoil, 0, 2.5, 0, Math.PI * 2);
         ctx.fill();
 
         // Recoil energy burst — gold flash
@@ -2533,7 +2532,7 @@ export class Renderer {
             ctx.globalAlpha = t * 0.6;
             ctx.fillStyle = '#ffd700';
             ctx.beginPath();
-            ctx.arc(20 + recoil, 0, 4 + (1 - t) * 5, 0, Math.PI * 2);
+            ctx.arc(16 + recoil, 0, 3 + (1 - t) * 4, 0, Math.PI * 2);
             ctx.fill();
             ctx.globalAlpha = 1;
         }

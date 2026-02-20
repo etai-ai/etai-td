@@ -432,7 +432,7 @@ export class UI {
             case 'superlightning': this.game.renderer.drawSuperLightningTurret(ctx, 0, fake); break;
             case 'bicannon': this.game.renderer.drawBiCannonTurret(ctx, 0, fake); break;
             case 'missilesniper': this.game.renderer.drawMissileSniperTurret(ctx, 0, fake); break;
-            case 'titan': this.game.renderer.drawTitanTurret(ctx, 0, fake); break;
+            case 'titan': ctx.translate(-4, 0); this.game.renderer.drawTitanTurret(ctx, 0, fake); break;
         }
 
         ctx.restore();
@@ -474,7 +474,7 @@ export class UI {
             case 'superlightning': this.game.renderer.drawSuperLightningTurret(ctx, 0, fake); break;
             case 'bicannon': this.game.renderer.drawBiCannonTurret(ctx, 0, fake); break;
             case 'missilesniper': this.game.renderer.drawMissileSniperTurret(ctx, 0, fake); break;
-            case 'titan': this.game.renderer.drawTitanTurret(ctx, 0, fake); break;
+            case 'titan': ctx.translate(-4, 0); this.game.renderer.drawTitanTurret(ctx, 0, fake); break;
         }
 
         ctx.restore();
@@ -503,7 +503,7 @@ export class UI {
             sniper: `${stats.critChance * 100}% crit for ${stats.critMulti}x dmg`,
             firearrow: `Burns for ${stats.burnDamage} dmg/s (${stats.burnDuration}s)`,
             missilesniper: `Homing missiles, splash ${stats.splashRadius}, ${(stats.critChance * 100).toFixed(0)}% crit ${stats.critMulti}x`,
-            titan: `Splash ${stats.splashRadius} + ${((1 - (stats.slowFactor || 1)) * 100).toFixed(0)}% slow + ${((stats.freezeChance || 0) * 100).toFixed(0)}% freeze`,
+            titan: `Splash ${stats.splashRadius}, pierces armor`,
         };
 
         let lockHTML = '';
@@ -785,6 +785,9 @@ export class UI {
         if (tower.splashRadius) {
             statsHtml += `<div>${arrow(tower.splashRadius.toFixed(1), nextLvl?.splashRadius?.toFixed(1))} splash</div>`;
         }
+        if (TOWER_TYPES[tower.type]?.armorPiercing) {
+            statsHtml += `<div style="color:#ffd700">armor piercing</div>`;
+        }
         if (tower.slowFactor) {
             statsHtml += `<div>${arrow(pct(1 - tower.slowFactor), nextLvl?.slowFactor ? pct(1 - nextLvl.slowFactor) : null)} slow</div>`;
         }
@@ -985,7 +988,7 @@ export class UI {
                     else if (def.dualBarrel) special = `Dual barrel, armor shred ${(stats.armorShred * 100).toFixed(0)}%`;
                     else if (def.missile) special = `Homing missiles, splash + ${(stats.critChance * 100).toFixed(0)}% crit`;
                     else if (stats.knockbackDist) special = `Splash + knockback ${stats.knockbackDist} cells`;
-                    else if (key === 'titan') special = `Massive splash + heavy slow`;
+                    else if (key === 'titan') special = `Massive splash, pierces armor`;
                     else if (stats.splashRadius) special = `Splash radius ${stats.splashRadius}`;
                     else if (stats.chainCount) special = `Chains to ${stats.chainCount} enemies`;
 
