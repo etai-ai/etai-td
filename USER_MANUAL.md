@@ -91,9 +91,9 @@ Low damage but slows enemies, making them spend more time in range of your other
 
 | Level | Damage | Range | Fire Rate | Slow | Duration | Upgrade Cost |
 |-------|--------|-------|-----------|------|----------|-------------|
-| 1 | 5 | 3.0 | 1.3/s | 35% | 1.5s | — |
-| 2 | 8 | 3.5 | 1.4/s | 43% | 1.8s | $55 |
-| 3 | 13 | 4.0 | 1.7/s | 50% | 2.2s | $100 |
+| 1 | 5 | 3.0 | 1.3/s | 40% | 1.5s | — |
+| 2 | 8 | 3.5 | 1.4/s | 48% | 1.8s | $55 |
+| 3 | 13 | 4.0 | 1.7/s | 55% | 2.2s | $100 |
 
 **Total investment:** $230 fully upgraded. Place before your damage towers so enemies are slowed when they enter the killzone.
 
@@ -155,9 +155,9 @@ An aura-based tower that pulses cold damage to ALL enemies in range simultaneous
 
 | Level | Damage | Range | Slow | Freeze Chance | Freeze Duration | Upgrade Cost |
 |-------|--------|-------|------|---------------|-----------------|-------------|
-| 1 | 15 | 3.0 | 28% | 7% | 0.6s | — |
-| 2 | 24 | 3.5 | 35% | 10% | 0.8s | $100 |
-| 3 | 33 | 4.0 | 43% | 14% | 1.0s | $175 |
+| 1 | 15 | 3.0 | 33% | 12% | 0.6s | — |
+| 2 | 24 | 3.5 | 40% | 15% | 0.8s | $100 |
+| 3 | 33 | 4.0 | 48% | 19% | 1.0s | $175 |
 
 **Total investment:** $425 fully upgraded. The aura pulse hits all enemies in range — no projectiles to miss. Frozen enemies stop completely (speed = 0). Place at chokepoints for maximum crowd control.
 
@@ -221,9 +221,9 @@ The ultimate siege weapon — a massive golden cannon with devastating splash da
 |------|-------|----|-------|-------|---------|-----------|
 | **Grunt** | Pentagon | 18 | Medium (70) | 0% | — | 1 |
 | **Runner** | Diamond | 6 | Fast (125) | 0% | — | 1 |
-| **Tank** | Square | 75 | Slow (40) | 27% | — | 2 |
+| **Tank** | Square | 71 | Slow (40) | 27% | — | 2 |
 | **Healer** | Cross | 25 | Medium (65) | 0% | Heals nearby allies (3 HP/s) | 1 |
-| **Boss** | Hexagon | 349 | Very slow (26) | 20% | Screen shake + shockwave on death | 5 |
+| **Boss** | Hexagon | 332 | Very slow (26) | 20% | Screen shake + shockwave on death | 5 |
 | **Swarm** | Triangle | 5 | Fast (105) | 0% | Comes in large numbers | 1 |
 | **Flying** | Wings | 10 | Medium (97) | 0% | Airborne until landing — untargetable while flying | 1 |
 | **Dragon Flyer** | Wings (large) | 30 | Medium (97) | 0% | Bigger flying enemy, wave 25+, 1→8 count | 2 |

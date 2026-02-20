@@ -229,9 +229,9 @@ Defined in `ENEMY_TYPES`. Each enemy has:
 |------|--------|-------|-------|------|
 | Grunt | 18 | 70 | 0 | Baseline |
 | Runner | 6 | 125 | 0 | Fast, fragile |
-| Tank | 75 | 40 | 0.27 | Slow, tanky |
+| Tank | 71 | 40 | 0.27 | Slow, tanky |
 | Healer | 25 | 65 | 0 | Heals nearby allies |
-| Boss | 349 | 26 | 0.20 | High HP, slow |
+| Boss | 332 | 26 | 0.20 | High HP, slow |
 | Swarm | 5 | 105 | 0 | Cheap, fast, overwhelming in numbers |
 | Flying | 10 | 97 | 0 | Airborne sortie, untargetable while flying |
 | Dragon Flyer | 30 | 97 | 0 | Bigger flying enemy, wave 25+, 1→8 count |

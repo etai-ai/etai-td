@@ -238,9 +238,9 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 |------|---------|-------|-------|--------|-------|---------|
 | Grunt | 18 | 70 | 0% | 7g | 1 | Basic enemy |
 | Runner | 6 | 125 | 0% | 6g | 1 | Fast, low HP |
-| Tank | 75 | 40 | 27% | 14g | 2 | High armor, slow |
+| Tank | 71 | 40 | 27% | 14g | 2 | High armor, slow |
 | Healer | 25 | 65 | 0% | 12g | 1 | Heals nearby allies 3 HP/s (1.5 cell radius) |
-| Boss | 349 | 26 | 20% | 200g | 5 | Spawns every 5 waves (5-20) |
+| Boss | 332 | 26 | 20% | 200g | 5 | Spawns every 5 waves (5-20) |
 | Swarm | 5 | 105 | 0% | 5g | 1 | Tiny, fast |
 | Wobbler | 8 | 29 | 0% | 30g | 1 | Secondary-path intro enemy (waves 16-20) |
 | Flying | 10 | 97 | 0% | 30g | 1 | Untargetable while airborne (110 px/s flight), scales 1→20 count over 13 waves |
