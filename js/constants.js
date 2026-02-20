@@ -640,9 +640,9 @@ export const TOWER_TYPES = {
         slow: true,
         maxWave: 9,
         levels: [
-            { damage: 5, range: 3.0, fireRate: 0.8, projSpeed: 250, slowFactor: 0.65, slowDuration: 1.5 },
-            { damage: 8, range: 3.5, fireRate: 0.7, projSpeed: 270, slowFactor: 0.575, slowDuration: 1.8, upgradeCost: 55 },
-            { damage: 13, range: 4.0, fireRate: 0.6, projSpeed: 290, slowFactor: 0.50, slowDuration: 2.2, upgradeCost: 100 },
+            { damage: 5, range: 3.0, fireRate: 0.8, projSpeed: 250, slowFactor: 0.60, slowDuration: 1.5 },
+            { damage: 8, range: 3.5, fireRate: 0.7, projSpeed: 270, slowFactor: 0.525, slowDuration: 1.8, upgradeCost: 55 },
+            { damage: 13, range: 4.0, fireRate: 0.6, projSpeed: 290, slowFactor: 0.45, slowDuration: 2.2, upgradeCost: 100 },
         ],
     },
     deepfrost: {
@@ -652,9 +652,9 @@ export const TOWER_TYPES = {
         aura: true,
         unlockWave: 10,
         levels: [
-            { damage: 15, range: 3.0, fireRate: 1.2, slowFactor: 0.72, slowDuration: 1.2, freezeChance: 0.07, freezeDuration: 0.6 },
-            { damage: 24, range: 3.5, fireRate: 0.85, slowFactor: 0.65, slowDuration: 1.5, freezeChance: 0.10, freezeDuration: 0.8, upgradeCost: 100 },
-            { damage: 33, range: 4.0, fireRate: 0.7, slowFactor: 0.575, slowDuration: 1.8, freezeChance: 0.14, freezeDuration: 1.0, upgradeCost: 175 },
+            { damage: 15, range: 3.0, fireRate: 1.2, slowFactor: 0.67, slowDuration: 1.2, freezeChance: 0.12, freezeDuration: 0.6 },
+            { damage: 24, range: 3.5, fireRate: 0.85, slowFactor: 0.60, slowDuration: 1.5, freezeChance: 0.15, freezeDuration: 0.8, upgradeCost: 100 },
+            { damage: 33, range: 4.0, fireRate: 0.7, slowFactor: 0.525, slowDuration: 1.8, freezeChance: 0.19, freezeDuration: 1.0, upgradeCost: 175 },
         ],
     },
     lightning: {
@@ -841,7 +841,7 @@ export const ENEMY_TYPES = {
     },
     tank: {
         name: 'Tank',
-        baseHP: 75,
+        baseHP: 71,
         speed: 40,     // (+15%)
         reward: 13,
         livesCost: 2,
@@ -863,7 +863,7 @@ export const ENEMY_TYPES = {
     },
     boss: {
         name: 'Boss',
-        baseHP: 349,
+        baseHP: 332,
         speed: 26,     // (+15%)
         reward: 207,
         livesCost: 5,
