@@ -445,6 +445,82 @@ export const MAP_DEFS = {
             },
         ],
     },
+    skyislands: {
+        name: 'Sky Citadel',
+        themeColor: '#5ba3d9',
+        worldHpMultiplier: 0.80,
+        requiredRecord: 15,
+        startingGold: 600,
+        dualSpawnWave: 10,
+        flyingStartWave: 12,
+        environment: 'sky',
+        description: 'A spiraling path through floating islands — long exposure, tight kill zones.',
+        layouts: [
+            // Layout 0: CW spiral from left edge (0,3) → center (14,10)
+            // Kill zones: y=3/5, x=24/26, y=15/17, x=3/5
+            {
+                waypoints: [
+                    {x:0, y:3}, {x:26, y:3}, {x:26, y:17}, {x:3, y:17},
+                    {x:3, y:5}, {x:24, y:5}, {x:24, y:15}, {x:5, y:15},
+                    {x:5, y:7}, {x:14, y:7}, {x:14, y:10},
+                ],
+                blocked: [
+                    {x:8, y:0}, {x:9, y:0}, {x:20, y:0}, {x:21, y:0},
+                    {x:28, y:8}, {x:28, y:9}, {x:20, y:19}, {x:21, y:19},
+                    {x:0, y:19}, {x:1, y:19}, {x:10, y:9}, {x:11, y:9},
+                    {x:18, y:11}, {x:19, y:11}, {x:15, y:8}, {x:16, y:8},
+                    {x:8, y:12}, {x:9, y:12}, {x:12, y:1}, {x:13, y:1},
+                    {x:0, y:10}, {x:1, y:10},
+                ],
+                paths: null,
+                secondaryWaypoints: [
+                    {x:29, y:10}, {x:22, y:10}, {x:14, y:10},
+                ],
+            },
+            // Layout 1: CCW spiral from bottom-right (29,16) → center (14,10)
+            // Kill zones: y=14/16, x=3/5, y=2/4, x=24/26
+            {
+                waypoints: [
+                    {x:29, y:16}, {x:3, y:16}, {x:3, y:2}, {x:26, y:2},
+                    {x:26, y:14}, {x:5, y:14}, {x:5, y:4}, {x:24, y:4},
+                    {x:24, y:12}, {x:14, y:12}, {x:14, y:10},
+                ],
+                blocked: [
+                    {x:0, y:0}, {x:1, y:0}, {x:20, y:0}, {x:21, y:0},
+                    {x:0, y:8}, {x:1, y:8}, {x:28, y:5}, {x:28, y:6},
+                    {x:22, y:18}, {x:23, y:18}, {x:0, y:18}, {x:1, y:18},
+                    {x:10, y:8}, {x:11, y:8}, {x:18, y:8}, {x:19, y:8},
+                    {x:10, y:10}, {x:11, y:10}, {x:14, y:0}, {x:15, y:0},
+                    {x:14, y:18}, {x:15, y:18},
+                ],
+                paths: null,
+                secondaryWaypoints: [
+                    {x:29, y:8}, {x:22, y:8}, {x:22, y:10}, {x:14, y:10},
+                ],
+            },
+            // Layout 2: CW spiral from bottom-left (0,17) → center (14,10)
+            // Kill zones: y=15/17, x=25/27, y=2/4, x=3/5
+            {
+                waypoints: [
+                    {x:0, y:17}, {x:27, y:17}, {x:27, y:2}, {x:3, y:2},
+                    {x:3, y:15}, {x:25, y:15}, {x:25, y:4}, {x:5, y:4},
+                    {x:5, y:13}, {x:14, y:13}, {x:14, y:10},
+                ],
+                blocked: [
+                    {x:0, y:0}, {x:1, y:0}, {x:22, y:0}, {x:23, y:0},
+                    {x:29, y:8}, {x:29, y:9}, {x:8, y:19}, {x:9, y:19},
+                    {x:22, y:19}, {x:23, y:19}, {x:10, y:8}, {x:11, y:8},
+                    {x:18, y:8}, {x:19, y:8}, {x:10, y:10}, {x:11, y:10},
+                    {x:0, y:8}, {x:1, y:8}, {x:14, y:0}, {x:15, y:0},
+                    {x:14, y:19}, {x:15, y:19},
+                ],
+                paths: null,
+                secondaryWaypoints: [
+                    {x:29, y:12}, {x:22, y:12}, {x:22, y:10}, {x:14, y:10},
+                ],
+            },
+        ],
+    },
 };
 
 // ── Economy ────────────────────────────────────────────────
@@ -832,6 +908,7 @@ export const MAP_AMBIENT_DARKNESS = {
     splitcreek: 0.10,
     gauntlet: 0.35,
     citadel: 0.20,
+    skyislands: 0.15,
 };
 export const TOWER_LIGHT_DEFS = {
     arrow:          { radius: 0.04, intensity: 0.25 },

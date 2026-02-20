@@ -2598,6 +2598,28 @@ export class Renderer {
                     color: colors[Math.random() * colors.length | 0], phase: Math.random() * Math.PI * 2, age: 0
                 };
             }
+        } else if (env === 'sky') {
+            if (r < 0.7) {
+                // Cloud wisp — white/pale blue drifting right
+                const life = 5 + Math.random() * 3;
+                const colors = ['#ffffff', '#e8f0ff', '#d0e4ff', '#f0f8ff'];
+                p = {
+                    type: 'sand', x: -10, y: Math.random() * CANVAS_H,
+                    vx: 40 + Math.random() * 40, vy: 0,
+                    life, maxLife: life, size: 3 + Math.random(),
+                    color: colors[Math.random() * colors.length | 0], phase: Math.random() * Math.PI * 2, age: 0
+                };
+            } else {
+                // Golden sparkle — twinkling gold point
+                const life = 4 + Math.random() * 2;
+                const colors = ['#ffd700', '#ffcc33', '#ffe066', '#ffb300'];
+                p = {
+                    type: 'firefly', x: Math.random() * CANVAS_W, y: Math.random() * CANVAS_H,
+                    vx: 0, vy: 0,
+                    life, maxLife: life, size: 2 + Math.random() * 1.5,
+                    color: colors[Math.random() * colors.length | 0], phase: Math.random() * Math.PI * 2, age: 0
+                };
+            }
         } else {
             // Forest (default)
             if (r < 0.7) {

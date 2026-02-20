@@ -161,6 +161,7 @@ export class Game {
                 splitcreek: [0.9, 0.95, 1.05],
                 gauntlet: [1.05, 0.95, 0.9],
                 citadel: [0.92, 0.95, 1.0],
+                skyislands: [0.92, 0.97, 1.08],
             };
             if (this.postfx.enabled) {
                 const t = tints[mapId] || [1, 1, 1];

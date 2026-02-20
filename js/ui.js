@@ -136,7 +136,7 @@ export class UI {
             const g = atmo.ground;
             ctx.fillStyle = `rgb(${g.base[0]},${g.base[1]},${g.base[2]})`;
         } else {
-            ctx.fillStyle = env === 'desert' ? '#c8a878' : env === 'lava' ? '#c05020' : env === 'ruins' ? '#707568' : '#2a3a2a';
+            ctx.fillStyle = env === 'desert' ? '#c8a878' : env === 'lava' ? '#c05020' : env === 'ruins' ? '#707568' : env === 'sky' ? '#c0d8ef' : '#2a3a2a';
         }
         ctx.fillRect(0, 0, w, h);
 
@@ -194,7 +194,7 @@ export class UI {
         }
 
         // Draw path cells — always map-native for enemy contrast
-        ctx.fillStyle = env === 'desert' ? '#e0b050' : env === 'lava' ? '#ff6a30' : env === 'ruins' ? '#b0a898' : '#d4a840';
+        ctx.fillStyle = env === 'desert' ? '#e0b050' : env === 'lava' ? '#ff6a30' : env === 'ruins' ? '#b0a898' : env === 'sky' ? '#c4a44a' : '#d4a840';
         for (let y = 0; y < ROWS; y++) {
             for (let x = 0; x < COLS; x++) {
                 if (grid[y][x] === CELL_TYPE.PATH) {
@@ -207,7 +207,7 @@ export class UI {
         if (atmo && atmo.obstacle) {
             ctx.fillStyle = atmo.obstacle.tint;
         } else {
-            ctx.fillStyle = env === 'desert' ? '#a08060' : env === 'lava' ? '#1a1a2a' : env === 'ruins' ? '#808080' : '#4a5a4a';
+            ctx.fillStyle = env === 'desert' ? '#a08060' : env === 'lava' ? '#1a1a2a' : env === 'ruins' ? '#808080' : env === 'sky' ? '#b0c0d0' : '#4a5a4a';
         }
         for (const c of layout.blocked) {
             if (c.x >= 0 && c.x < COLS && c.y >= 0 && c.y < ROWS && grid[c.y][c.x] !== CELL_TYPE.PATH) {

@@ -186,7 +186,7 @@ export class GameMap {
                 const py = y * CELL;
                 const type = this.grid[y][x];
 
-                const envPrefix = env === 'desert' ? 'Desert' : env === 'lava' ? 'Lava' : env === 'ruins' ? 'Ruins' : '';
+                const envPrefix = env === 'desert' ? 'Desert' : env === 'lava' ? 'Lava' : env === 'ruins' ? 'Ruins' : env === 'sky' ? 'Sky' : '';
                 if (colorOverride) {
                     if (type === CELL_TYPE.PATH) {
                         // Always use map-native path for contrast with enemies
@@ -200,7 +200,7 @@ export class GameMap {
                 } else if (type === CELL_TYPE.PATH) {
                     this[`draw${envPrefix}PathCell`](ctx, px, py, x, y);
                 } else {
-                    const groundPrefix = env === 'desert' ? 'Desert' : env === 'lava' ? 'Lava' : env === 'ruins' ? 'Ruins' : 'Grass';
+                    const groundPrefix = env === 'desert' ? 'Desert' : env === 'lava' ? 'Lava' : env === 'ruins' ? 'Ruins' : env === 'sky' ? 'Sky' : 'Grass';
                     this[`draw${groundPrefix}Cell`](ctx, px, py, x, y);
                     if (type === CELL_TYPE.BLOCKED) {
                         this[`draw${envPrefix}Obstacle`](ctx, px, py, x, y);
@@ -1146,6 +1146,128 @@ export class GameMap {
             ctx.beginPath();
             ctx.ellipse(cx + 4, cy - 2, 3, 4, 0.3, 0, Math.PI * 2);
             ctx.fill();
+        }
+    }
+
+    // ── Sky environment cells ─────────────────────────────
+
+    drawSkyCell(ctx, px, py, gx, gy) {
+        // Light blue-white sky ground with cloud wisps
+        const shade = seedRand(gx, gy, 0);
+        const r = Math.floor(200 + shade * 20 - 10);
+        const g = Math.floor(215 + shade * 15 - 7);
+        const b = Math.floor(235 + shade * 10 - 5);
+        ctx.fillStyle = `rgb(${r},${g},${b})`;
+        ctx.fillRect(px, py, CELL, CELL);
+
+        // Wispy cloud streaks
+        const streakCount = 1 + Math.floor(seedRand(gx, gy, 1) * 3);
+        for (let i = 0; i < streakCount; i++) {
+            const sx = px + seedRand(gx, gy, 10 + i) * CELL;
+            const sy = py + seedRand(gx, gy, 20 + i) * CELL;
+            const sw = 8 + seedRand(gx, gy, 30 + i) * 12;
+            ctx.fillStyle = 'rgba(255,255,255,0.15)';
+            ctx.beginPath();
+            ctx.ellipse(sx, sy, sw, 2 + seedRand(gx, gy, 40 + i) * 3, 0.2, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Occasional sparkle
+        if (seedRand(gx, gy, 50) > 0.75) {
+            const sx = px + seedRand(gx, gy, 51) * (CELL - 4) + 2;
+            const sy = py + seedRand(gx, gy, 52) * (CELL - 4) + 2;
+            ctx.fillStyle = 'rgba(255,215,100,0.25)';
+            ctx.beginPath();
+            ctx.arc(sx, sy, 1.5, 0, Math.PI * 2);
+            ctx.fill();
+        }
+    }
+
+    drawSkyPathCell(ctx, px, py, gx, gy) {
+        // Golden/amber stone pathway
+        ctx.fillStyle = '#c4a44a';
+        ctx.fillRect(px, py, CELL, CELL);
+
+        // Ornamental stone lines
+        const lineCount = 2 + Math.floor(seedRand(gx, gy, 0) * 2);
+        ctx.strokeStyle = 'rgba(180,140,50,0.3)';
+        ctx.lineWidth = 0.7;
+        for (let i = 0; i < lineCount; i++) {
+            const sx = px + seedRand(gx, gy, 60 + i) * CELL;
+            const sy = py + seedRand(gx, gy, 70 + i) * CELL;
+            const ex = sx + (seedRand(gx, gy, 80 + i) - 0.5) * 16;
+            const ey = sy + (seedRand(gx, gy, 90 + i) - 0.5) * 16;
+            ctx.beginPath();
+            ctx.moveTo(sx, sy);
+            ctx.lineTo(ex, ey);
+            ctx.stroke();
+        }
+
+        // Subtle highlight edge
+        ctx.fillStyle = 'rgba(255,255,255,0.08)';
+        ctx.fillRect(px, py, CELL, 2);
+
+        // Edge borders
+        const edgeW = 3;
+        ctx.fillStyle = 'rgba(0,0,0,0.08)';
+        if (!this.isPath(gx, gy - 1)) ctx.fillRect(px, py, CELL, edgeW);
+        if (!this.isPath(gx, gy + 1)) ctx.fillRect(px, py + CELL - edgeW, CELL, edgeW);
+        if (!this.isPath(gx - 1, gy)) ctx.fillRect(px, py, edgeW, CELL);
+        if (!this.isPath(gx + 1, gy)) ctx.fillRect(px + CELL - edgeW, py, edgeW, CELL);
+    }
+
+    drawSkyObstacle(ctx, px, py, gx, gy) {
+        const cx = px + CELL / 2;
+        const cy = py + CELL / 2;
+        const seed = gx + gy;
+
+        if (seed % 2 === 0) {
+            // Cloud pillar — white/silver floating column
+            ctx.fillStyle = 'rgba(0,0,0,0.06)';
+            ctx.beginPath();
+            ctx.ellipse(cx + 1, cy + 12, 8, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Pillar body
+            const pillarH = 14 + seedRand(gx, gy, 0) * 6;
+            ctx.fillStyle = '#d0dce8';
+            ctx.fillRect(cx - 5, cy + 2 - pillarH, 10, pillarH);
+
+            // Highlight
+            ctx.fillStyle = 'rgba(255,255,255,0.25)';
+            ctx.fillRect(cx - 4, cy + 2 - pillarH, 3, pillarH);
+
+            // Cloud cap
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + 2 - pillarH, 8, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+        } else {
+            // Floating stone arch
+            ctx.fillStyle = 'rgba(0,0,0,0.06)';
+            ctx.beginPath();
+            ctx.ellipse(cx, cy + 11, 10, 3, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Two pillars
+            const pH = 10 + seedRand(gx, gy, 0) * 4;
+            ctx.fillStyle = '#a0b0c0';
+            ctx.fillRect(cx - 9, cy + 2 - pH, 5, pH);
+            ctx.fillRect(cx + 4, cy + 2 - pH, 5, pH);
+
+            // Arch top
+            ctx.strokeStyle = '#a0b0c0';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(cx, cy + 2 - pH, 6.5, Math.PI, 0);
+            ctx.stroke();
+
+            // Gold accent on arch
+            ctx.strokeStyle = 'rgba(200,170,70,0.4)';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.arc(cx, cy + 2 - pH, 5, Math.PI, 0);
+            ctx.stroke();
         }
     }
 
