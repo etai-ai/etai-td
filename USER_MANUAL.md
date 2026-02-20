@@ -16,7 +16,7 @@ Every world is an **endless survival run** — you play until you lose all 20 li
 | 15 | Dual Spawn + Flying enemies | — |
 | 20 | Missile Sniper | Sniper (auto-upgraded) |
 | 25 | Super Lightning, Bi-Cannon | Lightning, Cannon (auto-upgraded) |
-| 30 | Pulse Cannon | — |
+| 30 | Titan | — |
 
 When a threshold is crossed, the game pauses and shows an unlock screen with the new tower stats. Click **Continue** to resume. Replaced towers on the field are auto-upgraded for free.
 
@@ -26,7 +26,7 @@ When a threshold is crossed, the game pauses and shows an unlock screen with the
 
 **Dragon Flyers** — larger, tougher red flying enemies — appear every wave from wave 25 onward (1→8 count).
 
-**Goldrush** waves occur every 10 waves — all kills give double gold. **Bosses** appear every 5 waves (waves 5-20). **Megabosses** replace them at waves 25-31 (every 2 waves). **Quantum Bosses** take over from wave 32+, appearing every wave with rapidly escalating counts.
+**Goldrush** waves occur every 10 waves — all kills give double gold. **Bosses** appear every 5 waves (waves 5-20). **Megabosses** replace them at waves 25-31 (every 2 waves). **Quantum Bosses** take over from wave 32+, appearing every wave (count capped at 6). **Victory screen** appears at wave 35 — you can continue into endless mode or return to menu.
 
 ## Maps
 
@@ -197,17 +197,17 @@ A dual-barreled cannon that fires twice as fast as a regular cannon. Every 3-4 s
 
 ### Wave 30 Unlock
 
-#### Pulse Cannon ($600)
+#### Titan ($800)
 
-A teal energy cannon that fires shockwave pulses, dealing splash damage and knocking enemies backward along the path. Forces enemies to re-walk sections of the path, giving all your towers extra shots.
+The ultimate crowd control weapon — a massive golden cannon that fires devastating splash projectiles, slowing and freezing everything in the blast radius. Perfect for locking down the endgame.
 
-| Level | Damage | Range | Fire Rate | Splash Radius | Knockback | Upgrade Cost |
-|-------|--------|-------|-----------|---------------|-----------|-------------|
-| 1 | 20 | 3.5 | 0.56/s | 1.2 | 1.0 cells | — |
-| 2 | 30 | 4.0 | 0.67/s | 1.5 | 1.5 cells | $150 |
-| 3 | 45 | 4.5 | 0.77/s | 1.8 | 2.0 cells | $250 |
+| Level | Damage | Range | Fire Rate | Splash Radius | Slow | Freeze Chance | Upgrade Cost |
+|-------|--------|-------|-----------|---------------|------|---------------|-------------|
+| 1 | 100 | 6.0 | 0.40/s | 2.5 | 60% for 2s | 20% for 1s | — |
+| 2 | 160 | 7.0 | 0.50/s | 3.0 | 65% for 2.5s | 30% for 1.3s | $400 |
+| 3 | 240 | 8.0 | 0.67/s | 3.5 | 70% for 3s | 40% for 1.5s | $600 |
 
-**Total investment:** $1000 fully upgraded. Knockback pushes enemies backward along their path — bosses are immune, tanks resist 50%. Each enemy can only be knocked back twice, then becomes immune to further pushback. Best placed mid-path where knockback forces enemies back through your killzone.
+**Total investment:** $1800 fully upgraded. Every projectile slows and has a chance to freeze all enemies in the splash area. Combine with Fire Arrow burn for devastating armor-bypassing damage on frozen targets.
 
 ## Enemies
 
@@ -222,7 +222,7 @@ A teal energy cannon that fires shockwave pulses, dealing splash damage and knoc
 | **Flying** | Wings | 10 | Medium (97) | 0% | Airborne until landing — untargetable while flying | 1 |
 | **Dragon Flyer** | Wings (large) | 30 | Medium (97) | 0% | Bigger flying enemy, wave 25+, 1→8 count | 2 |
 | **Megaboss** | Octagon | 392 | Medium (58) | 25% | Waves 25-31, knockback immune, enrages when last alive | 5 |
-| **Quantum Boss** | Star | 392 | Medium (64) | 30% | Wave 32+, count escalates fast, knockback immune | 5 |
+| **Quantum Boss** | Star | 392 | Medium-Fast (72) | 30% | Wave 32+, count capped at 6, knockback immune | 5 |
 
 HP scales exponentially each wave. By wave 20, enemies have roughly 161x the HP of wave 1.
 
@@ -312,7 +312,8 @@ Bosses appear every 5 waves. At wave 14, the hero unlocks — position it at cho
 - **Deep Frost + Lightning/Super Lightning:** Frozen enemies can't move, giving chain attacks more time to bounce between targets.
 - **Missile Sniper + Deep Frost:** Freeze groups together, then splash them all with a crit missile for devastating AoE.
 - **Sniper (Strongest) + Lightning (First):** Sniper focuses the boss while lightning clears the escort wave.
-- **Pulse Cannon + Any Damage Tower:** Knockback forces enemies to re-walk through your killzone, effectively doubling tower uptime. Place pulse mid-path with damage towers covering the same stretch.
+- **Titan + Fire Arrow:** Titan freezes and slows groups, keeping them in burn range longer. Frozen enemies take full burn ticks while unable to move.
+- **Titan + Deep Frost:** Double freeze chance — Titan's splash freeze stacks with Deep Frost's aura freeze for near-permanent crowd control.
 
 ### Tower Placement Tips
 

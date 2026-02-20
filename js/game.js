@@ -1,4 +1,4 @@
-import { STATE, CANVAS_W, CANVAS_H, HERO_STATS, MAP_DEFS, TOWER_TYPES, TOWER_LIGHT_DEFS, MAP_AMBIENT_DARKNESS, WAVE_UNLOCKS, SPEED_MULTIPLIERS, SPEED_MIN, SPEED_MAX, ATMOSPHERE_PRESETS, DUAL_SPAWN_WAVE } from './constants.js';
+import { STATE, CANVAS_W, CANVAS_H, HERO_STATS, MAP_DEFS, TOWER_TYPES, TOWER_LIGHT_DEFS, MAP_AMBIENT_DARKNESS, WAVE_UNLOCKS, SPEED_MULTIPLIERS, SPEED_MIN, SPEED_MAX, ATMOSPHERE_PRESETS, DUAL_SPAWN_WAVE, VICTORY_WAVE } from './constants.js';
 import { hexToGL, safeStorage } from './utils.js';
 import { GameMap } from './map.js';
 import { TowerManager } from './tower.js';
@@ -237,6 +237,7 @@ export class Game {
 
         this.state = STATE.PLAYING;
         this._unlockScreenActive = false;
+        this._victoryShown = false;
         this.ui.setupTowerPanel();
         this.ui.hideAllScreens();
 
@@ -438,6 +439,7 @@ export class Game {
     _doRestart() {
         this.state = STATE.MENU;
         this._unlockScreenActive = false;
+        this._victoryShown = false;
         this.selectedMapId = null;
         this.elapsedTime = 0;
         this.waveElapsed = 0;
@@ -681,6 +683,30 @@ export class Game {
         this.state = STATE.PAUSED;
         this._unlockScreenActive = true;
         this.ui.showMilestoneScreen(wave, stats);
+    }
+
+    showVictory() {
+        this._victoryShown = true;
+        this.state = STATE.PAUSED;
+        this._unlockScreenActive = true;
+
+        // Celebration effects
+        this.triggerShake(15, 0.5);
+        if (this.postfx.enabled) {
+            this.postfx.flash(0.4, 0.4);
+            this.postfx.shockwave(0.5, 0.5, 1.2);
+            this.postfx.aberration(0.8, 0.3);
+        }
+
+        const stats = {
+            kills: this.runKills,
+            towers: this.towers.towers.length,
+            score: this.economy.score,
+            lives: this.economy.lives,
+            gold: this.economy.gold,
+            elapsed: this.elapsedTime,
+        };
+        this.ui.showVictoryScreen(stats);
     }
 
     // ── Multiplayer ─────────────────────────────────────────

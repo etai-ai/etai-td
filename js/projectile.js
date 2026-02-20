@@ -26,6 +26,8 @@ export class Projectile {
         this.critMulti = tower.critMulti;
         this.burnDamage = tower.burnDamage;
         this.burnDuration = tower.burnDuration;
+        this.freezeChance = tower.freezeChance || 0;
+        this.freezeDuration = tower.freezeDuration || 0;
 
         // Fork chain (super lightning)
         this.forkCount = tower.forkCount;
@@ -124,13 +126,26 @@ export class Projectile {
             game.audio.playExplosion();
 
             // Explosion color by type
-            const explosionColor = this.towerType === 'pulsecannon' ? '#2eaaaa' : this.missile ? '#aabb44' : (this.isHeavy ? '#ff3300' : '#ff6600');
+            const explosionColor = this.towerType === 'titan' ? '#ffd700' : this.missile ? '#aabb44' : (this.isHeavy ? '#ff3300' : '#ff6600');
             game.particles.spawnExplosion(this.x, this.y, explosionColor);
             game.triggerShake(this.isHeavy ? 5 : (this.missile ? 4 : 3), this.isHeavy ? 0.25 : (this.missile ? 0.2 : 0.15));
             // PostFX shockwave on explosions
             game.postfx?.shockwave(this.x / CANVAS_W, this.y / CANVAS_H, this.isHeavy ? 0.4 : (this.missile ? 0.35 : 0.25));
             // Explosion flash light
             game.postfx?.addFlashLight(this.x, this.y, 1.0, 0.4, 0, 0.12, 1.5, 0.3);
+
+            // Titan-style splash slow + freeze
+            if (this.slowFactor > 0 && this.splashRadius > 0) {
+                const sfxPx = (this.isHeavy ? splashRad : this.splashRadius) * CELL;
+                const slowTargets = game.enemies.getEnemiesNear(this.x, this.y, sfxPx);
+                for (const e of slowTargets) {
+                    e.applySlow(this.slowFactor, this.slowDuration);
+                    if (this.freezeChance > 0 && Math.random() < this.freezeChance) {
+                        e.applyFreeze(this.freezeDuration);
+                        game.particles.spawnSpark(e.x, e.y, '#00ffff', 4);
+                    }
+                }
+            }
 
             // Heavy round: armor shred + scorch zone
             if (this.isHeavy && this.armorShred > 0) {
@@ -301,7 +316,7 @@ export class Projectile {
             firearrow: '#ff4500',
             bicannon: '#ff8c00',
             missilesniper: '#aabb44',
-            pulsecannon: '#2eaaaa',
+            titan: '#ffd700',
             hero: '#00e5ff',
         };
         return colors[this.towerType] || '#fff';

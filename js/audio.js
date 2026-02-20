@@ -138,12 +138,6 @@ export class Audio {
             case 'hero':
                 this.playTone('sine', 600, 900, 0.08, 0.12);
                 break;
-            case 'pulsecannon':
-                // Deep energy pulse thump
-                this.playTone('sine', 150, 40, 0.25, 0.2);
-                this.playTone('triangle', 300, 100, 0.15, 0.1);
-                this.playNoise(0.12, 0.06);
-                break;
             case 'bicannon':
                 if (isHeavy) {
                     // Heavy round: deep boom + armor crack

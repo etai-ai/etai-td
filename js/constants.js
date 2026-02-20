@@ -14,7 +14,10 @@ export const STATE = {
     PLAYING: 'PLAYING',
     PAUSED: 'PAUSED',
     GAME_OVER: 'GAME_OVER',
+    VICTORY: 'VICTORY',
 };
+
+export const VICTORY_WAVE = 35;
 
 // ── Cell Types ─────────────────────────────────────────────
 export const CELL_TYPE = {
@@ -734,17 +737,21 @@ export const TOWER_TYPES = {
             { damage: 229, range: 9.0, fireRate: 1.8, projSpeed: 350, splashRadius: 1.8, critChance: 0.20, critMulti: 3.2, upgradeCost: 300 },
         ],
     },
-    pulsecannon: {
-        name: 'Pulse Cannon',
-        cost: 600,
-        color: '#2eaaaa',
+    titan: {
+        name: 'Titan',
+        cost: 800,
+        color: '#d4af37',
         splash: true,
-        knockback: true,
         unlockWave: 30,
         levels: [
-            { damage: 20, range: 3.5, fireRate: 1.8, projSpeed: 200, splashRadius: 1.2, knockbackDist: 1.0 },
-            { damage: 30, range: 4.0, fireRate: 1.5, projSpeed: 220, splashRadius: 1.5, knockbackDist: 1.5, upgradeCost: 150 },
-            { damage: 45, range: 4.5, fireRate: 1.3, projSpeed: 240, splashRadius: 1.8, knockbackDist: 2.0, upgradeCost: 250 },
+            { damage: 100, range: 6.0, fireRate: 2.5, projSpeed: 160, splashRadius: 2.5,
+              slowFactor: 0.40, slowDuration: 2.0, freezeChance: 0.20, freezeDuration: 1.0 },
+            { damage: 160, range: 7.0, fireRate: 2.0, projSpeed: 180, splashRadius: 3.0,
+              slowFactor: 0.35, slowDuration: 2.5, freezeChance: 0.30, freezeDuration: 1.3,
+              upgradeCost: 400 },
+            { damage: 240, range: 8.0, fireRate: 1.5, projSpeed: 200, splashRadius: 3.5,
+              slowFactor: 0.30, slowDuration: 3.0, freezeChance: 0.40, freezeDuration: 1.5,
+              upgradeCost: 600 },
         ],
     },
 };
@@ -756,7 +763,7 @@ export const WAVE_UNLOCKS = {
     15: { dualSpawn: true, color: '#e74c3c' },
     20: { towers: ['Missile Sniper'], keys: ['missilesniper'], replacesKeys: ['sniper'], color: '#6b8e23' },
     25: { towers: ['Super Lightning', 'Bi-Cannon'], keys: ['superlightning', 'bicannon'], replacesKeys: ['lightning', 'cannon'], color: '#7b3fff' },
-    30: { towers: ['Pulse Cannon'], keys: ['pulsecannon'], replacesKeys: null, color: '#2eaaaa' },
+    30: { towers: ['Titan'], keys: ['titan'], replacesKeys: null, color: '#d4af37' },
 };
 
 // ── Hero Definitions ──────────────────────────────────────
@@ -920,7 +927,7 @@ export const ENEMY_TYPES = {
     quantumboss: {
         name: 'Quantum Boss',
         baseHP: 392,
-        speed: 64,
+        speed: 72,
         reward: 500,
         livesCost: 5,
         color: '#0a0a0a',
@@ -998,7 +1005,7 @@ export const TOWER_LIGHT_DEFS = {
     bicannon:       { radius: 0.06, intensity: 0.40 },
     sniper:         { radius: 0.04, intensity: 0.30 },
     missilesniper:  { radius: 0.07, intensity: 0.45 },
-    pulsecannon:    { radius: 0.05, intensity: 0.35 },
+    titan:          { radius: 0.08, intensity: 0.50 },
 };
 
 // ── Atmosphere Presets ──────────────────────────────────

@@ -204,9 +204,9 @@ export class Tower {
             game.particles.spawnMuzzleFlash(muzzleX, muzzleY, '#ff6600', 4);
         } else if (this.type === 'superlightning') {
             game.particles.spawnMuzzleFlash(muzzleX, muzzleY, '#b388ff', 5);
-        } else if (this.type === 'pulsecannon') {
-            game.particles.spawnMuzzleFlash(muzzleX, muzzleY, '#2eaaaa', 6);
-            game.triggerShake(3, 0.15);
+        } else if (this.type === 'titan') {
+            game.particles.spawnMuzzleFlash(muzzleX, muzzleY, '#ffd700', 8);
+            game.triggerShake(5, 0.25);
         }
     }
 

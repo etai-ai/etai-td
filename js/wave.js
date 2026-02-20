@@ -1,4 +1,4 @@
-import { WAVES, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getWaveHPScale, WAVE_MODIFIERS, MODIFIER_START_WAVE, MODIFIER_CHANCE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, DUAL_SPAWN_WAVE, DUAL_SPAWN_START_PCT, DUAL_SPAWN_RAMP_PCT, DUAL_SPAWN_MAX_PCT, FLYING_START_WAVE, GOLDRUSH_INTERVAL, SPEED_MAX, WAVE_GEN, STATE } from './constants.js';
+import { WAVES, WAVE_BONUS_BASE, WAVE_BONUS_PER, INTEREST_RATE, CANVAS_W, CANVAS_H, getWaveHPScale, WAVE_MODIFIERS, MODIFIER_START_WAVE, MODIFIER_CHANCE, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, DUAL_SPAWN_WAVE, DUAL_SPAWN_START_PCT, DUAL_SPAWN_RAMP_PCT, DUAL_SPAWN_MAX_PCT, FLYING_START_WAVE, GOLDRUSH_INTERVAL, SPEED_MAX, WAVE_GEN, STATE, VICTORY_WAVE } from './constants.js';
 import { Economy } from './economy.js';
 
 export class WaveManager {
@@ -273,7 +273,7 @@ export class WaveManager {
         // Quantum boss every wave starting at 32 — escalates fast
         if (waveNum >= 32) {
             const wavesIn = waveNum - 31; // 1 at wave 32
-            const quantumCount = Math.floor(wavesIn * 1.5); // 1,3,4,6,7,9,...
+            const quantumCount = Math.min(6, Math.floor(wavesIn * 0.8)); // 1,1,2,3,4,4,5,6 (capped)
             groups.push({
                 type: 'quantumboss',
                 count: Math.max(1, quantumCount),
@@ -464,6 +464,12 @@ export class WaveManager {
                 this.game.postfx.flash(0.15, 0.25);
                 this.game.postfx.shockwave(0.5, 0.5, 0.6);
             }
+        }
+
+        // Victory screen at wave 35
+        if (this.currentWave === VICTORY_WAVE && !this.game._victoryShown) {
+            this.game.showVictory();
+            return;
         }
 
         // Wave milestone banner every 10 waves

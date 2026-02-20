@@ -1,4 +1,4 @@
-import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, CANVAS_W, CANVAS_H, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, VERSION, SPEED_MAX, ATMOSPHERE_PRESETS } from './constants.js';
+import { TOWER_TYPES, TARGET_MODES, STATE, MAP_DEFS, COLS, ROWS, CELL, CELL_TYPE, CANVAS_W, CANVAS_H, EARLY_SEND_MAX_BONUS, EARLY_SEND_DECAY, VERSION, SPEED_MAX, ATMOSPHERE_PRESETS, VICTORY_WAVE } from './constants.js';
 import { Economy } from './economy.js';
 import { safeStorage } from './utils.js';
 
@@ -432,7 +432,7 @@ export class UI {
             case 'superlightning': this.game.renderer.drawSuperLightningTurret(ctx, 0, fake); break;
             case 'bicannon': this.game.renderer.drawBiCannonTurret(ctx, 0, fake); break;
             case 'missilesniper': this.game.renderer.drawMissileSniperTurret(ctx, 0, fake); break;
-            case 'pulsecannon': this.game.renderer.drawPulseCannonTurret(ctx, 0, fake); break;
+            case 'titan': this.game.renderer.drawTitanTurret(ctx, 0, fake); break;
         }
 
         ctx.restore();
@@ -474,7 +474,7 @@ export class UI {
             case 'superlightning': this.game.renderer.drawSuperLightningTurret(ctx, 0, fake); break;
             case 'bicannon': this.game.renderer.drawBiCannonTurret(ctx, 0, fake); break;
             case 'missilesniper': this.game.renderer.drawMissileSniperTurret(ctx, 0, fake); break;
-            case 'pulsecannon': this.game.renderer.drawPulseCannonTurret(ctx, 0, fake); break;
+            case 'titan': this.game.renderer.drawTitanTurret(ctx, 0, fake); break;
         }
 
         ctx.restore();
@@ -503,7 +503,7 @@ export class UI {
             sniper: `${stats.critChance * 100}% crit for ${stats.critMulti}x dmg`,
             firearrow: `Burns for ${stats.burnDamage} dmg/s (${stats.burnDuration}s)`,
             missilesniper: `Homing missiles, splash ${stats.splashRadius}, ${(stats.critChance * 100).toFixed(0)}% crit ${stats.critMulti}x`,
-            pulsecannon: `Splash + knockback ${stats.knockbackDist} cells`,
+            titan: `Splash ${stats.splashRadius} + ${((1 - (stats.slowFactor || 1)) * 100).toFixed(0)}% slow + ${((stats.freezeChance || 0) * 100).toFixed(0)}% freeze`,
         };
 
         let lockHTML = '';
@@ -985,6 +985,7 @@ export class UI {
                     else if (def.dualBarrel) special = `Dual barrel, armor shred ${(stats.armorShred * 100).toFixed(0)}%`;
                     else if (def.missile) special = `Homing missiles, splash + ${(stats.critChance * 100).toFixed(0)}% crit`;
                     else if (stats.knockbackDist) special = `Splash + knockback ${stats.knockbackDist} cells`;
+                    else if (key === 'titan') special = `Massive splash + freeze + slow`;
                     else if (stats.splashRadius) special = `Splash radius ${stats.splashRadius}`;
                     else if (stats.chainCount) special = `Chains to ${stats.chainCount} enemies`;
 
@@ -1066,7 +1067,7 @@ export class UI {
         const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
 
         // Pick a featured tower icon for this milestone
-        const milestoneTowers = { 10: 'firearrow', 20: 'missilesniper', 30: 'pulsecannon', 40: 'superlightning', 50: 'bicannon' };
+        const milestoneTowers = { 10: 'firearrow', 20: 'missilesniper', 30: 'titan', 40: 'superlightning', 50: 'bicannon' };
         const featuredKey = milestoneTowers[wave] || 'firearrow';
         const iconSrc = this.towerIconsLg?.[featuredKey] || '';
         const towerDef = TOWER_TYPES[featuredKey];
@@ -1131,6 +1132,128 @@ export class UI {
                 this.game.state = STATE.PLAYING;
             }
             this.game.audio.ensureContext();
+        }, { once: true });
+    }
+
+    showVictoryScreen(stats) {
+        const container = document.getElementById('victory-content');
+        if (!container) return;
+
+        container.style.maxWidth = '640px';
+        container.style.padding = '44px 56px';
+
+        const mapName = MAP_DEFS[this.game.selectedMapId]?.name || this.game.selectedMapId;
+
+        // Format elapsed time
+        const mins = Math.floor(stats.elapsed / 60);
+        const secs = Math.floor(stats.elapsed % 60);
+        const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+        // Damage breakdown bars (same pattern as game-over)
+        const damageByType = this.game.damageByType || {};
+        const dmgEntries = Object.entries(damageByType)
+            .filter(([, v]) => v > 0)
+            .sort((a, b) => b[1] - a[1]);
+        const maxDmg = dmgEntries.length > 0 ? dmgEntries[0][1] : 1;
+
+        const towerColors = {};
+        for (const [k, d] of Object.entries(TOWER_TYPES)) towerColors[k] = d.color;
+        towerColors['hero'] = '#00e5ff';
+
+        const towerNames = {};
+        for (const [k, d] of Object.entries(TOWER_TYPES)) towerNames[k] = d.name;
+        towerNames['hero'] = 'Hero';
+
+        let dmgBars = '';
+        if (dmgEntries.length > 0) {
+            dmgBars = `<div style="margin-top:20px;text-align:left">
+                <div style="color:#bbb;font-size:13px;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Damage by Type</div>`;
+            for (const [type, dmg] of dmgEntries) {
+                const pct = (dmg / maxDmg) * 100;
+                const color = towerColors[type] || '#888';
+                const name = towerNames[type] || type;
+                const dmgStr = dmg >= 1000 ? `${(dmg / 1000).toFixed(1)}k` : dmg;
+                dmgBars += `<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+                    <div style="width:90px;font-size:12px;color:${color};text-align:right;flex-shrink:0">${name}</div>
+                    <div style="flex:1;height:14px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden">
+                        <div style="width:${pct}%;height:100%;background:${color};border-radius:3px"></div>
+                    </div>
+                    <div style="width:50px;font-size:11px;color:#999;text-align:right">${dmgStr}</div>
+                </div>`;
+            }
+            dmgBars += '</div>';
+        }
+
+        container.innerHTML = `
+            <div style="font-size:52px;font-weight:900;color:#ffd700;margin-bottom:4px;text-shadow:0 0 40px rgba(255,215,0,0.7),0 0 80px rgba(255,215,0,0.3),0 2px 8px rgba(0,0,0,0.5);letter-spacing:3px">
+                VICTORY!
+            </div>
+            <div style="font-size:22px;font-weight:600;color:#fff;margin-bottom:6px;text-shadow:0 0 15px rgba(255,255,255,0.3)">
+                ${mapName}
+            </div>
+            <div style="font-size:16px;color:#bbb;margin-bottom:24px">You conquered Wave ${VICTORY_WAVE}!</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px 28px;margin:0 auto 24px;max-width:460px;text-align:center">
+                <div>
+                    <div style="color:#ff6b6b;font-size:28px;font-weight:800">${stats.kills}</div>
+                    <div style="color:#888;font-size:12px;text-transform:uppercase;letter-spacing:1px">Kills</div>
+                </div>
+                <div>
+                    <div style="color:#3498db;font-size:28px;font-weight:800">${stats.towers}</div>
+                    <div style="color:#888;font-size:12px;text-transform:uppercase;letter-spacing:1px">Towers</div>
+                </div>
+                <div>
+                    <div style="color:#ffd750;font-size:28px;font-weight:800">${stats.score}</div>
+                    <div style="color:#888;font-size:12px;text-transform:uppercase;letter-spacing:1px">Score</div>
+                </div>
+                <div>
+                    <div style="color:#e74c3c;font-size:28px;font-weight:800">${stats.lives}</div>
+                    <div style="color:#888;font-size:12px;text-transform:uppercase;letter-spacing:1px">Lives</div>
+                </div>
+                <div>
+                    <div style="color:#eee;font-size:28px;font-weight:800">${timeStr}</div>
+                    <div style="color:#888;font-size:12px;text-transform:uppercase;letter-spacing:1px">Time</div>
+                </div>
+                <div>
+                    <div style="color:#ffd750;font-size:28px;font-weight:800">${stats.gold}</div>
+                    <div style="color:#888;font-size:12px;text-transform:uppercase;letter-spacing:1px">Gold</div>
+                </div>
+            </div>
+            ${dmgBars}
+            <div style="display:flex;gap:16px;justify-content:center;margin-top:24px">
+                <button class="unlock-btn" id="victory-continue-btn" style="background:#2ecc71;padding:16px 36px;font-size:18px">Continue (Endless)</button>
+                <button class="unlock-btn" id="victory-menu-btn" style="background:#e74c3c;padding:16px 36px;font-size:18px">Return to Menu</button>
+            </div>
+        `;
+
+        // Show victory screen, hide bars
+        document.querySelectorAll('.game-screen').forEach(s => s.classList.remove('visible'));
+        document.getElementById('victory-screen').classList.add('visible');
+        const topBar = document.getElementById('top-bar');
+        const bottomBar = document.getElementById('bottom-bar');
+        if (topBar) topBar.style.display = 'none';
+        if (bottomBar) bottomBar.style.display = 'none';
+
+        // Continue (Endless) button
+        document.getElementById('victory-continue-btn').addEventListener('click', () => {
+            document.getElementById('victory-screen').classList.remove('visible');
+            container.style.maxWidth = '';
+            container.style.padding = '';
+            if (topBar) topBar.style.display = 'flex';
+            if (bottomBar) bottomBar.style.display = 'flex';
+            this.game._unlockScreenActive = false;
+            if (this.game.state === STATE.PAUSED) {
+                this.game.state = STATE.PLAYING;
+            }
+            this.game.audio.ensureContext();
+        }, { once: true });
+
+        // Return to Menu button
+        document.getElementById('victory-menu-btn').addEventListener('click', () => {
+            document.getElementById('victory-screen').classList.remove('visible');
+            container.style.maxWidth = '';
+            container.style.padding = '';
+            this.game._unlockScreenActive = false;
+            this.game.restart();
         }, { once: true });
     }
 

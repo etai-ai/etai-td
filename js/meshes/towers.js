@@ -181,19 +181,20 @@ function getTowerGeo(type) {
             geo = { body: new THREE.LatheGeometry(pts, 8) };
             break;
         }
-        case 'pulsecannon': {
-            // Rounded energy weapon body
+        case 'titan': {
+            // Wide fortress-like body
             const pts = [
                 new THREE.Vector2(0, 0),
-                new THREE.Vector2(0.4, 0.05),
-                new THREE.Vector2(0.7, 0.25),
-                new THREE.Vector2(0.75, 0.5),
-                new THREE.Vector2(0.65, 0.7),
-                new THREE.Vector2(0.4, 0.88),
-                new THREE.Vector2(0.15, 0.97),
+                new THREE.Vector2(1.0, 0),
+                new THREE.Vector2(1.05, 0.08),
+                new THREE.Vector2(0.9, 0.2),
+                new THREE.Vector2(0.85, 0.45),
+                new THREE.Vector2(0.7, 0.65),
+                new THREE.Vector2(0.45, 0.82),
+                new THREE.Vector2(0.2, 0.95),
                 new THREE.Vector2(0, 1.0),
             ];
-            geo = { body: new THREE.LatheGeometry(pts, 10) };
+            geo = { body: new THREE.LatheGeometry(pts, 8) };
             break;
         }
     }
@@ -421,23 +422,31 @@ function misslesniperTurret(color) {
     return turret;
 }
 
-function pulsecannonTurret(color) {
+function titanTurret(color) {
     const g = getGeo();
-    const tg = getTowerGeo('pulsecannon');
+    const tg = getTowerGeo('titan');
     const turret = new THREE.Group();
     const c = new THREE.Color(color);
-    // Rounded energy body
-    turret.add(mesh(tg.body, mat(c, { emissive: c, emissiveIntensity: 0.3, roughness: 0.3 }), {
-        sx: 10, sy: 13, sz: 10, py: H * 0.1,
+    // Wide fortress body with gold emissive
+    turret.add(mesh(tg.body, mat(c, { emissive: c, emissiveIntensity: 0.35, roughness: 0.25, metalness: 0.3 }), {
+        sx: 12, sy: 14, sz: 12, py: H * 0.08,
     }));
-    // Wide barrel
-    turret.add(mesh(g.cyl, mat(0x44aaaa, { metalness: 0.2, emissive: 0x115555, emissiveIntensity: 0.3 }), {
-        sx: 5, sy: 18, sz: 5, py: H * 0.45, rx: Math.PI / 2, pz: 8,
+    // Wide barrel — gold metallic
+    turret.add(mesh(g.cyl, mat(0xd4af37, { metalness: 0.4, emissive: 0x8b7328, emissiveIntensity: 0.25 }), {
+        sx: 5, sy: 20, sz: 5, py: H * 0.45, rx: Math.PI / 2, pz: 10,
     }));
-    // Ring emitter at tip
-    turret.add(mesh(g.torus, mat(0x44dddd, { emissive: 0x22bbbb, emissiveIntensity: 0.5 }), {
-        sx: 6, sy: 6, sz: 6, pz: 18, py: H * 0.45,
+    // Torus ring emitter at barrel tip — icy blue
+    turret.add(mesh(g.torus, mat(0x00ccff, { emissive: 0x00aaff, emissiveIntensity: 0.6 }), {
+        sx: 7, sy: 7, sz: 7, pz: 20, py: H * 0.45,
     }));
+    // 3 orbiting crystal ornaments (icy blue octahedra)
+    for (let i = 0; i < 3; i++) {
+        const angle = (Math.PI * 2 * i) / 3;
+        turret.add(mesh(g.oct, mat(0x66ddff, { emissive: 0x44bbff, emissiveIntensity: 0.5 }), {
+            sx: 2.5, sy: 2.5, sz: 2.5,
+            px: Math.cos(angle) * 10, py: H * 0.7, pz: Math.sin(angle) * 10,
+        }));
+    }
     return turret;
 }
 
@@ -453,7 +462,7 @@ const TURRET_FACTORY = {
     superlightning: superlightningTurret,
     sniper: sniperTurret,
     missilesniper: misslesniperTurret,
-    pulsecannon: pulsecannonTurret,
+    titan: titanTurret,
 };
 
 // ── GLTF tower creation ───────────────────────────────────────
