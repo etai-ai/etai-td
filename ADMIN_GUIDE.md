@@ -206,7 +206,7 @@ Defined in `WAVE_UNLOCKS` in constants.js. When `getEffectiveWave()` crosses a t
 - **Goldrush:** Every `GOLDRUSH_INTERVAL` (10) waves, all kills give 2x gold
 - **Bosses:** Every 5 waves (waves 5, 10, 15, 20)
 - **Megaboss:** Every 2 waves from wave 25-31 (count: 1→1→2→3), replaces regular boss
-- **Quantum Boss:** Every wave from wave 32+ (count: `min(6, floor((wave-31) * 0.8))`), replaces megaboss, capped at 6
+- **Roy Boss:** Every wave from wave 32+ (count: `min(6, floor((wave-31) * 0.8))`), replaces megaboss, capped at 6
 - **Dragon Flyer:** Every wave from wave 25+ (count: 1→8, +1 every 3 waves)
 
 ---
@@ -239,7 +239,7 @@ Defined in `ENEMY_TYPES`. Each enemy has:
 | Dragon Flyer | 30 | 97 | 0 | Bigger flying enemy, wave 25+, 1→8 count |
 | Wobbler | 8 | 29 | 0 | Secondary-path intro enemy |
 | Megaboss | 392 | 58 | 0.25 | Waves 25-31 (every 2 waves), knockback immune |
-| Quantum Boss | 392 | 72 | 0.30 | Wave 32+, every wave, count capped at 6 |
+| Roy Boss | 392 | 72 | 0.30 | Wave 32+, every wave, count capped at 6 |
 
 ---
 
@@ -286,7 +286,7 @@ arrow: {
 | Missile Sniper | Wave 20 | $300 | — |
 | Super Lightning | Wave 25 | $250 | — |
 | Bi-Cannon | Wave 25 | $200 | — |
-| The Titan | Wave 30 | $750 | — |
+| Ariel Tower | Wave 30 | $750 | — |
 
 **Special tower mechanics:**
 
@@ -301,7 +301,7 @@ arrow: {
 | Bi-Cannon | `heavyEvery`, `shredPercent`, `scorchDPS` | Dual barrel, armor shred, scorch zones |
 | Sniper | `critChance`, `critMulti` | Random crit hits for bonus damage |
 | Missile Sniper | `splashRadius`, `critChance`, `critMulti` | Homing missiles, splash + crit |
-| The Titan | `splashRadius`, `heavyEvery`, `armorShred`, `scorchDPS` | Massive splash + heavy rounds with armor shred + scorch zones |
+| Ariel Tower | `splashRadius`, `heavyEvery`, `armorShred`, `scorchDPS` | Massive splash + heavy rounds with armor shred + scorch zones |
 
 ### Burn Mechanic (Fire Arrow)
 
@@ -335,7 +335,7 @@ The hero unit (`hero.js`) is a player-controlled character that spawns at Wave 1
 |-----|---------|----------|--------|
 | Q | AoE Stun | 15s | Shocks all enemies in 3-cell radius for 1.5s |
 | E | Gold Magnet | 20s | 2x kill gold within 4-cell radius for 8s |
-| Z | Execute | 120s | Instant-kill nearest boss/megaboss/quantum boss within 15 cells. No target = no cooldown consumed. 0.8s animation with visual effects |
+| Z | Execute | 120s | Instant-kill nearest boss/megaboss/Roy Boss within 15 cells. No target = no cooldown consumed. 0.8s animation with visual effects |
 
 **Contact damage:** Enemies deal 10 base damage per 0.5s tick when overlapping the hero, multiplied by type (Boss 3x, Tank 2x, Runner 0.8x, Swarm 0.5x, Healer 0.6x).
 

@@ -43,7 +43,7 @@ Every world is an **endless wave-based survival run**. No levels — you play un
 - **Wave-based unlocks:** Towers, hero, and dual spawn unlock at wave thresholds mid-run via `WAVE_UNLOCKS` in constants.js
 - **HP scaling:** `getWaveHPScale(currentWave) * worldHpMultiplier * hpModifier` where `getWaveHPScale(w) = w * 1.11^w`. All maps use the same natural HP curve; `worldHpMultiplier` adjusts per-map (Citadel 0.42x, Nexus 0.70x, Creek/Gauntlet 1.0x).
 - Waves 1-5: hand-crafted intro waves. Wave 6+: procedural via `generateWave()`
-- **Special wave events:** Goldrush every 10 waves (2x kill gold). Boss every 5 waves (waves 5-20), replaced by Megaboss every 2 waves at waves 25-31 (count: 1→1→2→3), replaced by Quantum Boss every wave from wave 32+ (count: `min(6, floor((wave-31)*0.8))`, capped at 6). Dragon Flyers from wave 25+ (1→8 count, +1 every 3 waves)
+- **Special wave events:** Goldrush every 10 waves (2x kill gold). Boss every 5 waves (waves 5-20), replaced by Megaboss every 2 waves at waves 25-31 (count: 1→1→2→3), replaced by Roy Boss every wave from wave 32+ (count: `min(6, floor((wave-31)*0.8))`, capped at 6). Dragon Flyers from wave 25+ (1→8 count, +1 every 3 waves)
 - **Victory screen:** At wave 35 (`VICTORY_WAVE`), a gold-themed victory screen displays stats and damage breakdown. Player can continue into endless mode or return to menu. Triggered once per run via `_victoryShown` flag
 - **Starting gold:** Per-map via `startingGold` in MAP_DEFS (Serpentine 300g, Citadel 800g, Creek/Gauntlet 1000g, Nexus 1200g)
 - **Auto-wave:** Enabled by default (`game.autoWave`), auto-starts next wave after 5s. Early-send bonus: max +30g, decays by 5g/sec waited
@@ -61,7 +61,7 @@ Every world is an **endless wave-based survival run**. No levels — you play un
 | 15 | Dual Spawn + Flying enemies (start wave 17, scale 1→20 over 13 waves) | — |
 | 20 | Missile Sniper | Sniper (auto-upgraded) |
 | 25 | Super Lightning, Bi-Cannon | Lightning, Cannon (auto-upgraded) |
-| 30 | The Titan | — |
+| 30 | Ariel Tower | — |
 
 When a threshold is crossed, `onWaveThreshold()` in game.js:
 1. Collects all unlocks in a batch
@@ -112,7 +112,7 @@ Press backtick (`` ` ``) to toggle the admin panel with real-time DPS/efficiency
 WASD-controlled hero spawns when `getEffectiveWave() >= 14` (unlockWave in HERO_STATS). Auto-attacks nearest enemy (15 dmg, 3.5 range, 2/s). Three abilities: Q = AoE stun (3-cell radius, 1.5s, 15s cooldown), E = gold magnet (2x kill gold in 4-cell radius, 8s duration, 20s cooldown), Z = execute (instant-kill nearest boss/megaboss within 15-cell range, 2min cooldown). Takes contact damage from enemies (type-dependent multipliers). Dies at 0 HP, respawns after 5s. Managed by `hero.js`, updated after enemies/before towers in game loop.
 
 ### Execute Ability (Z key)
-- Instantly kills the nearest boss, megaboss, or quantum boss (not flying) within 15 grid cells
+- Instantly kills the nearest boss, megaboss, or Roy Boss (not flying) within 15 grid cells
 - 0.8s animation: 0-0.6s charge (hero grows 1x→3x, red/gold color), 0.6s strike, 0.6-0.8s shrink
 - 120s (2 minute) cooldown — strategic decision
 - **No target in range → "NO TARGET" text, cooldown NOT consumed** (can spam Z to check for targets)
@@ -210,7 +210,7 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 - Burn/scorch zone damage bypasses `takeDamage()` — directly modifies `enemy.hp`, so armor is ignored
 - Projectile trails use circular buffer to avoid O(n) shift() — overwrites oldest position when full
 - Healer logic throttled to 0.1s intervals instead of every frame — reduces checks by ~83% (6/sec vs 60/sec)
-- Boss enrage triggers only when boss/megaboss/quantum boss is last living enemy AND spawning is complete. Increases speed +50%, reduces armor -30%, plays once per boss
+- Boss enrage triggers only when boss/megaboss/Roy Boss is last living enemy AND spawning is complete. Increases speed +50%, reduces armor -30%, plays once per boss
 - Wave modifiers (armored/swift/regen/horde) can stack with goldrush — both systems are independent
 - Hero contact damage timer can drift due to accumulation: `contactTimer -= dt` then reset to 0.5s loses negative overflow
 
@@ -244,15 +244,15 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 | Flying | 10 | 97 | 0% | 30g | 1 | Untargetable while airborne (110 px/s flight), scales 1→20 count over 13 waves |
 | Dragon Flyer | 30 | 97 | 0% | 100g | 2 | Wave 25+, bigger flying enemy (radius 22), 1→8 count over waves |
 | Megaboss | 392 | 58 | 25% | 400g | 5 | Waves 25-31 only (every 2 waves, count 1→3) |
-| Quantum Boss | 392 | 72 | 30% | 500g | 5 | Wave 32+, every wave, count capped at 6 |
+| Roy Boss | 392 | 72 | 30% | 500g | 5 | Wave 32+, every wave, count capped at 6 |
 
 ## Late-Game Acceleration (Wave 26+)
 
 - **Exponential speed ramp:** All enemies gain `1.03^(wave-25)` speed multiplier from wave 26+. Doubles speed by wave 48. Stacks with Swift modifier and boss enrage.
-- **Quantum Boss (wave 32+):** Replaces megaboss. Black star shape with void aura and rotating purple tendrils. 24% faster than megaboss (72 vs 58 base speed), 30% armor. Count = `min(6, floor((wave-31) * 0.8))`, spawning faster (0.8x boss interval) and earlier in the wave (0.3x delay). Freeze halved, knockback immune. Hero execute targets them. Contact damage multiplier: 5x.
-- **Quantum Boss schedule:** Wave 32: 1, Wave 33: 1, Wave 34: 2, Wave 35: 3, Wave 36: 4, Wave 39: 6 (cap). Softened escalation with cap at 6.
+- **Roy Boss (wave 32+):** Replaces megaboss. Black star shape with void aura and rotating purple tendrils. 24% faster than megaboss (72 vs 58 base speed), 30% armor. Count = `min(6, floor((wave-31) * 0.8))`, spawning faster (0.8x boss interval) and earlier in the wave (0.3x delay). Freeze halved, knockback immune. Hero execute targets them. Contact damage multiplier: 5x.
+- **Roy Boss schedule:** Wave 32: 1, Wave 33: 1, Wave 34: 2, Wave 35: 3, Wave 36: 4, Wave 39: 6 (cap). Softened escalation with cap at 6.
 - **Victory at wave 35:** `VICTORY_WAVE = 35`. Gold-themed victory screen with stats + damage bars. Two buttons: "Continue (Endless)" resumes, "Return to Menu" restarts. Triggered once per run.
-- **Combined effect:** Exponential speed + quantum boss count + exponential HP scaling creates a "walls closing in" endgame.
+- **Combined effect:** Exponential speed + Roy Boss count + exponential HP scaling creates a "walls closing in" endgame.
 
 ## Wave Modifiers (Wave 3+)
 

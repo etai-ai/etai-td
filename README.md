@@ -21,8 +21,8 @@ Open `http://localhost:8000` in a modern browser with WebGL2 support.
 ## Features
 
 - **11 tower types** with unique mechanics — burn, freeze, chain lightning, splash, knockback, homing missiles, and more
-- **9 enemy types** — grunts, runners, tanks, healers, bosses, mega bosses, swarms, wobblers, and flying enemies
-- **3 maps** with distinct strategic challenges — long winding paths, split forks, and short gauntlets
+- **11 enemy types** — grunts, runners, tanks, healers, bosses, mega bosses, Roy Bosses, swarms, wobblers, flying enemies, and dragon flyers
+- **6 maps** with distinct strategic challenges — winding forests, 4-way ruins, sky citadels, desert splits, lava gauntlets, and void nexus
 - **Hero unit** (Wave 14+) — WASD-controlled character with AoE stun and gold magnet abilities
 - **Dual spawn points** (Wave 15+) — enemies gradually attack from two directions
 - **WebGL2 post-processing** — bloom, vignette, color grading, dynamic point lighting, shockwave distortion, chromatic aberration

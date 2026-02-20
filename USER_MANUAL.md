@@ -16,29 +16,32 @@ Every world is an **endless survival run** — you play until you lose all 20 li
 | 15 | Dual Spawn + Flying enemies | — |
 | 20 | Missile Sniper | Sniper (auto-upgraded) |
 | 25 | Super Lightning, Bi-Cannon | Lightning, Cannon (auto-upgraded) |
-| 30 | The Titan | — |
+| 30 | Ariel Tower | — |
 
 When a threshold is crossed, the game pauses and shows an unlock screen with the new tower stats. Click **Continue** to resume. Replaced towers on the field are auto-upgraded for free.
 
 **Dual spawn** starts at ~8% of enemies using the second entry at wave 16 and ramps up to 25%. If all secondary enemies are killed while primary enemies remain, reinforcements spawn from the secondary path to keep pressure up.
 
-**Flying enemies** also begin at wave 15 — purple winged enemies that spawn at the castle, fly a curvy path backward to the middle of the map, then land and walk to the exit. They are **untargetable while airborne** — towers, hero, and splash can't hit them until they land. Count scales from 1 at wave 15 to 10 by wave 30.
+**Flying enemies** appear at different waves per map (wave 6 on desert/lava maps, wave 17 on Serpentine) — purple winged enemies that spawn at the castle, fly a curvy path backward to the middle of the map, then land and walk to the exit. They are **untargetable while airborne** — towers, hero, and splash can't hit them until they land. Count scales from 1 up to 20 over 13 waves.
 
 **Dragon Flyers** — larger, tougher red flying enemies — appear every wave from wave 25 onward (1→8 count).
 
-**Goldrush** waves occur every 10 waves — all kills give double gold. **Bosses** appear every 5 waves (waves 5-20). **Megabosses** replace them at waves 25-31 (every 2 waves). **Quantum Bosses** take over from wave 32+, appearing every wave (count capped at 6). **Victory screen** appears at wave 35 — shows your tower arsenal with flashing icons, stats (kills, towers, score, lives, time, gold), damage breakdown by type, and your top 5 highest-damage towers. You can continue into endless mode or return to menu.
+**Goldrush** waves occur every 10 waves — all kills give double gold. **Bosses** appear every 5 waves (waves 5-20). **Megabosses** replace them at waves 25-31 (every 2 waves). **Roy Bosses** take over from wave 32+, appearing every wave (count capped at 6). **Victory screen** appears at wave 35 — shows your tower arsenal with flashing icons, stats (kills, towers, score, lives, time, gold), damage breakdown by type, and your top 5 highest-damage towers. You can continue into endless mode or return to menu.
 
 ## Maps
 
-Each world offers a different strategic challenge. Enemy HP is adjusted per world to keep difficulty balanced — shorter paths have lower HP multipliers so no world is inherently harder than another.
+Six worlds with unique environments and strategic challenges. Enemy HP is adjusted per world — multi-path maps get lower HP to compensate for defending multiple directions.
 
-| Map | Style | HP Multiplier | Unlock Requirement | Description |
-|-----|-------|---------------|-------------------|-------------|
-| **Serpentine Valley** | Long path | 1.0x | Always open | Winding path with 10+ turns. Lots of build space. Lightning towers shine at corners where the path doubles back. |
-| **Split Creek** | Split path | 0.60x | Wave 30 on any map | Path forks into two branches midway. Enemies randomly take upper or lower route, forcing you to defend both sides. Starts with wave 1-30 towers pre-unlocked. |
-| **The Gauntlet** | Short path | 0.65x | Wave 40 on any map | Direct path with only 3 turns. Fewer tower slots — every placement counts. Starts with wave 1-50 towers pre-unlocked. |
+| Map | Environment | HP Multi | Starting Gold | Unlock Requirement | Description |
+|-----|-------------|----------|---------------|-------------------|-------------|
+| **Serpentine Valley** | Forest | 1.0x | 300g | Always open | Long winding path with 10+ turns. Lots of build space. |
+| **The Citadel** | Ruins | 0.42x | 800g | Wave 5 on any map | 4 entry points from all edges, single castle at center. |
+| **Sky Citadel** | Sky | 0.80x | 600g | Wave 15 on any map | Floating golden pathways with cloud pillars. |
+| **Split Creek** | Desert | 1.0x | 1000g | Wave 20 on any map | Dual spawn from wave 2 — enemies attack from both sides early. |
+| **The Gauntlet** | Lava | 1.0x | 1000g | Wave 30 on any map | Dual spawn from wave 2, lava environment with rising embers. |
+| **The Nexus** | Void | 0.70x | 1200g | Wave 30 on any map | Enemies spawn from center, walk to 4 corner castles. |
 
-Each map has multiple layout variants randomly selected each run. Each environment has unique ambient effects — falling leaves and fireflies in forests, sand wisps in the desert, and rising embers over lava.
+Each map has multiple layout variants randomly selected each run. Each environment has unique ambient effects — falling leaves and fireflies in forests, sand wisps in the desert, rising embers over lava, dust motes in ruins, cloud wisps in sky, and purple energy wisps in the void.
 
 ## Hero Unit (Wave 14+)
 
@@ -52,6 +55,7 @@ At wave 14, you unlock a hero unit that spawns near the path start. Control it w
 |-----|---------|----------|--------|
 | **Q** | AoE Stun | 15s | Stuns all enemies in a 3-cell radius for 1.5 seconds |
 | **E** | Gold Magnet | 20s | Doubles gold from kills within a 4-cell radius for 8 seconds |
+| **Z** | Execute | 120s | Instant-kill nearest boss/megaboss/Roy Boss within 15 cells. No target = no cooldown consumed |
 
 **Contact Damage:** Enemies deal damage to the hero when they overlap. Bosses and tanks hurt more; swarms and runners hurt less. If the hero dies, it respawns near the castle after 5 seconds with full HP.
 
@@ -197,7 +201,7 @@ A dual-barreled cannon that fires twice as fast as a regular cannon. Every 3-4 s
 
 ### Wave 30 Unlock
 
-#### The Titan ($750)
+#### Ariel Tower ($750)
 
 The ultimate siege weapon — a massive golden cannon with devastating splash damage. Every 3rd shot is a heavy round that shreds enemy armor and leaves burning scorch zones on the ground.
 
@@ -222,7 +226,7 @@ The ultimate siege weapon — a massive golden cannon with devastating splash da
 | **Flying** | Wings | 10 | Medium (97) | 0% | Airborne until landing — untargetable while flying | 1 |
 | **Dragon Flyer** | Wings (large) | 30 | Medium (97) | 0% | Bigger flying enemy, wave 25+, 1→8 count | 2 |
 | **Megaboss** | Octagon | 392 | Medium (58) | 25% | Waves 25-31, knockback immune, enrages when last alive | 5 |
-| **Quantum Boss** | Star | 392 | Medium-Fast (72) | 30% | Wave 32+, count capped at 6, knockback immune | 5 |
+| **Roy Boss** | Star | 392 | Medium-Fast (72) | 30% | Wave 32+, count capped at 6, knockback immune | 5 |
 
 HP scales exponentially each wave. By wave 20, enemies have roughly 161x the HP of wave 1.
 
@@ -247,7 +251,7 @@ When a wave ends, pressing N to send the next wave early earns bonus gold. The b
 
 ## Economy
 
-- **Starting gold:** 300g (same for all worlds)
+- **Starting gold:** Varies per map (300g–1200g, see Maps table)
 - **Kill rewards:** Base reward + 10% bonus
 - **Wave completion bonus:** 25 + (wave number x 6) gold
 - **Interest:** 1% of your gold at end of each wave
@@ -283,6 +287,7 @@ Set frost/deep frost towers to **First** so they slow the leading enemy. Set sni
 | WASD / Arrows | Move hero unit (Wave 14+) |
 | Q | Hero AoE stun (Wave 14+) |
 | E | Hero gold magnet (Wave 14+) |
+| Z | Hero execute — instant-kill boss (Wave 14+) |
 
 ## HUD Features
 
@@ -313,8 +318,8 @@ al more damage to the affected enemy.
 - **Deep Frost + Lightning/Super Lightning:** Frozen enemies can't move, giving chain attacks more time to bounce between targets.
 - **Missile Sniper + Deep Frost:** Freeze groups together, then splash them all with a crit missile for devastating AoE.
 - **Sniper (Strongest) + Lightning (First):** Sniper focuses the boss while lightning clears the escort wave.
-- **The Titan + Deep Frost:** Freeze enemies in place while The Titan's heavy rounds shred their armor and scorch zones burn them. The longer they're frozen, the more volleys land.
-- **The Titan + Fire Arrow:** The Titan shreds armor, Fire Arrow burn bypasses it. Together they melt even 30% armor quantum bosses — shred makes normal hits hurt more, burn ignores armor entirely.
+- **Ariel Tower + Deep Frost:** Freeze enemies in place while Ariel Tower's heavy rounds shred their armor and scorch zones burn them. The longer they're frozen, the more volleys land.
+- **Ariel Tower + Fire Arrow:** Ariel Tower shreds armor, Fire Arrow burn bypasses it. Together they melt even 30% armor Roy Bosses — shred makes normal hits hurt more, burn ignores armor entirely.
 
 ### Tower Placement Tips
 
@@ -329,6 +334,12 @@ al more damage to the affected enemy.
 
 **Serpentine Valley:** The long winding path lets you build deep, layered defenses. Focus on 2-3 killzones at the tightest corners where the path doubles back. Lightning and Super Lightning shine here because chains can jump between parallel path segments.
 
-**Split Creek:** You must cover both branches. Place deep frost at the fork to slow enemies regardless of which path they take. Build symmetric defenses, or use long-range snipers/missile snipers placed centrally to cover both routes. The lower HP multiplier (0.60x) compensates for the split coverage requirement.
+**The Citadel:** Enemies attack from all 4 edges toward the center castle. You need coverage in every direction — long-range towers (Missile Sniper, Sniper) placed near the center can cover multiple paths. The 0.42x HP multiplier compensates for the 4-way split.
 
-**The Gauntlet:** Fewer build spots means every tower placement matters. Find the longest straight segment and stack deep frost + cannon + fire arrows there. Upgrade aggressively rather than building wide. The reduced HP multiplier (0.65x) balances the shorter path length. A well-placed Missile Sniper can cover most of this short map.
+**Sky Citadel:** Dual spawn starts early (wave 10) so prepare secondary defenses sooner. The 0.80x HP and 600g starting gold give a gentler curve. Golden pathways make tower placement intuitive.
+
+**Split Creek:** Dual spawn starts at wave 2 — you're defending two lanes from the start. The 1000g starting gold helps you build both sides quickly. Focus on the convergence point where both paths meet.
+
+**The Gauntlet:** Dual spawn from wave 2 on a lava map. Full HP multiplier (1.0x) makes this a true endurance test. Build killzones at path intersections where both lanes are in range.
+
+**The Nexus:** Enemies spawn from the center and walk to 4 corner castles. You must defend all 4 exits. The 0.70x HP and 1200g starting gold help, but spreading your defenses thin is the real challenge. Place towers near the center to cover multiple paths.

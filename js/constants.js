@@ -738,7 +738,7 @@ export const TOWER_TYPES = {
         ],
     },
     titan: {
-        name: 'The Titan',
+        name: 'Ariel Tower',
         cost: 750,
         color: '#d4af37',
         splash: true,
@@ -763,7 +763,7 @@ export const WAVE_UNLOCKS = {
     15: { dualSpawn: true, color: '#e74c3c' },
     20: { towers: ['Missile Sniper'], keys: ['missilesniper'], replacesKeys: ['sniper'], color: '#6b8e23' },
     25: { towers: ['Super Lightning', 'Bi-Cannon'], keys: ['superlightning', 'bicannon'], replacesKeys: ['lightning', 'cannon'], color: '#7b3fff' },
-    30: { towers: ['The Titan'], keys: ['titan'], replacesKeys: null, color: '#d4af37' },
+    30: { towers: ['Ariel Tower'], keys: ['titan'], replacesKeys: null, color: '#d4af37' },
 };
 
 // ── Hero Definitions ──────────────────────────────────────
@@ -925,7 +925,7 @@ export const ENEMY_TYPES = {
         armor: 0.25,
     },
     quantumboss: {
-        name: 'Quantum Boss',
+        name: 'Roy Boss',
         baseHP: 392,
         speed: 72,
         reward: 500,
