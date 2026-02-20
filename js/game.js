@@ -302,12 +302,14 @@ export class Game {
     }
 
     toggleAdmin() {
-        // Admin mode only available with ?admin=1 URL parameter
-        if (!new URLSearchParams(window.location.search).has('admin')) return;
-        this.adminMode = !this.adminMode;
         if (this.adminMode) {
-            this.achievements.check('adminToggle', { on: true });
+            this.adminMode = false;
+            return;
         }
+        const pw = prompt('Enter admin password:');
+        if (pw !== 'Ytheking') return;
+        this.adminMode = true;
+        this.achievements.check('adminToggle', { on: true });
     }
 
     togglePause() {
