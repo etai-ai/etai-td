@@ -1184,6 +1184,19 @@ export const ATMOSPHERE_PRESETS = {
         postfx: { mapTint: [0.85, 0.88, 1.15], ambientDarkness: 0.25, bloomIntensity: 0.4, bloomThreshold: 0.55, vignetteStrength: 0.5 },
         lighting: { ambient: { color: 0x4444aa, intensity: 1.8 }, dir: { color: 0x6666cc, intensity: 1.2 }, fill: { color: 0x4444aa, intensity: 0.8 }, background: 0x080818, fog: { color: 0x080818, near: 800, far: 3500 } },
     },
+    bradford: {
+        name: 'Torn Layers',
+        description: 'Weathered paper collage',
+        themeColor: '#c8a050',
+        ground:  { base: [165, 140, 105], variance: 18 },
+        obstacle: { tint: '#8a7050' },
+        particles: {
+            primary:   { behavior: 'leaf', colors: ['#d4b880', '#c0a060', '#e8d0a0', '#b89860'], weight: 0.6 },
+            secondary: { behavior: 'dust', colors: ['#ff7720', '#ffaa00', '#e86010', '#cc4400'], weight: 0.4 },
+        },
+        postfx: { mapTint: [1.05, 0.97, 0.85], ambientDarkness: 0.12, bloomIntensity: 0.25, bloomThreshold: 0.65, vignetteStrength: 0.45 },
+        lighting: { ambient: { color: 0xc8a060, intensity: 2.2 }, dir: { color: 0xe8c080, intensity: 1.3 }, fill: { color: 0x886040, intensity: 0.9 }, background: 0x1a1408, fog: { color: 0x1a1408, near: 1200, far: 4200 } },
+    },
 };
 
 // ── Procedural Music ──────────────────────────────────────
