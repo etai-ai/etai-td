@@ -31,19 +31,8 @@ function dismissLoadingScreen() {
     }, 200);
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
+document.addEventListener('DOMContentLoaded', () => {
     setLoadProgress(20); // DOM ready
-
-    // CrazyGames SDK v3: init must complete before any other SDK call
-    const sdk = typeof window !== 'undefined' && window.CrazyGames?.SDK;
-    if (sdk) {
-        try {
-            await sdk.init();
-            try { sdk.game.loadingStart(); } catch {}
-        } catch { /* SDK init failed — game continues without it */ }
-    }
-
-    setLoadProgress(30); // SDK initialized
 
     const canvases = {
         terrain: document.getElementById('terrain-canvas'),
