@@ -75,6 +75,8 @@ export class Game {
 
         // Track which wave thresholds have been triggered this run
         this._triggeredThresholds = new Set();
+        // Towers pending transformation animation (filled during onWaveThreshold)
+        this._transformingTowers = [];
 
         // Store canvas references for 3D toggle visibility
         this._canvases = canvases;
@@ -387,7 +389,7 @@ export class Game {
                             t.totalInvested = newDef.cost;
                             t.level = 0;
                             t.updateStats();
-                            this.particles.spawnExplosion(t.x, t.y, newDef.color);
+                            this._transformingTowers.push(t);
                         }
                     }
                     this.refreshTerrain();
@@ -427,6 +429,17 @@ export class Game {
         }
     }
 
+    startTransformAnimations() {
+        for (let i = 0; i < this._transformingTowers.length; i++) {
+            const t = this._transformingTowers[i];
+            // Stagger: first tower starts immediately, each subsequent +0.15s
+            t.transformTimer = 1.0 + i * 0.15;
+            t._transformFlashed = false;
+            t._transformSlammed = false;
+        }
+        this._transformingTowers = [];
+    }
+
     restart() {
         // Save wave record before resetting (covers mid-wave quit)
         if (this.selectedMapId && this.waves.currentWave > 0) {
@@ -464,6 +477,7 @@ export class Game {
         this.shakeOffsetX = 0;
         this.shakeOffsetY = 0;
         this._triggeredThresholds = new Set();
+        this._transformingTowers = [];
         this.runKills = 0;
         this.damageByType = {};
         this.damageByTower = {};

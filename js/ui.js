@@ -1041,6 +1041,8 @@ export class UI {
             if (topBar) topBar.style.display = 'flex';
             if (bottomBar) bottomBar.style.display = 'flex';
             this.game._unlockScreenActive = false;
+            // Trigger tower transformation animations before resuming
+            this.game.startTransformAnimations();
             if (this.game.state === STATE.PAUSED) {
                 this.game.state = STATE.PLAYING;
                 if (this.game.music) this.game.music.resume();

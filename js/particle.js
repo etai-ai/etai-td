@@ -594,6 +594,70 @@ export class ParticleSystem {
         });
     }
 
+    spawnTransformSlam(x, y, color) {
+        // Heavy radial dust burst
+        for (let i = 0; i < 20; i++) {
+            const ang = (Math.PI * 2 * i) / 20 + randRange(-0.2, 0.2);
+            const spd = randRange(80, 180);
+            this.acquire({
+                x, y,
+                vx: Math.cos(ang) * spd,
+                vy: Math.sin(ang) * spd,
+                life: randRange(0.35, 0.6),
+                color: '#a0896a',
+                size: randRange(2, 4),
+                gravity: 200,
+            });
+        }
+        // Colored star shards flying outward
+        for (let i = 0; i < 12; i++) {
+            const ang = (Math.PI * 2 * i) / 12 + randRange(-0.3, 0.3);
+            const spd = randRange(100, 200);
+            this.acquire({
+                x, y,
+                vx: Math.cos(ang) * spd,
+                vy: Math.sin(ang) * spd,
+                life: randRange(0.4, 0.7),
+                color,
+                size: randRange(3, 6),
+                type: 'star',
+                rotation: randRange(0, Math.PI * 2),
+                rotSpeed: randRange(-12, 12),
+            });
+        }
+        // Upward sparkle fountain
+        for (let i = 0; i < 8; i++) {
+            this.acquire({
+                x: x + randRange(-6, 6),
+                y,
+                vx: randRange(-25, 25),
+                vy: randRange(-160, -100),
+                life: randRange(0.5, 0.9),
+                color: '#fff',
+                size: randRange(2, 4),
+                type: 'star',
+                rotation: randRange(0, Math.PI * 2),
+                rotSpeed: randRange(-8, 8),
+                gravity: 80,
+            });
+        }
+        // Staggered impact rings
+        this.acquire({
+            x, y, vx: 0, vy: 0,
+            life: 0.35,
+            color: '#fff',
+            size: 35,
+            type: 'ring',
+        });
+        this.acquire({
+            x, y, vx: 0, vy: 0,
+            life: 0.5,
+            color,
+            size: 50,
+            type: 'ring',
+        });
+    }
+
     spawnShatter(x, y, color, count) {
         for (let i = 0; i < count; i++) {
             const ang = (Math.PI * 2 * i) / count + randRange(-0.3, 0.3);

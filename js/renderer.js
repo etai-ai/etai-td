@@ -1510,13 +1510,131 @@ export class Renderer {
             // Per-type ambient effects (drawn behind turret, world-space)
             this.drawTowerAmbient(ctx, tower, cx, cy);
 
+            // ── Transformation animation state ──
+            let tProgress = 0;
+            let tYOff = 0;
+            let tScale = 1;
+            const transforming = tower.transformTimer > 0;
+            if (transforming) {
+                tProgress = 1.0 - Math.min(tower.transformTimer, 1.0);
+                // Y offset: lift 0-0.5, hold 0.5-0.7, slam 0.7-1.0
+                if (tProgress < 0.5) tYOff = -35 * (tProgress / 0.5);
+                else if (tProgress < 0.7) tYOff = -35;
+                else tYOff = -35 * Math.pow(1 - (tProgress - 0.7) / 0.3, 0.4); // fast slam
+                // Tower scale: grow during flash phase, snap back on slam
+                if (tProgress < 0.5) tScale = 1 + tProgress * 0.6;
+                else if (tProgress < 0.7) tScale = 1.3 + Math.sin(tProgress * 30) * 0.1;
+                else tScale = 1 + 0.3 * Math.max(0, 1 - (tProgress - 0.7) / 0.15);
+
+                // Flash trigger at progress 0.5
+                if (tProgress >= 0.5 && !tower._transformFlashed) {
+                    tower._transformFlashed = true;
+                    if (this.game.postfx.enabled) {
+                        this.game.postfx.flash(0.35, 0.3);
+                        this.game.postfx.shockwave(cx / CANVAS_W, cy / CANVAS_H, 1.0);
+                        this.game.postfx.aberration(0.7, 0.3);
+                        this.game.postfx.addFlashLight(cx, cy, 1.0, 0.9, 0.5, 0.2, 1.5, 0.4);
+                    } else {
+                        this.game.screenFlash = 0.3;
+                    }
+                    this.game.audio.playExplosion();
+                }
+                // Slam trigger at progress 0.7
+                if (tProgress >= 0.7 && !tower._transformSlammed) {
+                    tower._transformSlammed = true;
+                    this.game.particles.spawnTransformSlam(cx, cy, tower.color);
+                    this.game.triggerShake(10, 0.35);
+                    if (this.game.postfx.enabled) {
+                        this.game.postfx.shockwave(cx / CANVAS_W, cy / CANVAS_H, 0.5);
+                    }
+                }
+            }
+
+            // Energy aura during entire transformation
+            if (transforming && tProgress > 0) {
+                ctx.save();
+                // Pulsing colored glow ring that tightens
+                const auraRadius = tProgress < 0.7
+                    ? 50 - tProgress * 40
+                    : 10 + (tProgress - 0.7) / 0.3 * 15;
+                const auraPulse = 0.3 + Math.sin(tProgress * 25) * 0.15;
+                ctx.strokeStyle = tower.color;
+                ctx.lineWidth = 3;
+                ctx.globalAlpha = auraPulse;
+                ctx.beginPath();
+                ctx.arc(cx, cy + tYOff, auraRadius, 0, Math.PI * 2);
+                ctx.stroke();
+                // Inner glow fill
+                ctx.fillStyle = tower.color;
+                ctx.globalAlpha = auraPulse * 0.2;
+                ctx.beginPath();
+                ctx.arc(cx, cy + tYOff, auraRadius * 0.8, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // Spiral sparkles (drawn behind turret, during gather phase)
+            if (transforming && tProgress > 0 && tProgress < 0.55) {
+                const sparkleRadius = 60 * Math.max(0, 1 - tProgress * 2);
+                ctx.save();
+                for (let si = 0; si < 12; si++) {
+                    const sAngle = tProgress * Math.PI * 10 + (si / 12) * Math.PI * 2;
+                    const sx = cx + Math.cos(sAngle) * sparkleRadius;
+                    const sy = cy + tYOff + Math.sin(sAngle) * sparkleRadius;
+                    const sparkleSize = 3 + Math.sin(tProgress * 25 + si * 2) * 1.5;
+                    // White-hot core
+                    ctx.globalAlpha = 0.9;
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, sparkleSize, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Colored glow halo
+                    ctx.globalAlpha = 0.5;
+                    ctx.fillStyle = tower.color;
+                    ctx.beginPath();
+                    ctx.arc(sx, sy, sparkleSize * 2.5, 0, Math.PI * 2);
+                    ctx.fill();
+                    // Trailing afterimage
+                    const trailAngle = sAngle - 0.4;
+                    const trailX = cx + Math.cos(trailAngle) * (sparkleRadius + 5);
+                    const trailY = cy + tYOff + Math.sin(trailAngle) * (sparkleRadius + 5);
+                    ctx.globalAlpha = 0.25;
+                    ctx.beginPath();
+                    ctx.arc(trailX, trailY, sparkleSize * 1.5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+                ctx.restore();
+            }
+
+            // Bright energy column during flash phase (0.5-0.7)
+            if (transforming && tProgress >= 0.5 && tProgress < 0.7) {
+                const colAlpha = 1 - (tProgress - 0.5) / 0.2;
+                ctx.save();
+                ctx.globalAlpha = colAlpha * 0.6;
+                ctx.fillStyle = '#fff';
+                ctx.fillRect(cx - 4, cy + tYOff - 50, 8, 50 - tYOff);
+                ctx.globalAlpha = colAlpha * 0.3;
+                ctx.fillStyle = tower.color;
+                ctx.fillRect(cx - 10, cy + tYOff - 50, 20, 50 - tYOff);
+                ctx.restore();
+            }
+
             // 2D turret shape (skipped in 3D mode — 3D meshes have turrets)
             if (!use3D) {
             const recoilAmount = tower.recoilTimer > 0 ? (tower.recoilTimer / 0.12) * 5 : 0;
 
             ctx.save();
-            ctx.translate(cx, cy);
-            ctx.rotate(tower.turretAngle);
+            ctx.translate(cx, cy + tYOff);
+            // Scale up during transformation
+            if (transforming && tScale !== 1) {
+                ctx.scale(tScale, tScale);
+            }
+            // Override turret angle with rapid spin during transform phases 1-2
+            if (transforming && tProgress > 0 && tProgress < 0.7) {
+                ctx.rotate(tProgress * Math.PI * 16);
+            } else {
+                ctx.rotate(tower.turretAngle);
+            }
 
             const recoilShift = -recoilAmount;
 
@@ -1563,6 +1681,57 @@ export class Renderer {
 
             ctx.restore();
             } // end if (!use3D)
+
+            // Ground cracks + impact ring after slam (progress 0.7-1.0)
+            if (transforming && tProgress >= 0.7) {
+                const crackT = (tProgress - 0.7) / 0.3;
+                const crackAlpha = 1 - crackT;
+                ctx.save();
+                // Expanding impact ring
+                ctx.strokeStyle = tower.color;
+                ctx.lineWidth = 3 * crackAlpha;
+                ctx.globalAlpha = crackAlpha * 0.6;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 15 + crackT * 40, 0, Math.PI * 2);
+                ctx.stroke();
+                // White inner ring
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2 * crackAlpha;
+                ctx.globalAlpha = crackAlpha * 0.4;
+                ctx.beginPath();
+                ctx.arc(cx, cy, 10 + crackT * 25, 0, Math.PI * 2);
+                ctx.stroke();
+                // Ground crack lines
+                ctx.globalAlpha = crackAlpha * 0.85;
+                ctx.lineWidth = 2.5;
+                for (let ci = 0; ci < 8; ci++) {
+                    const cAngle = (Math.PI * 2 * ci) / 8 + ci * 0.2;
+                    const cLen = 40 + (ci % 3) * 15;
+                    // Crack grows outward with progress
+                    const growLen = cLen * Math.min(1, crackT * 3);
+                    // White-hot inner stroke
+                    ctx.strokeStyle = '#fff';
+                    ctx.globalAlpha = crackAlpha * 0.5;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    const midX = cx + Math.cos(cAngle) * growLen * 0.4 + (ci % 2 ? 4 : -4);
+                    const midY = cy + Math.sin(cAngle) * growLen * 0.4 + (ci % 2 ? -3 : 3);
+                    ctx.lineTo(midX, midY);
+                    ctx.lineTo(cx + Math.cos(cAngle) * growLen, cy + Math.sin(cAngle) * growLen);
+                    ctx.stroke();
+                    // Tower-colored outer stroke
+                    ctx.strokeStyle = tower.color;
+                    ctx.globalAlpha = crackAlpha * 0.85;
+                    ctx.lineWidth = 2.5;
+                    ctx.beginPath();
+                    ctx.moveTo(cx, cy);
+                    ctx.lineTo(midX, midY);
+                    ctx.lineTo(cx + Math.cos(cAngle) * growLen, cy + Math.sin(cAngle) * growLen);
+                    ctx.stroke();
+                }
+                ctx.restore();
+            }
 
             // Target mode label below tower
             const mode = TARGET_MODES[tower.targetMode];

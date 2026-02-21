@@ -37,6 +37,7 @@ export class Tower {
         this.glowPhase = Math.random() * Math.PI * 2;
         this.spinPhase = 0;
         this.idleTime = 0; // time without target (for idle animations)
+        this.transformTimer = 0; // >0 means transformation animation active
     }
 
     updateStats() {
@@ -137,6 +138,7 @@ export class Tower {
     update(dt, game) {
         this.cooldown -= dt;
         if (this.recoilTimer > 0) this.recoilTimer -= dt;
+        if (this.transformTimer > 0) this.transformTimer -= dt;
         this.glowPhase += dt * 3;
         this.spinPhase += dt * 4;
 
