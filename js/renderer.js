@@ -782,7 +782,7 @@ export class Renderer {
             case 'megaboss':
                 this.drawOctagon(ctx, x, y, r);
                 break;
-            case 'quantumboss':
+            case 'royboss':
                 this.drawStar(ctx, x, y, r);
                 break;
             case 'foreststalker':
@@ -881,8 +881,8 @@ export class Renderer {
                 ctx.stroke();
             }
 
-            // Quantum boss void aura
-            if (e.type === 'quantumboss' && !isDying) {
+            // Roy Boss void aura
+            if (e.type === 'royboss' && !isDying) {
                 const pulse = 0.2 + 0.12 * Math.sin(this.game.elapsedTime * 5);
                 ctx.fillStyle = `rgba(20, 0, 40, ${pulse})`;
                 ctx.beginPath();
@@ -922,9 +922,9 @@ export class Renderer {
             ctx.fill();
 
             // Bold outline on bosses so they stand out through glow
-            if (!isDying && (e.type === 'boss' || e.type === 'megaboss' || e.type === 'quantumboss')) {
+            if (!isDying && (e.type === 'boss' || e.type === 'megaboss' || e.type === 'royboss')) {
                 ctx.lineWidth = 2.5;
-                ctx.strokeStyle = e.type === 'quantumboss' ? 'rgba(160, 0, 255, 0.8)' :
+                ctx.strokeStyle = e.type === 'royboss' ? 'rgba(160, 0, 255, 0.8)' :
                                   e.type === 'megaboss' ? 'rgba(255, 80, 0, 0.8)' :
                                   'rgba(255, 215, 0, 0.7)';
                 this.drawEnemyShape(ctx, e, drawX, drawY, r);
@@ -999,7 +999,7 @@ export class Renderer {
                 ctx.beginPath();
                 ctx.arc(drawX, drawY, r * 0.4, 0, Math.PI * 2);
                 ctx.fill();
-            } else if (e.type === 'quantumboss' && !isDying) {
+            } else if (e.type === 'royboss' && !isDying) {
                 // Void tendrils — 5 rotating dark spikes
                 const rot = this.game.elapsedTime * 1.5;
                 ctx.fillStyle = 'rgba(80, 0, 160, 0.6)';

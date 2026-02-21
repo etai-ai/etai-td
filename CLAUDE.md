@@ -41,7 +41,7 @@ Open `http://localhost:8000` in a modern browser. There are no tests or linters 
 Every world is an **endless wave-based survival run**. No levels — you play until you die.
 
 - **Wave-based unlocks:** Towers, hero, and dual spawn unlock at wave thresholds mid-run via `WAVE_UNLOCKS` in constants.js
-- **HP scaling:** `getWaveHPScale(currentWave) * worldHpMultiplier * hpModifier` where `getWaveHPScale(w) = w * 1.11^w`. All maps use the same natural HP curve; `worldHpMultiplier` adjusts per-map (Citadel 0.42x, Nexus 0.70x, Creek/Gauntlet 1.0x).
+- **HP scaling:** `getWaveHPScale(currentWave) * worldHpMultiplier * hpModifier` where `getWaveHPScale(w) = w * 1.11^w`. All maps use the same natural HP curve; `worldHpMultiplier` adjusts per-map (Citadel 0.39x, Nexus 0.70x, Creek/Gauntlet 0.9x).
 - Waves 1-5: hand-crafted intro waves. Wave 6+: procedural via `generateWave()`
 - **Special wave events:** Goldrush every 10 waves (2x kill gold). Boss every 5 waves (waves 5-20), replaced by Megaboss every 2 waves at waves 25-31 (count: 1→1→2→3), replaced by Roy Boss every wave from wave 32+ (count: `min(6, floor((wave-31)*0.8))`, capped at 6). Dragon Flyers from wave 25+ (1→8 count, +1 every 3 waves)
 - **Victory screen:** At wave 35 (`VICTORY_WAVE`), a gold-themed victory screen displays stats and damage breakdown. Player can continue into endless mode or return to menu. Triggered once per run via `_victoryShown` flag
@@ -79,7 +79,7 @@ Worlds unlock sequentially — beat the previous world (reach Victory at wave 35
 | 2 | Sky Citadel | Beat Serpentine | 600g | 0.80x | 10 | 12 | Sky |
 | 3 | Split Creek | Beat Sky Citadel | 1000g | 0.9x | 2 | 6 | Desert |
 | 4 | The Gauntlet | Beat Split Creek | 1000g | 0.9x | 2 | 6 | Lava |
-| 5 | The Citadel | Beat The Gauntlet | 1000g | 0.42x | Never | 10 | Ruins |
+| 5 | The Citadel | Beat The Gauntlet | 1000g | 0.39x | Never | 10 | Ruins |
 | 6 | The Nexus | Beat The Citadel | 1200g | 0.70x | Never | 8 | Void |
 
 All maps use the same natural progression — towers, hero, and abilities unlock at the same wave thresholds regardless of map. Per-map `dualSpawnWave` controls when secondary spawning begins (`Infinity` = never). Per-map `flyingStartWave` controls when flying enemies appear. Per-map `startingGold` and `worldHpMultiplier` provide economic and difficulty tuning.
@@ -186,7 +186,7 @@ Two maps use the `multiPaths` layout system with 4 waypoint arrays instead of si
 - **Entry marker auto-detect:** Shared entry → `drawSpawnMarker()` (purple glow + red dot + directional lines), shared exit → `drawEntryMarker()` arrows at edges
 - **Flying enemies:** Spawn from castle exit(s), fly backward along a random path — works naturally with multiPaths
 - **Hero spawn:** Shared-entry maps spawn hero at `multiPaths[0][1]` (one step from center), shared-exit maps spawn near the exit
-- **Balance:** Citadel `worldHpMultiplier: 0.42`, Nexus `worldHpMultiplier: 0.70` — reduced HP to compensate for defending 4 directions
+- **Balance:** Citadel `worldHpMultiplier: 0.39`, Nexus `worldHpMultiplier: 0.70` — reduced HP to compensate for defending 4 directions
 - **3 layout variants each** with different path configurations
 
 ## Ambient Map Effects
@@ -248,12 +248,12 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 | Flying | 10 | 97 | 0% | 30g | 1 | Untargetable while airborne (110 px/s flight), scales 1→20 count over 13 waves |
 | Dragon Flyer | 30 | 97 | 0% | 100g | 2 | Wave 25+, bigger flying enemy (radius 22), 1→8 count over waves |
 | Megaboss | 392 | 58 | 25% | 400g | 5 | Waves 25-31 only (every 2 waves, count 1→3) |
-| Roy Boss | 392 | 72 | 30% | 500g | 5 | Wave 32+, every wave, count capped at 6 |
+| Roy Boss | 392 | 74 | 30% | 500g | 5 | Wave 32+, every wave, count capped at 6 |
 
 ## Late-Game Acceleration (Wave 26+)
 
 - **Exponential speed ramp:** All enemies gain `1.03^(wave-25)` speed multiplier from wave 26+. Doubles speed by wave 48. Stacks with Swift modifier and boss enrage.
-- **Roy Boss (wave 32+):** Replaces megaboss. Black star shape with void aura and rotating purple tendrils. 24% faster than megaboss (72 vs 58 base speed), 30% armor. Count = `min(6, floor((wave-31) * 0.8))`, spawning faster (0.8x boss interval) and earlier in the wave (0.3x delay). Freeze halved, knockback immune. Hero execute targets them. Contact damage multiplier: 5x.
+- **Roy Boss (wave 32+):** Replaces megaboss. Black star shape with void aura and rotating purple tendrils. 28% faster than megaboss (74 vs 58 base speed), 30% armor. Count = `min(6, floor((wave-31) * 0.8))`, spawning faster (0.8x boss interval) and earlier in the wave (0.3x delay). Freeze halved, knockback immune. Hero execute targets them. Contact damage multiplier: 5x. Internal key: `royboss`.
 - **Roy Boss schedule:** Wave 32: 1, Wave 33: 1, Wave 34: 2, Wave 35: 3, Wave 36: 4, Wave 39: 6 (cap). Softened escalation with cap at 6.
 - **Victory at wave 35:** `VICTORY_WAVE = 35`. Gold-themed victory screen with stats + damage bars. Two buttons: "Continue (Endless)" resumes, "Return to Menu" restarts. Triggered once per run.
 - **Combined effect:** Exponential speed + Roy Boss count + exponential HP scaling creates a "walls closing in" endgame.

@@ -271,7 +271,7 @@ export class WaveManager {
             });
         }
 
-        // Mega boss every 2 waves starting at 25, replaced by quantum boss at 32
+        // Mega boss every 2 waves starting at 25, replaced by Roy Boss at 32
         if (waveNum >= 25 && waveNum < 32 && (waveNum - 25) % 2 === 0) {
             const megaSchedule = [1, 1, 2, 3];
             const megaIdx = Math.floor((waveNum - 25) / 2);
@@ -284,13 +284,13 @@ export class WaveManager {
             });
         }
 
-        // Quantum boss every wave starting at 32 — escalates fast
+        // Roy Boss every wave starting at 32 — escalates fast
         if (waveNum >= 32) {
             const wavesIn = waveNum - 31; // 1 at wave 32
-            const quantumCount = Math.min(6, Math.floor(wavesIn * 0.8)); // 1,1,2,3,4,4,5,6 (capped)
+            const royCount = Math.min(6, Math.floor(wavesIn * 0.8)); // 1,1,2,3,4,4,5,6 (capped)
             groups.push({
-                type: 'quantumboss',
-                count: Math.max(1, quantumCount),
+                type: 'royboss',
+                count: Math.max(1, royCount),
                 interval: W.BOSS_INTERVAL * 0.8,
                 delay: runningDelay * 0.3,
             });

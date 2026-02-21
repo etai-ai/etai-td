@@ -381,7 +381,7 @@ export const MAP_DEFS = {
     citadel: {
         name: 'The Citadel',
         themeColor: '#7f8c8d',
-        worldHpMultiplier: 0.42,
+        worldHpMultiplier: 0.39,
         startingGold: 1000,
         dualSpawnWave: Infinity,
         flyingStartWave: 10,
@@ -664,9 +664,9 @@ export const TOWER_TYPES = {
         aura: true,
         unlockWave: 10,
         levels: [
-            { damage: 15, range: 3.0, fireRate: 1.2, slowFactor: 0.67, slowDuration: 1.2, freezeChance: 0.12, freezeDuration: 0.6 },
-            { damage: 24, range: 3.5, fireRate: 0.85, slowFactor: 0.60, slowDuration: 1.5, freezeChance: 0.15, freezeDuration: 0.8, upgradeCost: 100 },
-            { damage: 33, range: 4.0, fireRate: 0.7, slowFactor: 0.525, slowDuration: 1.8, freezeChance: 0.19, freezeDuration: 1.0, upgradeCost: 175 },
+            { damage: 15, range: 3.0, fireRate: 1.2, slowFactor: 0.657, slowDuration: 1.2, freezeChance: 0.12, freezeDuration: 0.6 },
+            { damage: 24, range: 3.5, fireRate: 0.85, slowFactor: 0.588, slowDuration: 1.5, freezeChance: 0.15, freezeDuration: 0.8, upgradeCost: 100 },
+            { damage: 33, range: 4.0, fireRate: 0.7, slowFactor: 0.515, slowDuration: 1.8, freezeChance: 0.19, freezeDuration: 1.0, upgradeCost: 175 },
         ],
     },
     lightning: {
@@ -753,12 +753,12 @@ export const TOWER_TYPES = {
         splash: true,
         unlockWave: 30,
         levels: [
-            { damage: 105, range: 6.0, fireRate: 1.37, projSpeed: 160, splashRadius: 2.5,
+            { damage: 108, range: 6.0, fireRate: 1.37, projSpeed: 160, splashRadius: 2.5,
               heavyEvery: 3, armorShred: 0.12, shredDuration: 3.0, scorchDPS: 8, scorchDuration: 2.5 },
-            { damage: 168, range: 7.0, fireRate: 1.06, projSpeed: 180, splashRadius: 3.0,
+            { damage: 173, range: 7.0, fireRate: 1.06, projSpeed: 180, splashRadius: 3.0,
               heavyEvery: 3, armorShred: 0.15, shredDuration: 3.5, scorchDPS: 12, scorchDuration: 3.0,
               upgradeCost: 400 },
-            { damage: 252, range: 8.0, fireRate: 0.76, projSpeed: 200, splashRadius: 3.5,
+            { damage: 260, range: 8.0, fireRate: 0.76, projSpeed: 200, splashRadius: 3.5,
               heavyEvery: 3, armorShred: 0.18, shredDuration: 4.0, scorchDPS: 16, scorchDuration: 3.5,
               upgradeCost: 500 },
         ],
@@ -786,7 +786,7 @@ export const HERO_STATS = {
     damage: 15,  range: 3.5,  fireRate: 0.5,  projSpeed: 350,
     // Contact damage (DPS tick every 0.5s)
     contactTick: 0.5,  contactBase: 10,
-    contactMultipliers: { grunt: 1, runner: 0.8, tank: 2, healer: 0.6, boss: 3, swarm: 0.5, wobbler: 0.3, megaboss: 4, quantumboss: 5, foreststalker: 0.8, stormherald: 0.6, sandtitan: 2, magmabrute: 1, magmafragment: 0.3, siegegolem: 2.5, voidsovereign: 1.5 },
+    contactMultipliers: { grunt: 1, runner: 0.8, tank: 2, healer: 0.6, boss: 3, swarm: 0.5, wobbler: 0.3, megaboss: 4, royboss: 5, foreststalker: 0.8, stormherald: 0.6, sandtitan: 2, magmabrute: 1, magmafragment: 0.3, siegegolem: 2.5, voidsovereign: 1.5 },
     // Respawn
     respawnDelay: 5.0,
     // Q: AoE Stun
@@ -933,10 +933,10 @@ export const ENEMY_TYPES = {
         radius: 34,
         armor: 0.25,
     },
-    quantumboss: {
+    royboss: {
         name: 'Roy Boss',
         baseHP: 392,
-        speed: 76,
+        speed: 74,
         reward: 500,
         livesCost: 5,
         color: '#0a0a0a',
@@ -1004,7 +1004,7 @@ export const ENEMY_TYPES = {
     },
     siegegolem: {
         name: 'Siege Golem',
-        baseHP: 70,
+        baseHP: 69,
         speed: 29,
         reward: 18,
         livesCost: 2,

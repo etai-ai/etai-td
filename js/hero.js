@@ -382,7 +382,7 @@ export class Hero {
         let closestDist = Infinity;
 
         for (const e of nearby) {
-            if (e.type !== 'boss' && e.type !== 'megaboss' && e.type !== 'quantumboss') continue;
+            if (e.type !== 'boss' && e.type !== 'megaboss' && e.type !== 'royboss') continue;
             const dx = e.x - this.x;
             const dy = e.y - this.y;
             const d = Math.sqrt(dx * dx + dy * dy);

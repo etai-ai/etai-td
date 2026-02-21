@@ -56,7 +56,7 @@ export class Trailer {
         }
 
         // Boss icons
-        const bossList = ['boss', 'megaboss', 'quantumboss'];
+        const bossList = ['boss', 'megaboss', 'royboss'];
         for (const type of bossList) {
             this._bossIcons[type] = this._renderEnemyIcon(type, 80);
         }
@@ -418,7 +418,7 @@ export class Trailer {
         const bossData = [
             { type: 'boss', name: 'Boss', subtitle: 'Every 5 waves', color: '#8e44ad' },
             { type: 'megaboss', name: 'Megaboss', subtitle: 'Waves 25-31', color: '#8b0000' },
-            { type: 'quantumboss', name: 'Roy Boss', subtitle: 'Wave 32+', color: '#4a0080' },
+            { type: 'royboss', name: 'Roy Boss', subtitle: 'Wave 32+', color: '#4a0080' },
         ];
 
         const cards = bossData.map((b, i) => {

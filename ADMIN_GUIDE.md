@@ -165,7 +165,7 @@ Wave 6+ are procedurally generated via `WaveManager.generateWave()` in `wave.js`
 
 | Field | Meaning |
 |-------|---------|
-| `type` | Enemy type key: `grunt`, `runner`, `tank`, `healer`, `boss`, `swarm`, `flying`, `dragonflyer`, `megaboss`, `quantumboss`, `wobbler` |
+| `type` | Enemy type key: `grunt`, `runner`, `tank`, `healer`, `boss`, `swarm`, `flying`, `dragonflyer`, `megaboss`, `royboss`, `wobbler` |
 | `count` | Number of enemies in this group |
 | `interval` | Seconds between spawns within the group |
 | `delay` | Seconds before this group starts spawning (relative to wave start) |
