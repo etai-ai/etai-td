@@ -14,27 +14,7 @@ function fitGameToViewport() {
     container.style.marginBottom = `-${naturalH * (1 - scale)}px`;
 }
 
-function setLoadProgress(pct) {
-    const fill = document.getElementById('loading-bar-fill');
-    const text = document.getElementById('loading-percent');
-    if (fill) fill.style.width = pct + '%';
-    if (text) text.textContent = Math.round(pct) + '%';
-}
-
-function dismissLoadingScreen() {
-    const screen = document.getElementById('loading-screen');
-    if (!screen) return;
-    setLoadProgress(100);
-    screen.classList.add('fade-out');
-    // Remove after transition (0.5s) + buffer, with fallback if transitionend doesn't fire
-    const remove = () => { if (screen.parentNode) screen.remove(); };
-    screen.addEventListener('transitionend', remove, { once: true });
-    setTimeout(remove, 800);
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-    setLoadProgress(20); // DOM ready
-
     const canvases = {
         terrain: document.getElementById('terrain-canvas'),
         game: document.getElementById('game-canvas'),
@@ -43,18 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
         three: document.getElementById('three-canvas'),
     };
 
-    setLoadProgress(40); // Canvases resolved
-
     const game = new Game(canvases);
-    setLoadProgress(70); // Game systems initialized
-
     game.run();
-    setLoadProgress(90); // Game loop started
-
-    // Dismiss after a short settling frame so first render completes
-    requestAnimationFrame(() => {
-        dismissLoadingScreen();
-    });
 
     // Expose for debugging
     window.game = game;
