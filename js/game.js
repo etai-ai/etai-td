@@ -29,10 +29,6 @@ const platform = (() => {
 
     if (sdk) return {
         name: 'crazygames',
-        async init() {
-            try { await sdk.init(); } catch { /* init failed — methods will no-op gracefully */ }
-        },
-        loadingStart() { try { sdk.game.loadingStart(); } catch {} },
         loadingStop() { try { sdk.game.loadingStop(); } catch {} },
         gameplayStart() { try { sdk.game.gameplayStart(); } catch {} },
         gameplayStop() { try { sdk.game.gameplayStop(); } catch {} },
@@ -49,8 +45,6 @@ const platform = (() => {
     // No SDK available (local dev, ad blocker)
     return {
         name: 'none',
-        init: resolved,
-        loadingStart: noop,
         loadingStop: noop,
         gameplayStart: noop,
         gameplayStop: noop,
@@ -133,22 +127,18 @@ export class Game {
         // Initial terrain render
         this.refreshTerrain();
 
-        // Platform SDK v3 init
-        platform.loadingStart();
-        platform.init().then(() => {
-            platform.loadingStop();
-            // Respect platform audio/chat settings
-            platform.addSettingsListener((settings) => {
-                if (settings.muteAudio !== undefined) {
-                    if (settings.muteAudio) {
-                        this.audio.mute();
-                        if (this.music) this.music.pause();
-                    } else {
-                        this.audio.unmute();
-                        if (this.music && this.state === STATE.PLAYING) this.music.resume();
-                    }
+        // Platform SDK v3 — loadingStop + settings listener (init already called in main.js)
+        platform.loadingStop();
+        platform.addSettingsListener((settings) => {
+            if (settings.muteAudio !== undefined) {
+                if (settings.muteAudio) {
+                    this.audio.mute();
+                    if (this.music) this.music.pause();
+                } else {
+                    this.audio.unmute();
+                    if (this.music && this.state === STATE.PLAYING) this.music.resume();
                 }
-            });
+            }
         });
     }
 
