@@ -818,23 +818,23 @@ export const WAVE_GEN = {
     INTERVAL_MIN: 0.22,        // floor for spawn interval
     INTERVAL_MULTI: { grunt: 1.0, runner: 1.3, tank: 0.8, healer: 1.0, boss: 0.8, swarm: 1.3, wobbler: 1.0, flying: 1.0, megaboss: 0.7, foreststalker: 1.2, stormherald: 0.9, sandtitan: 0.7, magmabrute: 1.0, magmafragment: 1.3, siegegolem: 0.6, voidsovereign: 0.7 },
     GROUP_OVERLAP: 0.5,        // next group starts at this fraction of previous
-    GROUP_GAP_MIN: 0.7,        // min gap between groups (seconds)
+    GROUP_GAP_MIN: 0.5,        // min gap between groups (seconds)
     GROUP_GAP_RANDOM: 1.0,     // random extra gap
     BOSS_INTERVAL: 4.0,        // spawn interval between bosses
     BOSS_DELAY: 1.0,           // delay after last group before boss
 };
 
 // ── Game Speed ────────────────────────────────────────────
-export const SPEED_MULTIPLIERS = { 1: 1.1, 2: 2.1, 3: 3.1 };
+export const SPEED_MULTIPLIERS = { 1: 1.1, 2: 2.1, 3: 3.1, 4: 4.1 };
 export const SPEED_MIN = 1;
-export const SPEED_MAX = 3;
+export const SPEED_MAX = 4;
 
 // ── Enemy Definitions ──────────────────────────────────────
 export const ENEMY_TYPES = {
     grunt: {
         name: 'Grunt',
         baseHP: 18,
-        speed: 70,     // px per second (+15%)
+        speed: 74,     // px per second (+20%)
         reward: 7,
         livesCost: 1,
         color: '#e74c3c',
@@ -844,7 +844,7 @@ export const ENEMY_TYPES = {
     runner: {
         name: 'Runner',
         baseHP: 6,
-        speed: 125,    // (+15%)
+        speed: 131,    // (+20%)
         reward: 6,
         livesCost: 1,
         color: '#f39c12',
@@ -854,7 +854,7 @@ export const ENEMY_TYPES = {
     tank: {
         name: 'Tank',
         baseHP: 71,
-        speed: 40,     // (+15%)
+        speed: 42,     // (+20%)
         reward: 13,
         livesCost: 2,
         color: '#2c3e50',
@@ -864,7 +864,7 @@ export const ENEMY_TYPES = {
     healer: {
         name: 'Healer',
         baseHP: 25,
-        speed: 65,     // (+15%)
+        speed: 68,     // (+20%)
         reward: 12,
         livesCost: 1,
         color: '#2ecc71',
@@ -876,7 +876,7 @@ export const ENEMY_TYPES = {
     boss: {
         name: 'Boss',
         baseHP: 332,
-        speed: 26,     // (+15%)
+        speed: 27,     // (+20%)
         reward: 207,
         livesCost: 5,
         color: '#8e44ad',
@@ -886,7 +886,7 @@ export const ENEMY_TYPES = {
     swarm: {
         name: 'Swarm',
         baseHP: 5,
-        speed: 105,    // (+15%)
+        speed: 110,    // (+20%)
         reward: 5,
         livesCost: 1,
         color: '#e67e22',
@@ -896,7 +896,7 @@ export const ENEMY_TYPES = {
     wobbler: {
         name: 'Wobbler',
         baseHP: 8,
-        speed: 29,
+        speed: 30,
         reward: 30,
         livesCost: 1,
         color: '#ff69b4',
@@ -906,7 +906,7 @@ export const ENEMY_TYPES = {
     flying: {
         name: 'Flying',
         baseHP: 10,
-        speed: 97,
+        speed: 102,
         reward: 28,
         livesCost: 1,
         color: '#9b59b6',
@@ -916,7 +916,7 @@ export const ENEMY_TYPES = {
     dragonflyer: {
         name: 'Dragon Flyer',
         baseHP: 30,
-        speed: 97,
+        speed: 102,
         reward: 100,
         livesCost: 2,
         color: '#c0392b',
@@ -926,7 +926,7 @@ export const ENEMY_TYPES = {
     megaboss: {
         name: 'Mega Boss',
         baseHP: 392,
-        speed: 58,
+        speed: 61,
         reward: 400,
         livesCost: 5,
         color: '#8b0000',
@@ -936,7 +936,7 @@ export const ENEMY_TYPES = {
     quantumboss: {
         name: 'Roy Boss',
         baseHP: 392,
-        speed: 72,
+        speed: 76,
         reward: 500,
         livesCost: 5,
         color: '#0a0a0a',
@@ -947,7 +947,7 @@ export const ENEMY_TYPES = {
     foreststalker: {
         name: 'Forest Stalker',
         baseHP: 8,
-        speed: 110,
+        speed: 116,
         reward: 7,
         livesCost: 1,
         color: '#2d6b2d',
@@ -958,7 +958,7 @@ export const ENEMY_TYPES = {
     stormherald: {
         name: 'Storm Herald',
         baseHP: 28,
-        speed: 60,
+        speed: 63,
         reward: 14,
         livesCost: 1,
         color: '#4a90d9',
@@ -971,7 +971,7 @@ export const ENEMY_TYPES = {
     sandtitan: {
         name: 'Sand Titan',
         baseHP: 71,
-        speed: 35,
+        speed: 37,
         reward: 16,
         livesCost: 2,
         color: '#c4a84a',
@@ -983,7 +983,7 @@ export const ENEMY_TYPES = {
     magmabrute: {
         name: 'Magma Brute',
         baseHP: 50,
-        speed: 55,
+        speed: 58,
         reward: 8,
         livesCost: 1,
         color: '#d4451a',
@@ -995,7 +995,7 @@ export const ENEMY_TYPES = {
     magmafragment: {
         name: 'Magma Fragment',
         baseHP: 6,
-        speed: 100,
+        speed: 105,
         reward: 3,
         livesCost: 1,
         color: '#ff6633',
@@ -1005,7 +1005,7 @@ export const ENEMY_TYPES = {
     siegegolem: {
         name: 'Siege Golem',
         baseHP: 90,
-        speed: 28,
+        speed: 29,
         reward: 18,
         livesCost: 2,
         color: '#6a6a72',
@@ -1016,7 +1016,7 @@ export const ENEMY_TYPES = {
     voidsovereign: {
         name: 'Void Sovereign',
         baseHP: 55,
-        speed: 32,
+        speed: 34,
         reward: 10,
         livesCost: 1,
         color: '#4a1a6a',

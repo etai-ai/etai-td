@@ -303,8 +303,8 @@ export class WaveManager {
         // Track time between waves for early-send bonus
         if (this.betweenWaves) {
             this.betweenWaveTimer += dt;
-            // Auto-start next wave after 5 seconds (host-only in multiplayer)
-            if (this.game.autoWave && this.betweenWaveTimer >= 5 && (!this.game.isMultiplayer || this.game.net?.isHost)) {
+            // Auto-start next wave after 3 seconds (host-only in multiplayer)
+            if (this.game.autoWave && this.betweenWaveTimer >= 3 && (!this.game.isMultiplayer || this.game.net?.isHost)) {
                 this.startNextWave();
             }
             return;

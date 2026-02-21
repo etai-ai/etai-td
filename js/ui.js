@@ -541,7 +541,7 @@ export class UI {
     }
 
     setupControls() {
-        // Speed button — cycles 1→2→3→1
+        // Speed button — cycles 1→2→3→4→1
         this.elSpeedBtn.addEventListener('click', () => {
             this.game.audio.ensureContext();
             const next = this.game.speed % SPEED_MAX + 1;
