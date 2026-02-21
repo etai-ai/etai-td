@@ -1015,15 +1015,15 @@ export const ENEMY_TYPES = {
     },
     voidsovereign: {
         name: 'Void Sovereign',
-        baseHP: 80,
+        baseHP: 55,
         speed: 32,
         reward: 10,
         livesCost: 1,
         color: '#4a1a6a',
-        radius: 24,
-        armor: 0.20,
+        radius: 20,
+        armor: 0.10,
         splitAtHalf: true,
-        splitHPFraction: 0.4,
+        splitHPFraction: 0.3,
     },
 };
 
