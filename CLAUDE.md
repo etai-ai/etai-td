@@ -313,13 +313,14 @@ Six visual themes with different ground/path/obstacle rendering:
 
 Per-map lighting darkness: Serpentine 0.25, Split Creek 0.10, Citadel 0.20, Sky Citadel 0.15, Gauntlet 0.35, Nexus 0.35. All six use procedural `seedRand(gx, gy, i)` for deterministic decoration placement.
 
-## Poki SDK Integration
+## CrazyGames SDK Integration
 
-The game integrates with the [Poki](https://poki.com) web game platform. SDK loaded via `<script>` tag in index.html. Wrapper object `poki` in game.js provides graceful fallback when SDK is unavailable (local dev, ad blockers).
+The game integrates with [CrazyGames](https://crazygames.com). SDK loaded via `<script>` tag in index.html. Unified `platform` wrapper in game.js provides graceful fallback when SDK is unavailable (local dev, ad blockers).
 
-- **Lifecycle:** `poki.init()` + `gameLoadingFinished()` on boot, `gameplayStart()` on wave start / resume, `gameplayStop()` on game over / pause
-- **Commercial breaks:** `poki.commercialBreak()` shown on restart (between runs). Audio muted during ads via `audio.mute()` / `audio.unmute()`. Restart logic split into `restart()` (triggers ad) and `_doRestart()` (actual reset, called after ad completes)
-- **Three.js bundled locally:** `js/lib/three.module.js`, `js/lib/loaders/GLTFLoader.js`, `js/lib/utils/BufferGeometryUtils.js` — no CDN requests (Poki requirement). Import map in index.html maps `"three"` and `"three/addons/"` to local paths
+- **Lifecycle:** `gameLoadingFinished()` on boot (calls `crazy.game.loadingStop()`), `gameplayStart()` on wave start / resume, `gameplayStop()` on game over / pause
+- **Commercial breaks:** `platform.commercialBreak()` shown on restart (between runs) via `crazy.ad.requestAd('midgame')`. Audio muted during ads via `audio.mute()` / `audio.unmute()`. Restart logic split into `restart()` (triggers ad) and `_doRestart()` (actual reset, called after ad completes)
+- **Victory celebration:** `platform.happytime()` called on wave 35 victory
+- **Three.js bundled locally:** `js/lib/three.module.js`, `js/lib/loaders/GLTFLoader.js`, `js/lib/utils/BufferGeometryUtils.js` — no CDN requests. Import map in index.html maps `"three"` and `"three/addons/"` to local paths
 - **GLTF model probe:** `gltf-loader.js` sends a single HEAD request before loading tower models — if no `.glb` files exist, skips all loads to avoid 404 spam
 
 ## Damage Tracking

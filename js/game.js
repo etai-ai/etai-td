@@ -21,22 +21,11 @@ import { Net, ENEMY_TYPE_IDX, IDX_ENEMY_TYPE } from './net.js';
 
 const FIXED_DT = 1 / 60; // 60 Hz physics
 
-// Unified platform SDK wrapper — auto-detects Poki or CrazyGames, no-ops otherwise
+// CrazyGames SDK wrapper — no-ops when SDK unavailable (local dev, ad blocker)
 const platform = (() => {
-    const poki = typeof PokiSDK !== 'undefined' ? PokiSDK : null;
     const crazy = typeof CrazyGames !== 'undefined' ? CrazyGames?.SDK : null;
     const noop = () => {};
     const resolved = () => Promise.resolve();
-
-    if (poki) return {
-        name: 'poki',
-        init() { return poki.init(); },
-        gameLoadingFinished() { poki.gameLoadingFinished(); },
-        gameplayStart() { poki.gameplayStart(); },
-        gameplayStop() { poki.gameplayStop(); },
-        happytime: noop,
-        commercialBreak(onStart) { return poki.commercialBreak(onStart); },
-    };
 
     if (crazy) return {
         name: 'crazygames',
@@ -141,7 +130,7 @@ export class Game {
         // Initial terrain render
         this.refreshTerrain();
 
-        // Poki SDK init
+        // Platform SDK init
         platform.init().then(() => {
             platform.gameLoadingFinished();
         });

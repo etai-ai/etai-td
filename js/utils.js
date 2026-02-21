@@ -36,7 +36,7 @@ export function hexToGL(hex) {
     ];
 }
 
-// Safe localStorage wrapper for incognito/restricted environments (Poki requirement)
+// Safe localStorage wrapper for incognito/restricted environments
 export const safeStorage = {
     getItem(key) {
         try { return localStorage.getItem(key); } catch { return null; }
