@@ -34,6 +34,18 @@
     </script>
 </head>
 <body>
+    <!-- Loading Screen (visible immediately, before JS loads) -->
+    <div id="loading-screen">
+        <div class="loading-content">
+            <div class="loading-title">Etai's Tower Defence</div>
+            <div class="loading-tagline">Prepare your defences...</div>
+            <div class="loading-bar-track">
+                <div class="loading-bar-fill" id="loading-bar-fill"></div>
+            </div>
+            <div class="loading-percent" id="loading-percent">0%</div>
+        </div>
+    </div>
+
     <div id="game-container">
         <!-- Top Info Bar -->
         <div id="top-bar">

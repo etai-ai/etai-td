@@ -1004,14 +1004,14 @@ export const ENEMY_TYPES = {
     },
     siegegolem: {
         name: 'Siege Golem',
-        baseHP: 90,
+        baseHP: 70,
         speed: 29,
         reward: 18,
         livesCost: 2,
         color: '#6a6a72',
         radius: 22,
-        armor: 0.30,
-        absorbEvery: 8,
+        armor: 0.20,
+        absorbEvery: 10,
     },
     voidsovereign: {
         name: 'Void Sovereign',
