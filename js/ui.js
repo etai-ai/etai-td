@@ -644,6 +644,15 @@ export class UI {
             this.showScreen('menu');
         });
 
+        // Trailer button
+        document.getElementById('trailer-btn')?.addEventListener('click', async () => {
+            if (!this._trailer) {
+                const { Trailer } = await import('./trailer.js');
+                this._trailer = new Trailer(this.game);
+            }
+            this._trailer.show();
+        });
+
         // Trophy buttons
         document.getElementById('trophy-btn')?.addEventListener('click', () => {
             this.buildTrophyScreen();
@@ -1340,7 +1349,7 @@ export class UI {
         if (screen) screen.classList.add('visible');
 
         // Hide/show gameplay bars — menu-child screens also hide bars
-        const onMenu = name === 'menu' || name === 'trophy' || name === 'manual' || name === 'about' || name === 'reset';
+        const onMenu = name === 'menu' || name === 'trophy' || name === 'manual' || name === 'about' || name === 'reset' || name === 'trailer';
         const topBar = document.getElementById('top-bar');
         const bottomBar = document.getElementById('bottom-bar');
         if (topBar) topBar.style.display = onMenu ? 'none' : 'flex';

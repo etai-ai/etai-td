@@ -20,7 +20,7 @@ Open `http://localhost:8000` in a modern browser. There are no tests or linters 
 
 **Fixed timestep game loop** in `game.js`: 60Hz physics decoupled from rendering. Accumulator pattern with speed multiplier (1.1x/2.1x/3.1x — note: `SPEED_MULTIPLIERS` are 1.1/2.1/3.1, not 1/2/3). Update order: screen effects → waves → enemies → hero → towers → projectiles → particles → scorchZones → wave completion check.
 
-**Module graph:** `main.js` bootstraps `Game` (game.js), which instantiates all managers. Each manager class owns its entity array. `constants.js` is the single source of truth for all tuning data — tower stats, enemy stats, wave definitions, map layouts. `utils.js` has only pure helpers. `postfx.js` owns the WebGL2 pipeline (shaders, FBOs, effect state). `renderer3d.js` loaded dynamically via `import()` to avoid breaking the game if Three.js CDN is unavailable.
+**Module graph:** `main.js` bootstraps `Game` (game.js), which instantiates all managers. Each manager class owns its entity array. `constants.js` is the single source of truth for all tuning data — tower stats, enemy stats, wave definitions, map layouts. `utils.js` has only pure helpers. `postfx.js` owns the WebGL2 pipeline (shaders, FBOs, effect state). `renderer3d.js` loaded dynamically via `import()` to avoid breaking the game if Three.js CDN is unavailable. `trailer.js` loaded dynamically via `import()` on first trailer button click — self-contained `Trailer` class with no game-loop dependency.
 
 **State machine:** MENU → PLAYING → PAUSED / GAME_OVER. No level-up transitions — each world is a single endless run. Unlock screens pause the game (STATE.PAUSED) with `_unlockScreenActive = true` flag to block manual pause toggle.
 
@@ -231,6 +231,7 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 - **Game over screen:** Milestone-style summary with map name, wave reached, new record badge, 3x2 stat grid (kills, towers, score, lives, time, gold), and Try Again button. Uses `unlock-dialog` styling via `game-over-content` container. Wave record saved per-map in localStorage on both game over and mid-wave restart.
 - **3D toggle button:** Top-right button toggles between 2D Canvas and Three.js 3D rendering (if available). Persisted in `localStorage.td_use3d`
 - **Atmosphere selector:** Menu page shows atmosphere chips below map cards. In-game badge in top bar cycles through presets.
+- **Cinematic trailer:** "Trailer" button on menu page launches an 8-scene cinematic overlay (`trailer.js`, `css/trailer.css`). Scenes showcase real game visuals (tower icons from `towerIconsLg`, enemy shapes via `drawEnemyShape()`, map previews via `drawMapPreview()`). Particle background with per-scene color palettes, letterbox + vignette overlays, auto-advance timers. Navigation: arrow keys, Space, Escape, click controls + progress dots. Loaded via dynamic `import()` on first click. Own rAF loop, separate from game loop.
 
 ## Enemy Types Reference
 
