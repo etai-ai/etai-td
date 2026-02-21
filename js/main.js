@@ -25,10 +25,11 @@ function dismissLoadingScreen() {
     const screen = document.getElementById('loading-screen');
     if (!screen) return;
     setLoadProgress(100);
-    setTimeout(() => {
-        screen.classList.add('fade-out');
-        screen.addEventListener('transitionend', () => screen.remove(), { once: true });
-    }, 200);
+    screen.classList.add('fade-out');
+    // Remove after transition (0.5s) + buffer, with fallback if transitionend doesn't fire
+    const remove = () => { if (screen.parentNode) screen.remove(); };
+    screen.addEventListener('transitionend', remove, { once: true });
+    setTimeout(remove, 800);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
