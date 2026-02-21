@@ -1,4 +1,4 @@
-import { ENEMY_TYPES, CELL, COLS, ROWS, CANVAS_W, CANVAS_H, WAVE_MODIFIERS, GOLD_RUSH_MULTIPLIER, MIDBOSS_BOUNTY, KILL_GOLD_BONUS, ARMOR_BREAK_FACTOR, getWaveHPScale } from './constants.js';
+import { ENEMY_TYPES, CELL, COLS, ROWS, CANVAS_W, CANVAS_H, WAVE_MODIFIERS, GOLD_RUSH_MULTIPLIER, KILL_GOLD_BONUS, getWaveHPScale } from './constants.js';
 
 let nextEnemyId = 0;
 
@@ -452,6 +452,7 @@ export class EnemyManager {
     constructor(game) {
         this.game = game;
         this.enemies = [];
+        this._speedRampCache = { wave: -1, mul: 1 };
         // Spatial grid for fast range queries — reuses game grid dimensions
         this.spatialGrid = null;
         this._initSpatialGrid();
@@ -474,7 +475,9 @@ export class EnemyManager {
                 this.spatialGrid[x][y].length = 0;
             }
         }
-        // Bucket each living enemy by its grid cell
+        // Bucket each living enemy by its grid cell + count alive for enrage check
+        this._aliveCount = 0;
+        this._lastBoss = null;
         for (const e of this.enemies) {
             if (e.deathTimer >= 0.35) continue; // about to be removed
             const gx = Math.floor(e.x / CELL);
@@ -483,6 +486,10 @@ export class EnemyManager {
             const cx = gx < 0 ? 0 : gx >= COLS ? COLS - 1 : gx;
             const cy = gy < 0 ? 0 : gy >= ROWS ? ROWS - 1 : gy;
             this.spatialGrid[cx][cy].push(e);
+            if (e.alive && e.deathTimer < 0) {
+                this._aliveCount++;
+                if (e.type === 'boss' || e.type === 'megaboss' || e.type === 'royboss') this._lastBoss = e;
+            }
         }
     }
 
@@ -537,17 +544,15 @@ export class EnemyManager {
         const enemy = new Enemy(typeName, hpScale, this.game.map.getEnemyPath(actualSecondary, pathIndex));
         enemy.isSecondary = actualSecondary;
         if (modifier) enemy.applyModifier(modifier);
-        // Late-game speed ramp: exponential +2% per wave starting at wave 26
+        // Late-game speed ramp: exponential +3% per wave starting at wave 26
         const wave = this.game.waves.currentWave;
         if (wave >= 26) {
-            const speedMul = Math.pow(1.03, wave - 25);
-            enemy.speed *= speedMul;
-            enemy.baseSpeed *= speedMul;
-        }
-        // Armor break wave tag — halve armor
-        if (this.game.waves.waveTag === 'armorbreak') {
-            enemy.armor *= ARMOR_BREAK_FACTOR;
-            enemy.baseArmor *= ARMOR_BREAK_FACTOR;
+            if (this._speedRampCache.wave !== wave) {
+                this._speedRampCache.wave = wave;
+                this._speedRampCache.mul = Math.pow(1.03, wave - 25);
+            }
+            enemy.speed *= this._speedRampCache.mul;
+            enemy.baseSpeed *= this._speedRampCache.mul;
         }
         this.enemies.push(enemy);
         this.game.debug.onEnemySpawn(enemy);
@@ -555,28 +560,20 @@ export class EnemyManager {
     }
 
     update(dt) {
-        // Boss/megaboss enrage: tracked via counter instead of .filter() every frame
-        let aliveCount = 0;
-        let lastBoss = null;
-        for (const e of this.enemies) {
-            if (e.alive && e.deathTimer < 0) {
-                aliveCount++;
-                if (e.type === 'boss' || e.type === 'megaboss' || e.type === 'royboss') lastBoss = e;
-            }
-        }
-        if (aliveCount === 1 && lastBoss && !lastBoss.enraged && !this.game.waves.spawning) {
-            lastBoss.enraged = true;
-            lastBoss.baseSpeed = Math.round(lastBoss.baseSpeed * 1.5);
-            lastBoss.baseArmor = Math.max(0, lastBoss.baseArmor - 0.30);
-            lastBoss.armor = Math.max(0, lastBoss.armor - 0.30);
-            this.game.particles.spawnBigFloatingText(lastBoss.x, lastBoss.y - 30, 'ENRAGED!', '#ff4444');
+        // Build spatial grid from current positions — also counts alive enemies for enrage check
+        // Used by healers below and by hero/towers/projectiles/scorch zones that query after this update
+        this.buildSpatialGrid();
+
+        // Boss/megaboss enrage: when last enemy alive (uses counts from buildSpatialGrid)
+        if (this._aliveCount === 1 && this._lastBoss && !this._lastBoss.enraged && !this.game.waves.spawning) {
+            this._lastBoss.enraged = true;
+            this._lastBoss.baseSpeed = Math.round(this._lastBoss.baseSpeed * 1.5);
+            this._lastBoss.baseArmor = Math.max(0, this._lastBoss.baseArmor - 0.30);
+            this._lastBoss.armor = Math.max(0, this._lastBoss.armor - 0.30);
+            this.game.particles.spawnBigFloatingText(this._lastBoss.x, this._lastBoss.y - 30, 'ENRAGED!', '#ff4444');
             this.game.audio.playWaveStart();
             this.game.triggerShake(5, 0.25);
         }
-
-        // Build spatial grid from current positions — used by healers below
-        // and by hero/towers/projectiles/scorch zones that query after this update
-        this.buildSpatialGrid();
 
         for (let i = this.enemies.length - 1; i >= 0; i--) {
             const e = this.enemies[i];
@@ -645,11 +642,6 @@ export class EnemyManager {
                     const goldColor = heroMulti > 1 ? '#00e5ff' : (goldMulti > 1 ? '#ffaa00' : '#ffd700');
                     this.game.particles.spawnFloatingText(e.x, e.y - 10, `+${goldReward}`, goldColor);
 
-                    // Bounty boss bonus
-                    if (e.type === 'boss' && waveTag === 'midboss') {
-                        this.game.economy.addGold(MIDBOSS_BOUNTY);
-                        this.game.particles.spawnBigFloatingText(e.x, e.y - 30, `BOUNTY +${MIDBOSS_BOUNTY}g`, '#2ecc71');
-                    }
                 }
 
                 // Type-specific death particles

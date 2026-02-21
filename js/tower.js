@@ -115,8 +115,13 @@ export class Tower {
         if (inRange.length === 0) return null;
 
         switch (TARGET_MODES[this.targetMode]) {
-            case 'First':
-                return inRange.reduce((best, e) => e.progress > best.progress ? e : best);
+            case 'First': {
+                let best = inRange[0];
+                for (let i = 1; i < inRange.length; i++) {
+                    if (inRange[i].progress > best.progress) best = inRange[i];
+                }
+                return best;
+            }
             case 'Closest': {
                 let best = inRange[0];
                 let bestDist = distance(this, best);
@@ -126,10 +131,20 @@ export class Tower {
                 }
                 return best;
             }
-            case 'Strongest':
-                return inRange.reduce((best, e) => e.hp > best.hp ? e : best);
-            case 'Weakest':
-                return inRange.reduce((best, e) => e.hp < best.hp ? e : best);
+            case 'Strongest': {
+                let best = inRange[0];
+                for (let i = 1; i < inRange.length; i++) {
+                    if (inRange[i].hp > best.hp) best = inRange[i];
+                }
+                return best;
+            }
+            case 'Weakest': {
+                let best = inRange[0];
+                for (let i = 1; i < inRange.length; i++) {
+                    if (inRange[i].hp < best.hp) best = inRange[i];
+                }
+                return best;
+            }
             default:
                 return inRange[0];
         }

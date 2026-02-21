@@ -21,27 +21,28 @@ import { Net, ENEMY_TYPE_IDX, IDX_ENEMY_TYPE } from './net.js';
 
 const FIXED_DT = 1 / 60; // 60 Hz physics
 
-// CrazyGames SDK wrapper — no-ops when SDK unavailable (local dev, ad blocker)
+// CrazyGames SDK v3 wrapper — no-ops when SDK unavailable (local dev, ad blocker)
 const platform = (() => {
-    const crazy = typeof CrazyGames !== 'undefined' ? CrazyGames?.SDK : null;
+    const sdk = typeof window !== 'undefined' && window.CrazyGames?.SDK;
     const noop = () => {};
     const resolved = () => Promise.resolve();
 
-    if (crazy) return {
+    if (sdk) return {
         name: 'crazygames',
-        init: resolved,
-        gameLoadingFinished() { crazy.game.loadingStop(); },
-        gameplayStart() { crazy.game.gameplayStart(); },
-        gameplayStop() { crazy.game.gameplayStop(); },
-        happytime() { crazy.game.happytime(); },
-        commercialBreak(onStart) {
-            return new Promise(resolve => {
-                crazy.ad.requestAd('midgame', {
-                    adStarted: () => { if (onStart) onStart(); },
-                    adFinished: resolve,
-                    adError: () => resolve(),
-                });
-            });
+        async init() {
+            try { await sdk.init(); } catch { /* init failed — methods will no-op gracefully */ }
+        },
+        loadingStart() { try { sdk.game.loadingStart(); } catch {} },
+        loadingStop() { try { sdk.game.loadingStop(); } catch {} },
+        gameplayStart() { try { sdk.game.gameplayStart(); } catch {} },
+        gameplayStop() { try { sdk.game.gameplayStop(); } catch {} },
+        happytime() { try { sdk.game.happytime(); } catch {} },
+        async commercialBreak(onStart) {
+            if (onStart) onStart();
+            try { await sdk.ad.requestAd('midgame'); } catch { /* ad error/blocked — continue */ }
+        },
+        addSettingsListener(callback) {
+            try { sdk.game.addSettingsChangeListener(callback); } catch {}
         },
     };
 
@@ -49,11 +50,13 @@ const platform = (() => {
     return {
         name: 'none',
         init: resolved,
-        gameLoadingFinished: noop,
+        loadingStart: noop,
+        loadingStop: noop,
         gameplayStart: noop,
         gameplayStop: noop,
         happytime: noop,
         commercialBreak: resolved,
+        addSettingsListener: noop,
     };
 })();
 
@@ -130,9 +133,22 @@ export class Game {
         // Initial terrain render
         this.refreshTerrain();
 
-        // Platform SDK init
+        // Platform SDK v3 init
+        platform.loadingStart();
         platform.init().then(() => {
-            platform.gameLoadingFinished();
+            platform.loadingStop();
+            // Respect platform audio/chat settings
+            platform.addSettingsListener((settings) => {
+                if (settings.muteAudio !== undefined) {
+                    if (settings.muteAudio) {
+                        this.audio.mute();
+                        if (this.music) this.music.pause();
+                    } else {
+                        this.audio.unmute();
+                        if (this.music && this.state === STATE.PLAYING) this.music.resume();
+                    }
+                }
+            });
         });
     }
 
