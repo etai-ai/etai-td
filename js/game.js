@@ -21,18 +21,52 @@ import { Net, ENEMY_TYPE_IDX, IDX_ENEMY_TYPE } from './net.js';
 
 const FIXED_DT = 1 / 60; // 60 Hz physics
 
-// Poki SDK wrapper — all calls are no-ops if SDK isn't loaded (local dev, ad blocker)
-const poki = {
-    _sdk: typeof PokiSDK !== 'undefined' ? PokiSDK : null,
-    init() { return this._sdk ? this._sdk.init() : Promise.resolve(); },
-    gameLoadingFinished() { this._sdk?.gameLoadingFinished(); },
-    gameplayStart() { this._sdk?.gameplayStart(); },
-    gameplayStop() { this._sdk?.gameplayStop(); },
-    commercialBreak(onStart) {
-        if (!this._sdk) return Promise.resolve();
-        return this._sdk.commercialBreak(onStart);
-    },
-};
+// Unified platform SDK wrapper — auto-detects Poki or CrazyGames, no-ops otherwise
+const platform = (() => {
+    const poki = typeof PokiSDK !== 'undefined' ? PokiSDK : null;
+    const crazy = typeof CrazyGames !== 'undefined' ? CrazyGames?.SDK : null;
+    const noop = () => {};
+    const resolved = () => Promise.resolve();
+
+    if (poki) return {
+        name: 'poki',
+        init() { return poki.init(); },
+        gameLoadingFinished() { poki.gameLoadingFinished(); },
+        gameplayStart() { poki.gameplayStart(); },
+        gameplayStop() { poki.gameplayStop(); },
+        happytime: noop,
+        commercialBreak(onStart) { return poki.commercialBreak(onStart); },
+    };
+
+    if (crazy) return {
+        name: 'crazygames',
+        init: resolved,
+        gameLoadingFinished() { crazy.game.loadingStop(); },
+        gameplayStart() { crazy.game.gameplayStart(); },
+        gameplayStop() { crazy.game.gameplayStop(); },
+        happytime() { crazy.game.happytime(); },
+        commercialBreak(onStart) {
+            return new Promise(resolve => {
+                crazy.ad.requestAd('midgame', {
+                    adStarted: () => { if (onStart) onStart(); },
+                    adFinished: resolve,
+                    adError: () => resolve(),
+                });
+            });
+        },
+    };
+
+    // No SDK available (local dev, ad blocker)
+    return {
+        name: 'none',
+        init: resolved,
+        gameLoadingFinished: noop,
+        gameplayStart: noop,
+        gameplayStop: noop,
+        happytime: noop,
+        commercialBreak: resolved,
+    };
+})();
 
 export class Game {
     constructor(canvases) {
@@ -108,8 +142,8 @@ export class Game {
         this.refreshTerrain();
 
         // Poki SDK init
-        poki.init().then(() => {
-            poki.gameLoadingFinished();
+        platform.init().then(() => {
+            platform.gameLoadingFinished();
         });
     }
 
@@ -254,7 +288,7 @@ export class Game {
 
         this.waves.startNextWave();
         this.ui.update();
-        poki.gameplayStart();
+        platform.gameplayStart();
     }
 
     toggle3D() {
@@ -321,11 +355,11 @@ export class Game {
             this.state = STATE.PAUSED;
             this.hero.clearMovement();
             if (this.music) this.music.pause();
-            poki.gameplayStop();
+            platform.gameplayStop();
         } else if (this.state === STATE.PAUSED) {
             this.state = STATE.PLAYING;
             if (this.music) this.music.resume();
-            poki.gameplayStart();
+            platform.gameplayStart();
         }
         this.ui.update();
     }
@@ -355,7 +389,7 @@ export class Game {
         this.audio.playGameOver();
         this.ui.update();
         this.ui.showScreen('game-over');
-        poki.gameplayStop();
+        platform.gameplayStop();
     }
 
     onWaveThreshold(wave) {
@@ -445,7 +479,7 @@ export class Game {
         if (this.selectedMapId && this.waves.currentWave > 0) {
             Economy.setWaveRecord(this.selectedMapId, this.waves.currentWave);
         }
-        poki.gameplayStop();
+        platform.gameplayStop();
 
         // Disconnect multiplayer
         if (this.isMultiplayer && this.net) {
@@ -456,7 +490,7 @@ export class Game {
         this._syncFrameCounter = 0;
 
         // Show commercial break (ad) before returning to menu
-        poki.commercialBreak(() => {
+        platform.commercialBreak(() => {
             this.audio.mute();
         }).then(() => {
             this.audio.unmute();
@@ -740,6 +774,7 @@ export class Game {
             elapsed: this.elapsedTime,
         };
         this.ui.showVictoryScreen(stats);
+        platform.happytime();
     }
 
     // ── Multiplayer ─────────────────────────────────────────

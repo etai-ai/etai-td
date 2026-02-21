@@ -232,6 +232,7 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 - **3D toggle button:** Top-right button toggles between 2D Canvas and Three.js 3D rendering (if available). Persisted in `localStorage.td_use3d`
 - **Atmosphere selector:** Menu page shows atmosphere chips below map cards. In-game badge in top bar cycles through presets.
 - **Cinematic trailer:** "Trailer" button on menu page launches an 8-scene cinematic overlay (`trailer.js`, `css/trailer.css`). Scenes showcase real game visuals (tower icons from `towerIconsLg`, enemy shapes via `drawEnemyShape()`, map previews via `drawMapPreview()`). Particle background with per-scene color palettes, letterbox + vignette overlays, auto-advance timers. Navigation: arrow keys, Space, Escape, click controls + progress dots. Loaded via dynamic `import()` on first click. Own rAF loop, separate from game loop.
+- **Loading screen:** Branded `#loading-screen` div in index.html renders immediately before JS loads. Shows game title (shimmer gradient), tagline, animated progress bar + percentage. Progress driven by `main.js`: 20% DOM ready → 40% canvases → 70% Game constructor → 90% game loop → 100% first frame. Fades out via CSS transition (0.5s), then removed from DOM. Fixed overlay at `z-index: 9999`.
 
 ## Enemy Types Reference
 
