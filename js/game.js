@@ -21,45 +21,6 @@ import { Net, ENEMY_TYPE_IDX, IDX_ENEMY_TYPE } from './net.js';
 
 const FIXED_DT = 1 / 60; // 60 Hz physics
 
-// CrazyGames SDK v3 wrapper — no-ops when SDK unavailable (local dev, ad blocker)
-const platform = (() => {
-    const sdk = typeof window !== 'undefined' && window.CrazyGames?.SDK;
-    const noop = () => {};
-    const resolved = () => Promise.resolve();
-
-    if (sdk) return {
-        name: 'crazygames',
-        _ready: false,
-        init() {
-            return sdk.init().then(() => { this._ready = true; }).catch(() => {});
-        },
-        loadingStart() { try { sdk.game.loadingStart(); } catch {} },
-        loadingStop() { try { sdk.game.loadingStop(); } catch {} },
-        gameplayStart() { try { sdk.game.gameplayStart(); } catch {} },
-        gameplayStop() { try { sdk.game.gameplayStop(); } catch {} },
-        happytime() { try { sdk.game.happytime(); } catch {} },
-        async commercialBreak(onStart) {
-            if (onStart) onStart();
-            try { await sdk.ad.requestAd('midgame'); } catch { /* ad error/blocked — continue */ }
-        },
-        addSettingsListener(callback) {
-            try { sdk.game.addSettingsChangeListener(callback); } catch {}
-        },
-    };
-
-    // No SDK available (local dev, ad blocker)
-    return {
-        name: 'none',
-        init: resolved,
-        loadingStart: noop,
-        loadingStop: noop,
-        gameplayStart: noop,
-        gameplayStop: noop,
-        happytime: noop,
-        commercialBreak: resolved,
-        addSettingsListener: noop,
-    };
-})();
 
 export class Game {
     constructor(canvases) {
@@ -134,22 +95,6 @@ export class Game {
         // Initial terrain render
         this.refreshTerrain();
 
-        // Platform SDK v3 — init, then loadingStart → loadingStop + settings listener
-        platform.init().then(() => {
-            platform.loadingStart();
-            platform.loadingStop();
-            platform.addSettingsListener((settings) => {
-                if (settings.muteAudio !== undefined) {
-                    if (settings.muteAudio) {
-                        this.audio.mute();
-                        if (this.music) this.music.pause();
-                    } else {
-                        this.audio.unmute();
-                        if (this.music && this.state === STATE.PLAYING) this.music.resume();
-                    }
-                }
-            });
-        });
     }
 
     async _init3D(canvases) {
@@ -293,7 +238,6 @@ export class Game {
 
         this.waves.startNextWave();
         this.ui.update();
-        platform.gameplayStart();
     }
 
     toggle3D() {
@@ -360,11 +304,9 @@ export class Game {
             this.state = STATE.PAUSED;
             this.hero.clearMovement();
             if (this.music) this.music.pause();
-            platform.gameplayStop();
         } else if (this.state === STATE.PAUSED) {
             this.state = STATE.PLAYING;
             if (this.music) this.music.resume();
-            platform.gameplayStart();
         }
         this.ui.update();
     }
@@ -394,7 +336,6 @@ export class Game {
         this.audio.playGameOver();
         this.ui.update();
         this.ui.showScreen('game-over');
-        platform.gameplayStop();
     }
 
     onWaveThreshold(wave) {
@@ -484,8 +425,6 @@ export class Game {
         if (this.selectedMapId && this.waves.currentWave > 0) {
             Economy.setWaveRecord(this.selectedMapId, this.waves.currentWave);
         }
-        platform.gameplayStop();
-
         // Disconnect multiplayer
         if (this.isMultiplayer && this.net) {
             this.net.disconnect();
@@ -494,13 +433,7 @@ export class Game {
         this.net = null;
         this._syncFrameCounter = 0;
 
-        // Show commercial break (ad) before returning to menu
-        platform.commercialBreak(() => {
-            this.audio.mute();
-        }).then(() => {
-            this.audio.unmute();
-            this._doRestart();
-        });
+        this._doRestart();
     }
 
     _doRestart() {
@@ -779,7 +712,6 @@ export class Game {
             elapsed: this.elapsedTime,
         };
         this.ui.showVictoryScreen(stats);
-        platform.happytime();
     }
 
     // ── Multiplayer ─────────────────────────────────────────
