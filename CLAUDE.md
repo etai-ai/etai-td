@@ -41,10 +41,10 @@ Open `http://localhost:8000` in a modern browser. There are no tests or linters 
 Every world is an **endless wave-based survival run**. No levels — you play until you die.
 
 - **Wave-based unlocks:** Towers, hero, and dual spawn unlock at wave thresholds mid-run via `WAVE_UNLOCKS` in constants.js
-- **HP scaling:** `getWaveHPScale(currentWave) * worldHpMultiplier * hpModifier` where `getWaveHPScale(w) = w * 1.11^w`. All maps use the same natural HP curve; `worldHpMultiplier` adjusts per-map (Citadel 0.39x, Nexus 0.70x, Creek/Gauntlet 0.9x).
+- **HP scaling:** `getWaveHPScale(currentWave) * worldHpMultiplier * hpModifier` where `getWaveHPScale(w) = w * 1.085^w`. All maps use the same natural HP curve; `worldHpMultiplier` adjusts per-map (Citadel 0.39x, Nexus 0.70x, Creek/Gauntlet 0.9x).
 - Waves 1-5: hand-crafted intro waves. Wave 6+: procedural via `generateWave()`
-- **Special wave events:** Goldrush every 10 waves (2x kill gold). Boss every 5 waves (waves 5-20), replaced by Megaboss every 2 waves at waves 25-31 (count: 1→1→2→3), replaced by Roy Boss every wave from wave 32+ (count: `min(6, floor((wave-31)*0.8))`, capped at 6). Dragon Flyers from wave 25+ (1→8 count, +1 every 3 waves)
-- **Victory screen:** At wave 35 (`VICTORY_WAVE`), a gold-themed victory screen displays stats and damage breakdown. Player can continue into endless mode or return to menu. Triggered once per run via `_victoryShown` flag
+- **Special wave events:** Goldrush every 10 waves (2x kill gold). Boss every 5 waves (waves 5-20), replaced by Megaboss every 2 waves at waves 25-36 (count: 1→1→2→2→3→3), replaced by Roy Boss every wave from wave 37+ (count: `min(5, floor((wave-36)*0.7))`, capped at 5). Dragon Flyers from wave 25+ (1→8 count, +1 every 4 waves)
+- **Victory screen:** At wave 40 (`VICTORY_WAVE`), a gold-themed victory screen displays stats and damage breakdown. Player can continue into endless mode or return to menu. Triggered once per run via `_victoryShown` flag
 - **Starting gold:** Per-map via `startingGold` in MAP_DEFS (Serpentine 300g, Citadel 800g, Creek/Gauntlet 1000g, Nexus 1200g)
 - **Auto-wave:** Enabled by default (`game.autoWave`), auto-starts next wave after 5s. Early-send bonus: max +30g, decays by 5g/sec waited
 - Wave record saved per map in `td_wave_record` localStorage key (JSON object `{mapId: wave}`)
@@ -62,6 +62,7 @@ Every world is an **endless wave-based survival run**. No levels — you play un
 | 20 | Missile Sniper | Sniper (auto-upgraded) |
 | 25 | Super Lightning, Bi-Cannon | Lightning, Cannon (auto-upgraded) |
 | 30 | Ariel Tower | — |
+| 33 | The Tal | Ariel Tower (auto-upgraded) |
 
 When a threshold is crossed, `onWaveThreshold()` in game.js:
 1. Collects all unlocks in a batch
@@ -71,7 +72,7 @@ When a threshold is crossed, `onWaveThreshold()` in game.js:
 
 ### World Unlock & Map Parameters
 
-Worlds unlock sequentially — beat the previous world (reach Victory at wave 35) to unlock the next. Campaign order defined in `WORLD_ORDER` array in constants.js. Unlock check in `ui.js buildMapSelect()`: previous world's wave record >= `VICTORY_WAVE` (35).
+Worlds unlock sequentially — beat the previous world (reach Victory at wave 40) to unlock the next. Campaign order defined in `WORLD_ORDER` array in constants.js. Unlock check in `ui.js buildMapSelect()`: previous world's wave record >= `VICTORY_WAVE` (40).
 
 | # | World | Unlock | Starting Gold | HP Multiplier | Dual Spawn Wave | Flying Start Wave | Environment |
 |---|-------|--------|---------------|---------------|-----------------|-------------------|-------------|
@@ -92,8 +93,8 @@ Burn damage bypasses armor entirely — applied directly to HP in `enemy.update(
 ### Scorch Zones (Bi-Cannon Heavy Rounds)
 Heavy rounds from Bi-Cannon create persistent ground AoE zones (orange glow). Damage bypasses armor like burn. Zones stored in `game.scorchZones[]` array, updated in `game.updateScorchZones(dt)`. Visual rendered as glowing circles on game canvas. Duration 2-3s, DPS 6-14 depending on tower level.
 
-### Armor Shred (Bi-Cannon & Titan Heavy Rounds)
-Stacking debuff (max 3 stacks). Each stack reduces enemy armor by `shredAmount` (10%-18%). Only shreds with amount ≥ current shred amount add stacks — weaker shreds are ignored. Applied via `enemy.applyArmorShred(amount, duration)`. Formula: `armor = baseArmor - shredAmount * stacks` (max 3 stacks). Both Bi-Cannon and Titan fire heavy rounds every Nth shot (`heavyEvery`), which apply armor shred and leave scorch zones.
+### Armor Shred (Bi-Cannon, Ariel Tower & The Tal Heavy Rounds)
+Stacking debuff (max 3 stacks). Each stack reduces enemy armor by `shredAmount` (10%-24%). Only shreds with amount ≥ current shred amount add stacks — weaker shreds are ignored. Applied via `enemy.applyArmorShred(amount, duration)`. Formula: `armor = baseArmor - shredAmount * stacks` (max 3 stacks). Bi-Cannon, Ariel Tower, and The Tal fire heavy rounds every Nth shot (`heavyEvery`), which apply armor shred and leave scorch zones.
 
 ## Admin/Debug Mode
 
@@ -144,7 +145,7 @@ Larger, tougher flying enemies that appear every wave from wave 25 onward. Same 
 - Flight: same sine-wave path as flying, but 60px peak altitude (vs 40px for regular flyers)
 - Visual: same wing shape as flying (`drawWing()`) but bigger and red, with orange wing/body outlines for definition
 - 3D: uses same `flyingBody()` mesh factory as flying enemy
-- **Count scaling:** `Math.min(8, 1 + Math.floor((waveNum - 25) / 3))` — 1 at wave 25, +1 every 3 waves, max 8
+- **Count scaling:** `Math.min(8, 1 + Math.floor((waveNum - 25) / 4))` — 1 at wave 25, +1 every 4 waves, max 8
 - Spawn interval: 1.2s between spawns (vs 0.8s for regular flyers)
 - Always uses primary path (like regular flyers)
 
@@ -205,7 +206,7 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 - Hero WASD keys conflict with admin hotkeys (W=wave, D=download) when admin mode is active
 - PostFX canvas textures need `UNPACK_FLIP_Y_WEBGL = true` or the image renders upside-down
 - Screen flash in `renderer.js` is gated behind `!postfx.enabled` — the PostFX shader handles flash when active
-- Heavy rounds (`heavyEvery`) now work for any tower with that stat (not just dualBarrel) — Titan uses this for shred + scorch
+- Heavy rounds (`heavyEvery`) now work for any tower with that stat (not just dualBarrel) — Ariel Tower and The Tal use this for shred + scorch
 - Flying enemies (`e.flying`) must be skipped in ALL targeting/damage loops — `findTarget`, `getEnemiesInRange`, `doSplash`, `findChainTarget`, `doForkChain`, `updateScorchZones`, `checkContactDamage`. Check pattern: `if (!e.alive || e.flying) continue;`
 - `_nextWaveCache` in wave.js must be cleared before `startNextWave()` when jumping waves (e.g. `adminSetWave`)
 - Tower icon cache (`towerIconsLg`) is pre-generated for ALL tower types on first `setupTowerPanel()` call — needed for unlock screen
@@ -227,7 +228,7 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 - **Kill counter badge:** Real-time kill count (`game.runKills`) displayed in top bar's info-items section. Reset per run. Incremented in enemy.js on kill.
 - **Wave milestone banners:** Every 10 waves (10, 20, 30...) shows a milestone-style congratulations screen with stats (kills, towers, lives, gold, time, record) and featured tower icon. Pauses game via `_unlockScreenActive`. Fires in `onWaveComplete()` after wave rewards.
 - **Personal best notification:** When beating a previous wave record, shows "NEW RECORD!" floating text with PostFX flash + shockwave. Checked in `onWaveComplete()` before `Economy.setWaveRecord()`.
-- **Victory screen (wave 35):** Gold-themed "VICTORY!" screen with map name, stats grid (kills, towers, score, lives, time, gold), and damage by type bars. Two buttons: "Continue (Endless)" to keep playing, "Return to Menu" to restart. Uses `victory-screen`/`victory-content` HTML divs. Celebration effects: shake, flash, shockwave, aberration. `_victoryShown` flag prevents repeat.
+- **Victory screen (wave 40):** Gold-themed "VICTORY!" screen with map name, stats grid (kills, towers, score, lives, time, gold), and damage by type bars. Two buttons: "Continue (Endless)" to keep playing, "Return to Menu" to restart. Uses `victory-screen`/`victory-content` HTML divs. Celebration effects: shake, flash, shockwave, aberration. `_victoryShown` flag prevents repeat.
 - **Game over screen:** Milestone-style summary with map name, wave reached, new record badge, 3x2 stat grid (kills, towers, score, lives, time, gold), and Try Again button. Uses `unlock-dialog` styling via `game-over-content` container. Wave record saved per-map in localStorage on both game over and mid-wave restart.
 - **3D toggle button:** Top-right button toggles between 2D Canvas and Three.js 3D rendering (if available). Persisted in `localStorage.td_use3d`
 - **Atmosphere selector:** Menu page shows atmosphere chips below map cards. In-game badge in top bar cycles through presets.
@@ -247,15 +248,16 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 | Wobbler | 8 | 29 | 0% | 30g | 1 | Secondary-path intro enemy (waves 16-20) |
 | Flying | 10 | 97 | 0% | 30g | 1 | Untargetable while airborne (110 px/s flight), scales 1→20 count over 13 waves |
 | Dragon Flyer | 30 | 97 | 0% | 100g | 2 | Wave 25+, bigger flying enemy (radius 22), 1→8 count over waves |
-| Megaboss | 392 | 58 | 25% | 400g | 5 | Waves 25-31 only (every 2 waves, count 1→3) |
-| Roy Boss | 392 | 74 | 30% | 500g | 5 | Wave 32+, every wave, count capped at 6 |
+| Megaboss | 392 | 58 | 25% | 400g | 5 | Waves 25-36 only (every 2 waves, count 1→3) |
+| Roy Boss | 392 | 74 | 30% | 500g | 5 | Wave 37+, every wave, count capped at 5 |
 
 ## Late-Game Acceleration (Wave 26+)
 
-- **Exponential speed ramp:** All enemies gain `1.03^(wave-25)` speed multiplier from wave 26+. Doubles speed by wave 48. Stacks with Swift modifier and boss enrage.
-- **Roy Boss (wave 32+):** Replaces megaboss. Black star shape with void aura and rotating purple tendrils. 28% faster than megaboss (74 vs 58 base speed), 30% armor. Count = `min(6, floor((wave-31) * 0.8))`, spawning faster (0.8x boss interval) and earlier in the wave (0.3x delay). Freeze halved, knockback immune. Hero execute targets them. Contact damage multiplier: 5x. Internal key: `royboss`.
-- **Roy Boss schedule:** Wave 32: 1, Wave 33: 1, Wave 34: 2, Wave 35: 3, Wave 36: 4, Wave 39: 6 (cap). Softened escalation with cap at 6.
-- **Victory at wave 35:** `VICTORY_WAVE = 35`. Gold-themed victory screen with stats + damage bars. Two buttons: "Continue (Endless)" resumes, "Return to Menu" restarts. Triggered once per run.
+- **Exponential speed ramp:** All enemies gain `1.02^(wave-25)` speed multiplier from wave 26+. Doubles speed by ~wave 60. Stacks with Swift modifier and boss enrage.
+- **Roy Boss (wave 37+):** Replaces megaboss. Black star shape with void aura and rotating purple tendrils. 28% faster than megaboss (74 vs 58 base speed), 30% armor. Count = `min(5, floor((wave-36) * 0.7))`, spawning faster (0.8x boss interval) and earlier in the wave (0.3x delay). Freeze halved, knockback immune. Hero execute targets them. Contact damage multiplier: 5x. Internal key: `royboss`.
+- **Roy Boss schedule:** Wave 37: 1, Wave 38: 1, Wave 39: 2, Wave 40: 2, Wave 41: 3, capped at 5. Gradual escalation.
+- **Megaboss phase (waves 25-36):** Every 2 waves, count schedule: 1, 1, 2, 2, 3, 3.
+- **Victory at wave 40:** `VICTORY_WAVE = 40`. Gold-themed victory screen with stats + damage bars. Two buttons: "Continue (Endless)" resumes, "Return to Menu" restarts. Triggered once per run.
 - **Combined effect:** Exponential speed + Roy Boss count + exponential HP scaling creates a "walls closing in" endgame.
 
 ## Wave Modifiers (Wave 3+)
