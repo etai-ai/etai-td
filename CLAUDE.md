@@ -41,7 +41,7 @@ Open `http://localhost:8000` in a modern browser. There are no tests or linters 
 Every world is an **endless wave-based survival run**. No levels — you play until you die.
 
 - **Wave-based unlocks:** Towers, hero, and dual spawn unlock at wave thresholds mid-run via `WAVE_UNLOCKS` in constants.js
-- **HP scaling:** `getWaveHPScale(currentWave) * worldHpMultiplier * hpModifier` where `getWaveHPScale(w) = w * 1.085^w`. All maps use the same natural HP curve; `worldHpMultiplier` adjusts per-map (Citadel 0.39x, Nexus 0.70x, Creek/Gauntlet 0.9x).
+- **HP scaling:** `getWaveHPScale(currentWave) * worldHpMultiplier * hpModifier` where `getWaveHPScale(w) = w * 1.086^w`. All maps use the same natural HP curve; `worldHpMultiplier` adjusts per-map (Citadel 0.39x, Nexus 0.70x, Creek/Gauntlet 0.9x).
 - Waves 1-5: hand-crafted intro waves. Wave 6+: procedural via `generateWave()`
 - **Special wave events:** Goldrush every 10 waves (2x kill gold). Boss every 5 waves (waves 5-20), replaced by Megaboss every 2 waves at waves 25-36 (count: 1→1→2→2→3→3), replaced by Roy Boss every wave from wave 37+ (count: `min(5, floor((wave-36)*0.7))`, capped at 5). Dragon Flyers from wave 25+ (1→8 count, +1 every 4 waves)
 - **Victory screen:** At wave 40 (`VICTORY_WAVE`), a gold-themed victory screen displays stats and damage breakdown. Player can continue into endless mode or return to menu. Triggered once per run via `_victoryShown` flag
@@ -253,7 +253,7 @@ Per-environment animated particles drawn on the game canvas (ground layer, befor
 
 ## Late-Game Acceleration (Wave 26+)
 
-- **Exponential speed ramp:** All enemies gain `1.02^(wave-25)` speed multiplier from wave 26+. Doubles speed by ~wave 60. Stacks with Swift modifier and boss enrage.
+- **Exponential speed ramp:** All enemies gain `1.021^(wave-25)` speed multiplier from wave 26+. Stacks with Swift modifier and boss enrage.
 - **Roy Boss (wave 37+):** Replaces megaboss. Black star shape with void aura and rotating purple tendrils. 28% faster than megaboss (74 vs 58 base speed), 30% armor. Count = `min(5, floor((wave-36) * 0.7))`, spawning faster (0.8x boss interval) and earlier in the wave (0.3x delay). Freeze halved, knockback immune. Hero execute targets them. Contact damage multiplier: 5x. Internal key: `royboss`.
 - **Roy Boss schedule:** Wave 37: 1, Wave 38: 1, Wave 39: 2, Wave 40: 2, Wave 41: 3, capped at 5. Gradual escalation.
 - **Megaboss phase (waves 25-36):** Every 2 waves, count schedule: 1, 1, 2, 2, 3, 3.

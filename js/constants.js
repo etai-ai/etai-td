@@ -766,7 +766,7 @@ export const TOWER_TYPES = {
     },
     thetal: {
         name: 'The Tal',
-        cost: 960,
+        cost: 1056,
         color: '#e01050',
         splash: true,
         unlockWave: 33,
@@ -775,10 +775,10 @@ export const TOWER_TYPES = {
               heavyEvery: 2, armorShred: 0.16, shredDuration: 3.5, scorchDPS: 14, scorchDuration: 3.0 },
             { damage: 350, range: 8.5, fireRate: 0.82, projSpeed: 230, splashRadius: 3.5,
               heavyEvery: 2, armorShred: 0.20, shredDuration: 4.0, scorchDPS: 20, scorchDuration: 3.5,
-              upgradeCost: 520 },
+              upgradeCost: 572 },
             { damage: 520, range: 9.5, fireRate: 0.58, projSpeed: 260, splashRadius: 4.0,
               heavyEvery: 2, armorShred: 0.24, shredDuration: 4.5, scorchDPS: 28, scorchDuration: 4.0,
-              upgradeCost: 720 },
+              upgradeCost: 792 },
         ],
     },
 };
@@ -1072,8 +1072,8 @@ export const MAX_PARTICLES = 500;
 
 // ── HP Scaling ─────────────────────────────────────────────
 export function getWaveHPScale(wave) {
-    // Wave 1≈1.09, Wave 10≈22.4, Wave 20≈103, Wave 40≈1029
-    return wave * Math.pow(1.085, wave);
+    // Wave 1≈1.09, Wave 10≈22.7, Wave 20≈107, Wave 40≈1070
+    return wave * Math.pow(1.086, wave);
 }
 
 // ── Wave Modifiers ────────────────────────────────────────
