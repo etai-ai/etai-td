@@ -226,6 +226,9 @@ export class Tower {
         } else if (this.type === 'titan') {
             game.particles.spawnMuzzleFlash(muzzleX, muzzleY, isHeavy ? '#ff4400' : '#ffd700', isHeavy ? 10 : 8);
             game.triggerShake(isHeavy ? 7 : 5, isHeavy ? 0.3 : 0.25);
+        } else if (this.type === 'thetal') {
+            game.particles.spawnMuzzleFlash(muzzleX, muzzleY, isHeavy ? '#ff0033' : '#e01050', isHeavy ? 12 : 9);
+            game.triggerShake(isHeavy ? 9 : 6, isHeavy ? 0.35 : 0.28);
         }
     }
 

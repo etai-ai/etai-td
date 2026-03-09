@@ -436,6 +436,7 @@ export class UI {
             case 'bicannon': this.game.renderer.drawBiCannonTurret(ctx, 0, fake); break;
             case 'missilesniper': this.game.renderer.drawMissileSniperTurret(ctx, 0, fake); break;
             case 'titan': ctx.translate(-4, 0); this.game.renderer.drawTitanTurret(ctx, 0, fake); break;
+            case 'thetal': ctx.translate(-4, 0); this.game.renderer.drawTheTalTurret(ctx, 0, fake); break;
         }
 
         ctx.restore();
@@ -478,6 +479,7 @@ export class UI {
             case 'bicannon': this.game.renderer.drawBiCannonTurret(ctx, 0, fake); break;
             case 'missilesniper': this.game.renderer.drawMissileSniperTurret(ctx, 0, fake); break;
             case 'titan': ctx.translate(-4, 0); this.game.renderer.drawTitanTurret(ctx, 0, fake); break;
+            case 'thetal': ctx.translate(-4, 0); this.game.renderer.drawTheTalTurret(ctx, 0, fake); break;
         }
 
         ctx.restore();
@@ -507,6 +509,7 @@ export class UI {
             firearrow: `Burns for ${stats.burnDamage} dmg/s (${stats.burnDuration}s)`,
             missilesniper: `Homing missiles, splash ${stats.splashRadius}, ${(stats.critChance * 100).toFixed(0)}% crit ${stats.critMulti}x`,
             titan: `Splash ${stats.splashRadius}, shred + scorch every ${stats.heavyEvery} shots`,
+            thetal: `Splash ${stats.splashRadius}, heavy every ${stats.heavyEvery} shots, ${(stats.armorShred * 100).toFixed(0)}% shred + scorch`,
         };
 
         let lockHTML = '';
@@ -998,6 +1001,7 @@ export class UI {
                     else if (def.missile) special = `Homing missiles, splash + ${(stats.critChance * 100).toFixed(0)}% crit`;
                     else if (stats.knockbackDist) special = `Splash + knockback ${stats.knockbackDist} cells`;
                     else if (key === 'titan') special = `Massive splash + armor shred + scorch`;
+                    else if (key === 'thetal') special = `Devastating splash + heavy shred + scorch`;
                     else if (stats.splashRadius) special = `Splash radius ${stats.splashRadius}`;
                     else if (stats.chainCount) special = `Chains to ${stats.chainCount} enemies`;
 
@@ -1082,7 +1086,7 @@ export class UI {
         const timeStr = `${mins}:${secs.toString().padStart(2, '0')}`;
 
         // Pick a featured tower icon for this milestone
-        const milestoneTowers = { 10: 'firearrow', 20: 'missilesniper', 30: 'titan', 40: 'superlightning', 50: 'bicannon' };
+        const milestoneTowers = { 10: 'firearrow', 20: 'missilesniper', 30: 'thetal', 40: 'superlightning', 50: 'bicannon' };
         const featuredKey = milestoneTowers[wave] || 'firearrow';
         const iconSrc = this.towerIconsLg?.[featuredKey] || '';
         const towerDef = TOWER_TYPES[featuredKey];

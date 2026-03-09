@@ -17,9 +17,9 @@ export const STATE = {
     VICTORY: 'VICTORY',
 };
 
-export const VICTORY_WAVE = 35;
+export const VICTORY_WAVE = 40;
 
-// Campaign unlock order — each world unlocks after beating (wave 35) the previous one
+// Campaign unlock order — each world unlocks after beating (wave 40) the previous one
 export const WORLD_ORDER = ['serpentine', 'skyislands', 'splitcreek', 'gauntlet', 'citadel', 'nexus'];
 
 // ── Cell Types ─────────────────────────────────────────────
@@ -752,6 +752,7 @@ export const TOWER_TYPES = {
         color: '#d4af37',
         splash: true,
         unlockWave: 30,
+        maxWave: 32,
         levels: [
             { damage: 108, range: 6.0, fireRate: 1.37, projSpeed: 160, splashRadius: 2.5,
               heavyEvery: 3, armorShred: 0.12, shredDuration: 3.0, scorchDPS: 8, scorchDuration: 2.5 },
@@ -761,6 +762,23 @@ export const TOWER_TYPES = {
             { damage: 260, range: 8.0, fireRate: 0.76, projSpeed: 200, splashRadius: 3.5,
               heavyEvery: 3, armorShred: 0.18, shredDuration: 4.0, scorchDPS: 16, scorchDuration: 3.5,
               upgradeCost: 500 },
+        ],
+    },
+    thetal: {
+        name: 'The Tal',
+        cost: 960,
+        color: '#e01050',
+        splash: true,
+        unlockWave: 33,
+        levels: [
+            { damage: 220, range: 7.5, fireRate: 1.1, projSpeed: 200, splashRadius: 3.0,
+              heavyEvery: 2, armorShred: 0.16, shredDuration: 3.5, scorchDPS: 14, scorchDuration: 3.0 },
+            { damage: 350, range: 8.5, fireRate: 0.82, projSpeed: 230, splashRadius: 3.5,
+              heavyEvery: 2, armorShred: 0.20, shredDuration: 4.0, scorchDPS: 20, scorchDuration: 3.5,
+              upgradeCost: 520 },
+            { damage: 520, range: 9.5, fireRate: 0.58, projSpeed: 260, splashRadius: 4.0,
+              heavyEvery: 2, armorShred: 0.24, shredDuration: 4.5, scorchDPS: 28, scorchDuration: 4.0,
+              upgradeCost: 720 },
         ],
     },
 };
@@ -773,6 +791,7 @@ export const WAVE_UNLOCKS = {
     20: { towers: ['Missile Sniper'], keys: ['missilesniper'], replacesKeys: ['sniper'], color: '#6b8e23' },
     25: { towers: ['Super Lightning', 'Bi-Cannon'], keys: ['superlightning', 'bicannon'], replacesKeys: ['lightning', 'cannon'], color: '#7b3fff' },
     30: { towers: ['Ariel Tower'], keys: ['titan'], replacesKeys: null, color: '#d4af37' },
+    33: { towers: ['The Tal'], keys: ['thetal'], replacesKeys: ['titan'], color: '#e01050' },
 };
 
 // ── Hero Definitions ──────────────────────────────────────
@@ -1053,8 +1072,8 @@ export const MAX_PARTICLES = 500;
 
 // ── HP Scaling ─────────────────────────────────────────────
 export function getWaveHPScale(wave) {
-    // Wave 1≈1.11, Wave 10≈28.3, Wave 20≈161
-    return wave * Math.pow(1.11, wave);
+    // Wave 1≈1.09, Wave 10≈22.4, Wave 20≈103, Wave 40≈1029
+    return wave * Math.pow(1.085, wave);
 }
 
 // ── Wave Modifiers ────────────────────────────────────────
@@ -1093,6 +1112,7 @@ export const TOWER_LIGHT_DEFS = {
     sniper:         { radius: 0.04, intensity: 0.30 },
     missilesniper:  { radius: 0.07, intensity: 0.45 },
     titan:          { radius: 0.08, intensity: 0.50 },
+    thetal:         { radius: 0.10, intensity: 0.60 },
 };
 
 // ── Atmosphere Presets ──────────────────────────────────

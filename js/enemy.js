@@ -544,12 +544,12 @@ export class EnemyManager {
         const enemy = new Enemy(typeName, hpScale, this.game.map.getEnemyPath(actualSecondary, pathIndex));
         enemy.isSecondary = actualSecondary;
         if (modifier) enemy.applyModifier(modifier);
-        // Late-game speed ramp: exponential +3% per wave starting at wave 26
+        // Late-game speed ramp: exponential +2% per wave starting at wave 26
         const wave = this.game.waves.currentWave;
         if (wave >= 26) {
             if (this._speedRampCache.wave !== wave) {
                 this._speedRampCache.wave = wave;
-                this._speedRampCache.mul = Math.pow(1.03, wave - 25);
+                this._speedRampCache.mul = Math.pow(1.02, wave - 25);
             }
             enemy.speed *= this._speedRampCache.mul;
             enemy.baseSpeed *= this._speedRampCache.mul;

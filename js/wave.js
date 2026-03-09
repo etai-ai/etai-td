@@ -211,9 +211,9 @@ export class WaveManager {
             const flyCount = Math.min(20, 1 + Math.round((waveNum - flyStart) * 19 / 13));
             def.push({ type: 'flying', count: flyCount, interval: 0.8, delay: 0 });
         }
-        // Dragon Flyers from wave 25+: 1 at wave 25, +1 every 3 waves, max 8
+        // Dragon Flyers from wave 25+: 1 at wave 25, +1 every 4 waves, max 8
         if (waveNum >= 25) {
-            const dragonCount = Math.min(8, 1 + Math.floor((waveNum - 25) / 3));
+            const dragonCount = Math.min(8, 1 + Math.floor((waveNum - 25) / 4));
             def.push({ type: 'dragonflyer', count: dragonCount, interval: 1.2, delay: 0.5 });
         }
         return def;
@@ -271,9 +271,9 @@ export class WaveManager {
             });
         }
 
-        // Mega boss every 2 waves starting at 25, replaced by Roy Boss at 32
-        if (waveNum >= 25 && waveNum < 32 && (waveNum - 25) % 2 === 0) {
-            const megaSchedule = [1, 1, 2, 3];
+        // Mega boss every 2 waves starting at 25, replaced by Roy Boss at 37
+        if (waveNum >= 25 && waveNum < 37 && (waveNum - 25) % 2 === 0) {
+            const megaSchedule = [1, 1, 2, 2, 3, 3];
             const megaIdx = Math.floor((waveNum - 25) / 2);
             const megaCount = megaIdx < megaSchedule.length ? megaSchedule[megaIdx] : 3;
             groups.push({
@@ -284,10 +284,10 @@ export class WaveManager {
             });
         }
 
-        // Roy Boss every wave starting at 32 — escalates fast
-        if (waveNum >= 32) {
-            const wavesIn = waveNum - 31; // 1 at wave 32
-            const royCount = Math.min(6, Math.floor(wavesIn * 0.8)); // 1,1,2,3,4,4,5,6 (capped)
+        // Roy Boss every wave starting at 37 — gradual escalation
+        if (waveNum >= 37) {
+            const wavesIn = waveNum - 36; // 1 at wave 37
+            const royCount = Math.min(5, Math.floor(wavesIn * 0.7));
             groups.push({
                 type: 'royboss',
                 count: Math.max(1, royCount),
@@ -488,7 +488,7 @@ export class WaveManager {
             }
         }
 
-        // Victory screen at wave 35
+        // Victory screen at wave 40
         if (this.currentWave === VICTORY_WAVE && !this.game._victoryShown) {
             this.game.showVictory();
             return;

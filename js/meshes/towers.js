@@ -197,6 +197,22 @@ function getTowerGeo(type) {
             geo = { body: new THREE.LatheGeometry(pts, 8) };
             break;
         }
+        case 'thetal': {
+            // Wider, more angular fortress body
+            const pts = [
+                new THREE.Vector2(0, 0),
+                new THREE.Vector2(1.15, 0),
+                new THREE.Vector2(1.2, 0.1),
+                new THREE.Vector2(1.0, 0.25),
+                new THREE.Vector2(0.95, 0.5),
+                new THREE.Vector2(0.75, 0.7),
+                new THREE.Vector2(0.5, 0.85),
+                new THREE.Vector2(0.25, 0.95),
+                new THREE.Vector2(0, 1.0),
+            ];
+            geo = { body: new THREE.LatheGeometry(pts, 10) };
+            break;
+        }
     }
     if (geo) _towerGeoCache.set(type, geo);
     return geo;
@@ -450,6 +466,37 @@ function titanTurret(color) {
     return turret;
 }
 
+function theTalTurret(color) {
+    const g = getGeo();
+    const tg = getTowerGeo('thetal');
+    const turret = new THREE.Group();
+    const c = new THREE.Color(color);
+    // Wider fortress body with crimson emissive
+    turret.add(mesh(tg.body, mat(c, { emissive: c, emissiveIntensity: 0.4, roughness: 0.2, metalness: 0.35 }), {
+        sx: 13, sy: 15, sz: 13, py: H * 0.08,
+    }));
+    // Dual barrels — crimson metallic
+    turret.add(mesh(g.cyl, mat(0xe01050, { metalness: 0.45, emissive: 0x5a0a20, emissiveIntensity: 0.3 }), {
+        sx: 4, sy: 20, sz: 4, py: H * 0.5, rx: Math.PI / 2, pz: 10, px: 4,
+    }));
+    turret.add(mesh(g.cyl, mat(0xe01050, { metalness: 0.45, emissive: 0x5a0a20, emissiveIntensity: 0.3 }), {
+        sx: 4, sy: 20, sz: 4, py: H * 0.5, rx: Math.PI / 2, pz: 10, px: -4,
+    }));
+    // Torus ring emitter at barrel tip — crimson
+    turret.add(mesh(g.torus, mat(0xff3060, { emissive: 0xe01050, emissiveIntensity: 0.7 }), {
+        sx: 8, sy: 8, sz: 8, pz: 20, py: H * 0.5,
+    }));
+    // 5 orbiting crimson crystal shards
+    for (let i = 0; i < 5; i++) {
+        const angle = (Math.PI * 2 * i) / 5;
+        turret.add(mesh(g.oct, mat(0xff3060, { emissive: 0xe01050, emissiveIntensity: 0.55 }), {
+            sx: 2.5, sy: 3, sz: 2.5,
+            px: Math.cos(angle) * 11, py: H * 0.75, pz: Math.sin(angle) * 11,
+        }));
+    }
+    return turret;
+}
+
 // ── Factory map ───────────────────────────────────────────────
 const TURRET_FACTORY = {
     arrow: arrowTurret,
@@ -463,6 +510,7 @@ const TURRET_FACTORY = {
     sniper: sniperTurret,
     missilesniper: misslesniperTurret,
     titan: titanTurret,
+    thetal: theTalTurret,
 };
 
 // ── GLTF tower creation ───────────────────────────────────────

@@ -1672,6 +1672,9 @@ export class Renderer {
                 case 'titan':
                     this.drawTitanTurret(ctx, recoilShift, tower);
                     break;
+                case 'thetal':
+                    this.drawTheTalTurret(ctx, recoilShift, tower);
+                    break;
                 default:
                     ctx.fillStyle = tower.color;
                     ctx.fillRect(-6, -4, 12, 8);
@@ -2040,6 +2043,52 @@ export class Renderer {
                 ctx.fillStyle = 'rgba(255,220,100,0.3)';
                 ctx.beginPath();
                 ctx.arc(cx + Math.cos(shimA) * shimR, cy + Math.sin(shimA) * shimR, 1, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        } else if (tower.type === 'thetal') {
+            // Pulsing crimson aura
+            const pulse = 0.14 + Math.sin(gp * 1.4) * 0.08;
+            ctx.fillStyle = `rgba(224,16,80,${pulse})`;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 26, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Outer energy ring — rotating dashed crimson
+            ctx.strokeStyle = `rgba(224,16,80,${0.25 + Math.sin(gp * 2) * 0.1})`;
+            ctx.lineWidth = 1.5;
+            ctx.setLineDash([4, 6]);
+            ctx.lineDashOffset = -sp * 40;
+            ctx.beginPath();
+            ctx.arc(cx, cy, 22, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // 5 orbiting crimson shards (triangle shapes)
+            for (let i = 0; i < 5; i++) {
+                const a = sp * 0.9 + (Math.PI * 2 * i) / 5;
+                const r = 19 + Math.sin(gp + i * 1.2) * 2.5;
+                const px = cx + Math.cos(a) * r;
+                const py = cy + Math.sin(a) * r;
+                ctx.fillStyle = i % 2 === 0 ? 'rgba(224,16,80,0.55)' : 'rgba(255,60,100,0.5)';
+                ctx.save();
+                ctx.translate(px, py);
+                ctx.rotate(sp * 2.5 + i);
+                ctx.beginPath();
+                ctx.moveTo(0, -3.5);
+                ctx.lineTo(2.5, 2);
+                ctx.lineTo(-2.5, 2);
+                ctx.closePath();
+                ctx.fill();
+                ctx.restore();
+            }
+
+            // Crimson particle shimmer
+            if (Math.random() < 0.35) {
+                const shimA = Math.random() * Math.PI * 2;
+                const shimR = 8 + Math.random() * 14;
+                ctx.fillStyle = 'rgba(255,60,100,0.35)';
+                ctx.beginPath();
+                ctx.arc(cx + Math.cos(shimA) * shimR, cy + Math.sin(shimA) * shimR, 1.2, 0, Math.PI * 2);
                 ctx.fill();
             }
         }
@@ -2993,6 +3042,95 @@ export class Renderer {
             ctx.fillStyle = '#ffd700';
             ctx.beginPath();
             ctx.arc(16 + recoil, 0, 3 + (1 - t) * 4, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.globalAlpha = 1;
+        }
+    }
+
+    drawTheTalTurret(ctx, recoil, tower) {
+        // Wider armored body — trapezoidal crimson/dark
+        ctx.fillStyle = '#5a0a20';
+        ctx.beginPath();
+        ctx.moveTo(-10, -8);
+        ctx.lineTo(5, -10);
+        ctx.lineTo(5, 10);
+        ctx.lineTo(-10, 8);
+        ctx.closePath();
+        ctx.fill();
+
+        // Inner body highlight — crimson
+        ctx.fillStyle = '#e01050';
+        ctx.beginPath();
+        ctx.moveTo(-8, -6);
+        ctx.lineTo(3, -8);
+        ctx.lineTo(3, 8);
+        ctx.lineTo(-8, 6);
+        ctx.closePath();
+        ctx.fill();
+
+        // Armor rivets — dark crimson
+        ctx.fillStyle = '#a00830';
+        for (let i = 0; i < 4; i++) {
+            ctx.beginPath();
+            ctx.arc(-6 + i * 3, -7 + i * 0.4, 1, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.beginPath();
+            ctx.arc(-6 + i * 3, 7 - i * 0.4, 1, 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+        // Dual thick barrels
+        ctx.fillStyle = '#5a0a20';
+        ctx.fillRect(2 + recoil, -7, 14, 4);
+        ctx.fillRect(2 + recoil, 3, 14, 4);
+        ctx.fillStyle = '#e01050';
+        ctx.fillRect(4 + recoil, -6, 10, 2);
+        ctx.fillRect(4 + recoil, 4, 10, 2);
+
+        // Energy veins on barrels
+        ctx.strokeStyle = 'rgba(255,60,100,0.5)';
+        ctx.lineWidth = 0.8;
+        ctx.beginPath();
+        ctx.moveTo(5 + recoil, -5);
+        ctx.lineTo(13 + recoil, -5);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(5 + recoil, 5);
+        ctx.lineTo(13 + recoil, 5);
+        ctx.stroke();
+
+        // Energy ring near muzzle — crimson
+        ctx.strokeStyle = '#ff3060';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(15 + recoil, 0, 6, -Math.PI * 0.65, Math.PI * 0.65);
+        ctx.stroke();
+
+        // Inner ring glow
+        const ringGlow = 0.5 + Math.sin(tower.glowPhase * 2.5) * 0.3;
+        ctx.strokeStyle = `rgba(255,60,100,${ringGlow})`;
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(15 + recoil, 0, 4, -Math.PI * 0.5, Math.PI * 0.5);
+        ctx.stroke();
+
+        // Muzzle glow — pulsing crimson
+        const muzzleGlow = 0.45 + Math.sin(tower.glowPhase * 3.5) * 0.25;
+        ctx.fillStyle = `rgba(255,40,80,${muzzleGlow})`;
+        ctx.beginPath();
+        ctx.arc(16 + recoil, -5, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.arc(16 + recoil, 5, 2.5, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Recoil energy burst — crimson flash
+        if (tower.recoilTimer > 0) {
+            const t = tower.recoilTimer / 0.12;
+            ctx.globalAlpha = t * 0.65;
+            ctx.fillStyle = '#ff3060';
+            ctx.beginPath();
+            ctx.arc(17 + recoil, 0, 4 + (1 - t) * 5, 0, Math.PI * 2);
             ctx.fill();
             ctx.globalAlpha = 1;
         }

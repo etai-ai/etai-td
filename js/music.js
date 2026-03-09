@@ -111,7 +111,7 @@ export class Music {
         const now = this.ctx.currentTime;
         const fade = MUSIC.fadeTime;
 
-        const t = Math.min(1, wave / 35);
+        const t = Math.min(1, wave / 40);
         this._bpm = MUSIC.baseBPM + (MUSIC.maxBPM - MUSIC.baseBPM) * t;
         this._beatDuration = 60 / this._bpm;
 

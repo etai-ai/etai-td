@@ -125,7 +125,7 @@ export class Projectile {
             game.audio.playExplosion();
 
             // Explosion color by type
-            const explosionColor = this.towerType === 'titan' ? '#ffd700' : this.missile ? '#aabb44' : (this.isHeavy ? '#ff3300' : '#ff6600');
+            const explosionColor = this.towerType === 'thetal' ? '#e01050' : this.towerType === 'titan' ? '#ffd700' : this.missile ? '#aabb44' : (this.isHeavy ? '#ff3300' : '#ff6600');
             game.particles.spawnExplosion(this.x, this.y, explosionColor);
             game.triggerShake(this.isHeavy ? 5 : (this.missile ? 4 : 3), this.isHeavy ? 0.25 : (this.missile ? 0.2 : 0.15));
             // PostFX shockwave on explosions
@@ -304,6 +304,7 @@ export class Projectile {
             bicannon: '#ff8c00',
             missilesniper: '#aabb44',
             titan: '#ffd700',
+            thetal: '#e01050',
             hero: '#00e5ff',
         };
         return colors[this.towerType] || '#fff';

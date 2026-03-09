@@ -357,7 +357,7 @@ export class Trailer {
 
     _sceneArsenal() {
         // Show the main tower types in two rows
-        const towerKeys = ['firearrow', 'deepfrost', 'superlightning', 'bicannon', 'missilesniper', 'titan'];
+        const towerKeys = ['firearrow', 'deepfrost', 'superlightning', 'bicannon', 'missilesniper', 'thetal'];
         const row1 = towerKeys.slice(0, 3);
         const row2 = towerKeys.slice(3);
 
@@ -418,7 +418,7 @@ export class Trailer {
         const bossData = [
             { type: 'boss', name: 'Boss', subtitle: 'Every 5 waves', color: '#8e44ad' },
             { type: 'megaboss', name: 'Megaboss', subtitle: 'Waves 25-31', color: '#8b0000' },
-            { type: 'royboss', name: 'Roy Boss', subtitle: 'Wave 32+', color: '#4a0080' },
+            { type: 'royboss', name: 'Roy Boss', subtitle: 'Wave 37+', color: '#4a0080' },
         ];
 
         const cards = bossData.map((b, i) => {
